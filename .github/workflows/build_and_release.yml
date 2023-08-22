@@ -2,9 +2,10 @@ name: Build and release the app
 
 on:
   push:
-    branches: [ "main", "impl_ci" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - "*.*.*"
+  #pull_request:
+  #  branches: [ "main" ]
   workflow_dispatch:
 jobs:
   build:
