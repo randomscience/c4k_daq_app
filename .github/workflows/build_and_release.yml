@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        name: Update version in YAML
+      - name: Update version in YAML
         run: sed -i 's/99.99.99/${{ github.ref }}/g' pubspec.yaml
       - name: Create key.properties
         uses: actions/setup-java@v3
