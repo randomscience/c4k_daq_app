@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'Calibration.dart';
 import 'Library.dart';
 import 'NewRecording.dart';
+import 'information.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
@@ -24,8 +25,9 @@ class MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
 
   StatefulWidget _getCentralWidget() {
-    if (currentPageIndex == 0) return const Calibration();
-    if (currentPageIndex == 1) return NewRecording();
+    if (currentPageIndex == 0) return const Information();
+    if (currentPageIndex == 1) return const Calibration();
+    if (currentPageIndex == 2) return NewRecording();
     return const Library();
   }
 
@@ -50,6 +52,11 @@ class MyHomePageState extends State<MyHomePage> {
             });
           },
           destinations: const <Widget>[
+            NavigationDestination(
+              selectedIcon: Icon(Icons.info),
+              icon: Icon(Icons.info_outlined),
+              label: 'Information',
+            ),
             NavigationDestination(
               selectedIcon: Icon(Icons.compass_calibration),
               icon: Icon(Icons.compass_calibration_outlined),
