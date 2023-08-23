@@ -2,54 +2,16 @@ import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'measurement_stepper.dart';
 import 'full_screen_modal.dart';
 import 'upload_data_dialog.dart';
+import 'upload_measurement.dart';
 import 'upload_result.dart';
-
-Future<UploadResult> uploadMeasurement(Map<String, String> measurement) async {
-  final resp = await http.post(
-    Uri.parse(
-        "https://external.randomscience.org/c4k/api/v1/upload_measurement_info"),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(measurement),
-  );
-
-  return UploadResult(statusCode: resp.statusCode, body: resp.body.toString());
-}
-
-uploadMeasurementVideo(
-  String path,
-  String fileName,
-  String id,
-  String gatewayKey,
-) async {
-  var request = http.MultipartRequest(
-    'POST',
-    Uri.parse(
-        "https://external.randomscience.org/c4k/api/v1/upload_measurement_video/$gatewayKey/$id"),
-  );
-
-  request.files.add(
-    http.MultipartFile.fromBytes(
-      fileName,
-      io.File(path).readAsBytesSync(),
-      filename: fileName,
-    ),
-  );
-  final resp = await request.send();
-
-  return UploadResult(
-      statusCode: resp.statusCode, body: await resp.stream.bytesToString());
-}
 
 class NewRecording extends StatefulWidget {
   NewRecording({super.key});
-  bool recordingVideo = false;
+
   Map<String, String?> userInformation = {
     "id": null,
     "height": null,
@@ -130,16 +92,18 @@ class NewRecording extends StatefulWidget {
 }
 
 class _NewRecording extends State<NewRecording> {
+  bool recordingVideo = false;
+
   String currentlyRecorderExerciseTitle = "No_exercise_is_currently_recorded";
 
   setExerciseVideoMapping(String exercise, String? videoPath) {
     if (videoPath != null) widget.exerciseVideoMapping[exercise] = videoPath;
-    setState(() => widget.recordingVideo = false);
+    setState(() => recordingVideo = false);
   }
 
   recordVideo(String exerciseTitle) {
     currentlyRecorderExerciseTitle = exerciseTitle;
-    setState(() => widget.recordingVideo = true);
+    setState(() => recordingVideo = true);
   }
 
   _showDialog() async {

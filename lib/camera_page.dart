@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
 class CameraPage extends StatefulWidget {
-  Function pathToVideoSetter;
-  Function exitButton;
-  String exerciseTitle;
+  final Function pathToVideoSetter;
+  final Function exitButton;
+  final String exerciseTitle;
 
-  CameraPage(
+  const CameraPage(
       {super.key,
       required this.pathToVideoSetter,
       required this.exerciseTitle,

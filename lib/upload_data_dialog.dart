@@ -2,18 +2,19 @@ import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 
 class UploadDataDialog extends StatefulWidget {
-  Function exitButton;
-  Function awaitedFunction;
+  final Function exitButton;
+  final Function awaitedFunction;
 
-  Function userInformationGetter;
-  Function exerciseVideoMappingGetter;
+  final Function userInformationGetter;
+  final Function exerciseVideoMappingGetter;
 
-  UploadDataDialog(
+  const UploadDataDialog(
       {super.key,
       required this.exitButton,
       required this.userInformationGetter,
       required this.exerciseVideoMappingGetter,
       required this.awaitedFunction});
+
   @override
   UploadDataDialogState createState() => UploadDataDialogState();
 }
@@ -67,8 +68,10 @@ class UploadDataDialogState extends State<UploadDataDialog> {
 
     if (result != null) {
       bool singleOverallResult = true;
-      result.forEach(
-          (element) => singleOverallResult = element.isSuccess() && true);
+
+      for (var element in result) {
+        singleOverallResult = element.isSuccess() && true;
+      }
 
       if (singleOverallResult) {
         description = "Upload succeeded! There's no more to be done.";
@@ -79,8 +82,9 @@ class UploadDataDialogState extends State<UploadDataDialog> {
       } else {
         description = "Upload failed, here's list of responses:";
 
-        result.forEach(
-            (element) => description = '$description\n${element.body}');
+        for (var element in result) {
+          description = '$description\n${element.body}';
+        }
 
         okButton = TextButton(
             onPressed: () => widget.exitButton(), child: const Text('ok'));

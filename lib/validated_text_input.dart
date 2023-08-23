@@ -37,7 +37,6 @@ class ValidatedTextInput extends StatefulWidget {
 }
 
 class ValidatedTextInputState extends State<ValidatedTextInput> {
-  var _text = '';
   @override
   void initState() {
     super.initState();

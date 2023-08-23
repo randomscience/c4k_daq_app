@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'validated_text_input.dart';
 
 class MeasurementStepper extends StatefulWidget {
-  MeasurementStepper(
+  const MeasurementStepper(
       {super.key,
       required this.showModalBottomSheet,
       required this.saveMeasurement,
@@ -10,15 +10,15 @@ class MeasurementStepper extends StatefulWidget {
       required this.exerciseVideoMappingGetter,
       required this.setUserInformation,
       required this.clearData});
-  Function userInformationGetter;
-  Function exerciseVideoMappingGetter;
+  final Function userInformationGetter;
+  final Function exerciseVideoMappingGetter;
 
-  Function clearData;
+  final Function clearData;
 
-  Function showModalBottomSheet;
+  final Function showModalBottomSheet;
 
-  Function saveMeasurement;
-  Function setUserInformation;
+  final Function saveMeasurement;
+  final Function setUserInformation;
 
   _noSteps() {
     return userInformationGetter().length + exerciseVideoMappingGetter().length;
@@ -41,8 +41,6 @@ class MeasurementStepper extends StatefulWidget {
   }
 
   _textFieldGenerator(String mapKey, String title, String hintText) {
-    bool isActive = false;
-
     StepState state = StepState.indexed;
 
     if (userInformationGetter()[mapKey] != null) {
