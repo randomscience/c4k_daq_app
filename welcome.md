@@ -4,7 +4,7 @@ Aplikacja ma na celu umozliwiane zbieranie danych w celu przygotowania algorytmu
 
 Przygotowane zostały 2 głowne ekrany:
 - `Instrukcja` - Ekran na ktorym aktualnie sie znajdujesz zawiera informacje o aplikacji oraz dokładny opis procedury wykonywania pomiarow
-- `Nowy Pomiar` - Głowny ekran aplikacji, przeprowadzi Ciebie przez wykonanie pomiaru i wysle zebrane dane do naszej bazy danych.
+- `Nowy Pomiar` - Głowny ekran aplikacji, przeprowadzi Ciebie przez wykonanie pomiaru i wyśle zebrane dane do naszej bazy danych.
 
 W razie problemow z aplikacja zapraszamy do wypełniania formularza: lub kontaktu z nami pod adresem e-mail: [contact@randomscience.org](mailto:contact@randomscience.org)
 
