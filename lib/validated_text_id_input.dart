@@ -1,4 +1,3 @@
-import 'package:c4k_daq/measurement_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,9 +20,8 @@ class ValidatedTextIDInput extends StatefulWidget {
     if (text.isEmpty) {
       return 'Pole nie może być puste';
     }
-    int textInt;
     try {
-      textInt = int.parse(text);
+      int.parse(text);
     } catch (e) {
       return 'Wprowadź liczbę';
     }
