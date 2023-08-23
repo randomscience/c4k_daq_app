@@ -25,10 +25,6 @@ class MeasurementStepper extends StatefulWidget {
   final Function saveMeasurement;
   final Function setUserInformation;
 
-  _noSteps() {
-    return userInformationGetter().length + exerciseVideoMappingGetter().length;
-  }
-
   _steps() {
     return <Step>[
       _textFieldGenerator(
@@ -48,10 +44,10 @@ class MeasurementStepper extends StatefulWidget {
       _exerciseGenerator(
           "Ćwiczenie 2", "Nagraj dziecko wykonujace skłony w punkcie O"),
       const Step(
-          state: StepState.complete,
+          state: StepState.indexed,
           title: Text("Obróć telefon"),
           content: Text(
-              "Obróć telefon tak zeby znajdował sie w pozycji horyzontalnej")),
+              "Obróć telefon tak żeby znajdował sie w pozycji horyzontalnej")),
       _exerciseGenerator(
           "Ćwiczenie 3", "Nagraj dziecko idace od punktu L do punktu P"),
       const Step(
@@ -75,11 +71,6 @@ class MeasurementStepper extends StatefulWidget {
       StepTypes.save
     ];
     return listOfStepTypes[index];
-  }
-
-  _infoGenerator(title, content) {
-    return Step(
-        state: StepState.indexed, title: Text(title), content: Text(content));
   }
 
   _textFieldGenerator(String mapKey, String title, String hintText,

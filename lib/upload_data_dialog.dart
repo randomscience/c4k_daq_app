@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 
@@ -21,12 +23,18 @@ class UploadDataDialog extends StatefulWidget {
 
 class UploadDataDialogState extends State<UploadDataDialog> {
   bool isAwaiting = true;
-  String description = 'Trwa wysyłanie danych na zewnętrzny serwer.';
+  String description = 'Trwa wysyłanie danych do zewnętrznego serwera.';
 
   ElevatedButton okButton = ElevatedButton(
     onPressed: () => {},
     child: const Padding(
-        padding: EdgeInsets.all(8), child: CircularProgressIndicator()),
+        padding: EdgeInsets.all(8),
+        child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 3.0,
+            ))),
   );
 
   _runAwaitedFunction() async {
@@ -37,7 +45,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
         description =
             "Wszystkie wymagane pola muszą być wypełnione przed wysłaniem danych.";
         okButton = ElevatedButton(
-            onPressed: () => widget.exitButton(), child: const Text('ok'));
+            onPressed: () => widget.exitButton(), child: const Text('Ok'));
         setState(() => isAwaiting = false);
         return;
       }
@@ -51,7 +59,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
         description =
             "Wszystkie wymagane ćwiczenia muszą być nagrane przed wysłaniem danych. Brakujące nagranie: ${field.key}";
         okButton = ElevatedButton(
-            onPressed: () => widget.exitButton(), child: const Text('ok'));
+            onPressed: () => widget.exitButton(), child: const Text('Ok'));
         setState(() => isAwaiting = false);
         return;
       }
@@ -61,9 +69,9 @@ class UploadDataDialogState extends State<UploadDataDialog> {
     try {
       result = await widget.awaitedFunction();
     } catch (e) {
-      description = 'Nieznany błąd został napotkany w aplikacji. Szczegóły: $e';
+      description = "Napotkano błąd w aplikacji. Szczegóły dla deweloperów: $e";
       okButton = ElevatedButton(
-          onPressed: () => widget.exitButton(), child: const Text('ok'));
+          onPressed: () => widget.exitButton(), child: const Text('Ignoruj'));
       setState(() => isAwaiting = false);
       return;
     }
@@ -82,7 +90,8 @@ class UploadDataDialogState extends State<UploadDataDialog> {
         setState(() => isAwaiting = false);
         return;
       } else {
-        description = "Nastąpił błąd połączenia z serwerem. Szczegóły:";
+        description =
+            "Nastąpił błąd połączenia z serwerem, dane zapisane zostały w pamięci urządzenia. Szczegóły dla deweloperów:";
 
         for (var element in result) {
           description = '$description\n${element.body}';

@@ -109,7 +109,7 @@ class _NewRecording extends State<NewRecording> {
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-            title: const Text("Uploading data"),
+            title: const Text("Wysyłanie danych"),
             content: UploadDataDialog(
                 exerciseVideoMappingGetter: () => widget.exerciseVideoMapping,
                 userInformationGetter: () => widget.userInformation,

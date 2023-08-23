@@ -25,6 +25,13 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
 
+  _pageTitle() {
+    if (currentPageIndex == 0) return "Instrukcja";
+    if (currentPageIndex == 1) return "Kalibracja";
+    if (currentPageIndex == 2) return "Nowy Pomiar";
+    return "Biblioteka";
+  }
+
   StatefulWidget _getCentralWidget() {
     if (currentPageIndex == 0) return const Information();
     if (currentPageIndex == 1) return const Calibration();
@@ -44,7 +51,7 @@ class MyHomePageState extends State<MyHomePage> {
       ),
       home: Scaffold(
         bottomNavigationBar: NavigationBar(
-          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           selectedIndex: currentPageIndex,
           height: 60,
           onDestinationSelected: (int index) {
@@ -77,8 +84,9 @@ class MyHomePageState extends State<MyHomePage> {
         ),
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("Connect 4 Kids",
-              style: Theme.of(context).textTheme.headlineSmall),
+          title: Text(_pageTitle(),
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
         ),
         body: Center(child: _getCentralWidget()),
       ),

@@ -23,6 +23,7 @@ class CameraPage extends StatefulWidget {
 class CameraPageState extends State<CameraPage> {
   bool _isLoading = true;
   bool _isRecording = false;
+  bool _recordingEnded = false;
   late CameraController _cameraController;
 
   @override
@@ -75,8 +76,8 @@ class CameraPageState extends State<CameraPage> {
     if (_isRecording) {
       final file = await _cameraController.stopVideoRecording();
       widget.pathToVideoSetter(widget.exerciseTitle, file.path);
-      setState(() => _isRecording = false);
-      widget.exitButton();
+      setState(() => {_isRecording = false, _recordingEnded = true});
+      // widget.exitButton();
     } else {
       await _cameraController.prepareForVideoRecording();
       await _cameraController.startVideoRecording();
@@ -104,7 +105,7 @@ class CameraPageState extends State<CameraPage> {
           Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 72),
                 child: FloatingActionButton(
                   backgroundColor: Colors.white,
                   shape: const CircleBorder(eccentricity: 0.5),
@@ -133,13 +134,29 @@ class CameraPageState extends State<CameraPage> {
           Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
                 child: Text(widget.exerciseTitle,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 24,
+                        fontSize: 28,
                         color: Colors.white)),
               )),
+          if (_recordingEnded)
+            Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 24, 76),
+                    child: ElevatedButton(
+                        // backgroundColor:Colors.transparent,
+                        // style: TextStyle(color: Colors.grey),
+                        onPressed: () => widget.exitButton(),
+                        child: const Text(
+                          'Zapisz',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black),
+                        )))),
         ],
         // ),
       ));
