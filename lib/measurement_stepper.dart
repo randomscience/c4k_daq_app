@@ -12,13 +12,10 @@ class MeasurementStepper extends StatefulWidget {
       required this.saveMeasurement,
       required this.userInformationGetter,
       required this.exerciseVideoMappingGetter,
-      required this.setUserInformation,
-      required this.clearData});
+      required this.setUserInformation});
 
   final Function userInformationGetter;
   final Function exerciseVideoMappingGetter;
-
-  final Function clearData;
 
   final Function showModalBottomSheet;
 
@@ -125,6 +122,8 @@ class MeasurementStepper extends StatefulWidget {
 class Steps {}
 
 class _MeasurementStepperState extends State<MeasurementStepper> {
+  var scrollController = ScrollController();
+
   _recordVideo() {
     Text textField = widget._steps()[_index].title;
     widget.showModalBottomSheet(textField.data);
@@ -136,9 +135,18 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
     }
   }
 
+  void _animateToIndex(int index) {
+    if (index <= 6) {
+      scrollController.animateTo(
+        index * 40,
+        duration: const Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
+  }
+
   _saveMeasurement() {
     widget.saveMeasurement();
-
     setState(() {
       _index = 0;
     });
@@ -148,7 +156,8 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   @override
   Widget build(BuildContext context) {
     return Stepper(
-      physics: const ClampingScrollPhysics(),
+      controller: scrollController,
+      physics: const BouncingScrollPhysics(),
       currentStep: _index,
       onStepCancel: () {
         setState(() {
@@ -161,6 +170,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
         });
       },
       onStepTapped: (int index) {
+        _animateToIndex(index);
         setState(() {
           _index = index;
         });

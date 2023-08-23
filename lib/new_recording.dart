@@ -105,7 +105,7 @@ class _NewRecording extends State<NewRecording> {
     setState(() => recordingVideo = true);
   }
 
-  _showDialog() async {
+  _showDialog() {
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -130,7 +130,6 @@ class _NewRecording extends State<NewRecording> {
       showModalBottomSheet: (exerciseTitle) =>
           _showModal(context, exerciseTitle),
       saveMeasurement: _showDialog,
-      clearData: widget.clearData,
       setUserInformation: widget.setUserInformation,
       exerciseVideoMappingGetter: () => widget.exerciseVideoMapping,
       userInformationGetter: () => widget.userInformation,
