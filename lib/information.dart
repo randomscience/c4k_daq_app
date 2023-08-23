@@ -1,4 +1,3 @@
-import 'package:c4k_daq/main.dart';
 import 'package:flutter/material.dart';
 
 class Information extends StatefulWidget {

@@ -1,75 +1,5 @@
-import 'package:c4k_daq/saving_states.dart';
-import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'exercise.dart';
-
-class ValidatedTextInput extends StatefulWidget {
-  Function userInformationGetter;
-  String mapKey;
-  String title;
-  String hintText;
-  ValidatedTextInput(
-      {super.key,
-      required this.userInformationGetter,
-      required this.mapKey,
-      required this.title,
-      required this.hintText});
-
-  TextEditingController controller = TextEditingController();
-
-  String? _errorText() {
-    final text = controller.value.text;
-    if (text.isEmpty) {
-      return 'Can\'t be empty';
-    }
-    int textInt;
-    try {
-      textInt = int.parse(text);
-    } catch (e) {
-      return 'Provided text must be int';
-    }
-    if (textInt >= 200) {
-      return 'Too long';
-    }
-    return null;
-  }
-
-  @override
-  State<ValidatedTextInput> createState() => ValidatedTextInputState();
-}
-
-class ValidatedTextInputState extends State<ValidatedTextInput> {
-  var _text = '';
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(() =>
-        widget.userInformationGetter()[widget.mapKey] = widget.controller.text);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.userInformationGetter()[widget.mapKey] != null) {
-      widget.controller.text =
-          widget.userInformationGetter()[widget.mapKey].toString();
-    }
-
-    return TextField(
-      // onChanged: (text) => setState(),
-      controller: widget.controller,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        errorText: widget._errorText(),
-        labelText: widget.title,
-        hintText: widget.hintText,
-      ),
-      onChanged: (text) => setState(
-          () => {widget.userInformationGetter()[widget.mapKey] = text}),
-    );
-  }
-}
+import 'validated_text_input.dart';
 
 class MeasurementStepper extends StatefulWidget {
   MeasurementStepper(
@@ -112,11 +42,16 @@ class MeasurementStepper extends StatefulWidget {
 
   _textFieldGenerator(String mapKey, String title, String hintText) {
     bool isActive = false;
+
+    StepState state = StepState.indexed;
+
     if (userInformationGetter()[mapKey] != null) {
-      isActive = true;
+      state = StepState.complete;
     }
+
     return Step(
-        isActive: isActive,
+        isActive: state == StepState.complete ? true : false,
+        state: state,
         title: Text(title),
         content: ValidatedTextInput(
             mapKey: mapKey,
@@ -126,13 +61,15 @@ class MeasurementStepper extends StatefulWidget {
   }
 
   _exerciseGenerator(String title, String exerciseExplanation) {
-    bool isActive = false;
+    StepState state = StepState.indexed;
+
     if (exerciseVideoMappingGetter()[title] != null) {
-      isActive = true;
+      state = StepState.complete;
     }
 
     return Step(
-      isActive: isActive,
+      isActive: state == StepState.complete ? true : false,
+      state: state,
       title: Text(title),
       content:
           Align(alignment: Alignment.topLeft, child: Text(exerciseExplanation)),
@@ -148,9 +85,7 @@ class Steps {}
 class _MeasurementStepperState extends State<MeasurementStepper> {
   _recordVideo() {
     Text textField = widget._steps()[_index].title;
-
     widget.showModalBottomSheet(textField.data);
-
     if (widget.exerciseVideoMappingGetter()[widget._steps()[_index].title] !=
         null) {
       setState(() {
@@ -200,12 +135,26 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                 ),
               if (_index >= widget.userInformationGetter().length &&
                   _index < widget._noSteps())
-                ElevatedButton(
-                  onPressed: _recordVideo,
-                  child: const Text(
-                    "RECORD VIDEO",
+                if (widget.exerciseVideoMappingGetter()[
+                        widget._steps()[_index].title] !=
+                    null)
+                  ElevatedButton(
+                    onPressed: _recordVideo,
+                    child: const Text(
+                      "RE_RECORD VIDEO",
+                    ),
                   ),
-                ),
+              if (_index >= widget.userInformationGetter().length &&
+                  _index < widget._noSteps())
+                if (widget.exerciseVideoMappingGetter()[
+                        widget._steps()[_index].title] ==
+                    null)
+                  ElevatedButton(
+                    onPressed: _recordVideo,
+                    child: const Text(
+                      "RECORD VIDEO",
+                    ),
+                  ),
               if (_index == widget._noSteps())
                 ElevatedButton(
                   onPressed: _saveMeasurement,

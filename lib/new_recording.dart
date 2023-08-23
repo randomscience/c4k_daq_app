@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
-import 'camera_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'measurement_stepper.dart';
-import 'awaiting_button.dart';
 import 'full_screen_modal.dart';
-import 'loading_button.dart';
-import 'saving_states.dart';
 import 'upload_data_dialog.dart';
 import 'upload_result.dart';
 
