@@ -30,19 +30,20 @@ class MeasurementStepper extends StatefulWidget {
 
   _steps() {
     return <Step>[
-      _textFieldGenerator(id, 'Enter Unique ID', 'Child ID'),
-      _textFieldGenerator(height, 'Enter size of the child', 'Height in [cm]'),
-      _textFieldGenerator(noseToFloor, 'Enter nose to floor', 'Height in [cm]'),
+      _textFieldGenerator(id, 'Wpisz ID ktore otrzymales z ankiety', 'Unikatowe ID dziecka'),
+      _textFieldGenerator(height, 'Wpisz wzrost dziecka', 'Wzrost [cm]'),
+      _textFieldGenerator(noseToFloor, 'Wpisz odleglosc od ziemi do nosa', 'Odleglosc od ziemi do nosa [cm]'),
       _textFieldGenerator(
-          collarBoneToFloor, 'Enter collarbone to floor', 'Height in [cm]'),
+          collarBoneToFloor, 'Wpisz odleglosc od obojczyka do ziemi', 'Odleglosc od obojczyka do ziemi [cm]'),
       _textFieldGenerator(
-          pelvisToFloor, 'Enter d2f of the child', 'Height in [cm]'),
-      _exerciseGenerator("Exercise 1", "do a flip, bitch!"),
+          pelvisToFloor, 'Wpisz odleglosc od pasa do ziemi', 'Odleglosc od pasa do ziemi [cm]'),
+      _exerciseGenerator("Cwiczenie 1", "Nagraj dziecko idace od punktu N do punktu S"),
+      _exerciseGenerator("Cwiczenie 2", "Nagraj dziecko wykonujace sklony w punkcie O"),
       const Step(
-          title: Text("Rotate the phone"),
-          content: Text("rotate horizontally")),
-      _exerciseGenerator("Exercise 2", "do a flip, bitch!"),
-      const Step(title: Text("Save Measurement"), content: Text("that's it")),
+          title: Text("Obroc telefon"),
+          content: Text("Obroc telefon tak zeby znajdowal sie w pozycji horyzontalnej")),
+      _exerciseGenerator("Cwiczenie 3", "Nagraj dziecko idace od punktu L do punktu P"),
+      const Step(title: Text("Zapisz pomiar"), content: Text("TODO: Opis koniec pomiaru")),
     ];
   }
 
