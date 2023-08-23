@@ -5,8 +5,16 @@ import 'package:flutter/material.dart';
 class UploadDataDialog extends StatefulWidget {
   Function exitButton;
   Function awaitedFunction;
+
+  Function userInformationGetter;
+  Function exerciseVideoMappingGetter;
+
   UploadDataDialog(
-      {super.key, required this.exitButton, required this.awaitedFunction});
+      {super.key,
+      required this.exitButton,
+      required this.userInformationGetter,
+      required this.exerciseVideoMappingGetter,
+      required this.awaitedFunction});
   @override
   UploadDataDialogState createState() => UploadDataDialogState();
 }
@@ -21,6 +29,32 @@ class UploadDataDialogState extends State<UploadDataDialog> {
   );
 
   _runAwaitedFunction() async {
+    Map<String, String?> userInformation = widget.userInformationGetter();
+
+    for (MapEntry<String, String?> field in userInformation.entries) {
+      if (field.value == null) {
+        description = "Fill out all required fields before uploading data!";
+        okButton = TextButton(
+            onPressed: () => widget.exitButton(), child: const Text('ok'));
+        setState(() => isAwaiting = false);
+        return;
+      }
+    }
+
+    Map<String, String?> exerciseVideoMapping =
+        widget.exerciseVideoMappingGetter();
+
+    for (MapEntry<String, String?> field in exerciseVideoMapping.entries) {
+      if (field.value == null) {
+        description =
+            "Record all required exercises before uploading data! Missing exercise: ${field.key}";
+        okButton = TextButton(
+            onPressed: () => widget.exitButton(), child: const Text('ok'));
+        setState(() => isAwaiting = false);
+        return;
+      }
+    }
+
     List<UploadResult>? result;
     try {
       result = await widget.awaitedFunction();
@@ -29,6 +63,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
       okButton = TextButton(
           onPressed: () => widget.exitButton(), child: const Text('ok'));
       setState(() => isAwaiting = false);
+      return;
     }
 
     if (result != null) {
@@ -41,6 +76,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
         okButton = TextButton(
             onPressed: () => widget.exitButton(), child: const Text('ok'));
         setState(() => isAwaiting = false);
+        return;
       } else {
         description = "Upload failed, here's list of responses:";
 
@@ -51,6 +87,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
             onPressed: () => widget.exitButton(), child: const Text('ok'));
 
         setState(() => isAwaiting = false);
+        return;
       }
     }
   }

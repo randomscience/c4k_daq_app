@@ -66,6 +66,15 @@ class NewRecording extends StatefulWidget {
     "Exercise 1": null,
   };
 
+  clearData() {
+    for (MapEntry e in userInformation.entries) {
+      userInformation[e.key] = null;
+    }
+    for (MapEntry e in exerciseVideoMapping.entries) {
+      exerciseVideoMapping[e.key] = null;
+    }
+  }
+
   setUserInformation(Map<String, String?> userInformation) {
     this.userInformation = userInformation;
   }
@@ -76,10 +85,6 @@ class NewRecording extends StatefulWidget {
   }
 
   saveMeasurement() async {
-    if (userInformation['id'] == null) {
-      return;
-    }
-
     var uuid = const Uuid().v4();
     final path = await _localPath;
     var localFile = io.File('$path/c4k_daq/$uuid.json');
@@ -120,18 +125,7 @@ class NewRecording extends StatefulWidget {
           uuid,
           "dc48813b9f2371df0479fa27b112b64d"));
     }
-
-    userInformation = {
-      "id": null,
-      "height": null,
-      "nose_to_floor": null,
-      "collar_bone_to_floor": null,
-      "pelvis_to_floor": null
-    };
-
-    exerciseVideoMapping = {
-      "Exercise 1": null,
-    };
+    clearData();
     return overallResult;
   }
 
@@ -156,13 +150,14 @@ class _NewRecording extends State<NewRecording> {
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-            title: Text("sdasd"),
+            title: const Text("Uploading data"),
             content: UploadDataDialog(
+                exerciseVideoMappingGetter: () => widget.exerciseVideoMapping,
+                userInformationGetter: () => widget.userInformation,
                 exitButton: Navigator.of(context).pop,
                 awaitedFunction: widget.saveMeasurement)));
   }
 
-// TODO this one should return success or failure of the camera recording operation and stuff
   _showModal(BuildContext context, String exerciseTitle) async {
     // show the modal dialog and pass some data to it
     await Navigator.of(context).push(FullScreenModal(
@@ -176,6 +171,7 @@ class _NewRecording extends State<NewRecording> {
       showModalBottomSheet: (exerciseTitle) =>
           _showModal(context, exerciseTitle),
       saveMeasurement: _showDialog,
+      clearData: widget.clearData,
       setUserInformation: widget.setUserInformation,
       exerciseVideoMappingGetter: () => widget.exerciseVideoMapping,
       userInformationGetter: () => widget.userInformation,

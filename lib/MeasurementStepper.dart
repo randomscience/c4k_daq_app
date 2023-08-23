@@ -29,8 +29,8 @@ class ValidatedTextInput extends StatefulWidget {
     } catch (e) {
       return 'Provided text must be int';
     }
-    if (textInt <= 0) {
-      return 'Too short';
+    if (textInt >= 200) {
+      return 'Too long';
     }
     return null;
   }
@@ -78,9 +78,12 @@ class MeasurementStepper extends StatefulWidget {
       required this.saveMeasurement,
       required this.userInformationGetter,
       required this.exerciseVideoMappingGetter,
-      required this.setUserInformation});
+      required this.setUserInformation,
+      required this.clearData});
   Function userInformationGetter;
   Function exerciseVideoMappingGetter;
+
+  Function clearData;
 
   Function showModalBottomSheet;
 
@@ -149,11 +152,15 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
     widget.showModalBottomSheet(textField.data);
 
     if (widget.exerciseVideoMappingGetter()[widget._steps()[_index].title] !=
-        null) _index = _index + 1;
+        null) {
+      setState(() {
+        _index = _index + 1;
+      });
+    }
   }
 
-  _saveMeasurement() async {
-    await widget.saveMeasurement();
+  _saveMeasurement() {
+    widget.saveMeasurement();
 
     setState(() {
       _index = 0;
@@ -196,7 +203,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                 ElevatedButton(
                   onPressed: _recordVideo,
                   child: const Text(
-                    'RECORD A VIDEO',
+                    "RECORD VIDEO",
                   ),
                 ),
               if (_index == widget._noSteps())
