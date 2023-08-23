@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ValidatedTextInput extends StatefulWidget {
-  Function userInformationGetter;
-  String mapKey;
-  String title;
-  String hintText;
+  final Function userInformationGetter;
+  final String mapKey;
+  final String title;
+  final String hintText;
+  final TextEditingController controller = TextEditingController();
+
   ValidatedTextInput(
       {super.key,
       required this.userInformationGetter,
       required this.mapKey,
       required this.title,
       required this.hintText});
-
-  TextEditingController controller = TextEditingController();
 
   String? _errorText() {
     final text = controller.value.text;
@@ -61,8 +61,8 @@ class ValidatedTextInputState extends State<ValidatedTextInput> {
         labelText: widget.title,
         hintText: widget.hintText,
       ),
-      onChanged: (text) => setState(
-          () => {widget.userInformationGetter()[widget.mapKey] = text}),
+      onChanged: (text) =>
+          setState(() => widget.userInformationGetter()[widget.mapKey] = text),
     );
   }
 }

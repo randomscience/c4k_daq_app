@@ -1,3 +1,4 @@
+import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'package:path_provider/path_provider.dart';
@@ -10,27 +11,23 @@ import 'upload_measurement.dart';
 import 'upload_result.dart';
 
 class NewRecording extends StatefulWidget {
-  NewRecording({super.key});
-
   Map<String, String?> userInformation = {
-    "id": null,
-    "height": null,
-    "nose_to_floor": null,
-    "collar_bone_to_floor": null,
-    "pelvis_to_floor": null
+    id: null,
+    height: null,
+    noseToFloor: null,
+    collarBoneToFloor: null,
+    pelvisToFloor: null
   };
 
   Map<String, String?> exerciseVideoMapping = {
     "Exercise 1": null,
   };
 
+  NewRecording({super.key});
+
   clearData() {
-    for (MapEntry e in userInformation.entries) {
-      userInformation[e.key] = null;
-    }
-    for (MapEntry e in exerciseVideoMapping.entries) {
-      exerciseVideoMapping[e.key] = null;
-    }
+    userInformation = emptyUserInformation;
+    exerciseVideoMapping = emptyExerciseVideoMapping;
   }
 
   setUserInformation(Map<String, String?> userInformation) {
@@ -60,7 +57,7 @@ class NewRecording extends StatefulWidget {
     Map<String, String> parsedUserInformation = {};
 
     Iterator serInformationIterator = {
-      ...{"gateway_key": "dc48813b9f2371df0479fa27b112b64d"},
+      ...{"gateway_key": gatewayKey},
       ...{"unique_id": uuid},
       ...userInformation,
     }.entries.iterator;
@@ -78,10 +75,7 @@ class NewRecording extends StatefulWidget {
       MapEntry<String, String?> entry = videoIterator.current;
 
       overallResult.add(await uploadMeasurementVideo(
-          exerciseVideoMapping[entry.key]!,
-          entry.key,
-          uuid,
-          "dc48813b9f2371df0479fa27b112b64d"));
+          exerciseVideoMapping[entry.key]!, entry.key, uuid, gatewayKey));
     }
     clearData();
     return overallResult;
