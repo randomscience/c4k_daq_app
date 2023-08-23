@@ -42,7 +42,7 @@ class MeasurementStepper extends StatefulWidget {
       _exerciseGenerator(
           "Ćwiczenie 1", "Nagraj dziecko idace od punktu N do punktu S"),
       _exerciseGenerator(
-          "Ćwiczenie 2", "Nagraj dziecko wykonujace skłony w punkcie O"),
+          "Ćwiczenie 2", "Nagraj dziecko wykonujące skłony w punkcie O"),
       const Step(
           state: StepState.indexed,
           title: Text("Obróć telefon"),
