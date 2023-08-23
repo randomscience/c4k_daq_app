@@ -2,7 +2,7 @@ import 'package:c4k_daq/saving_states.dart';
 import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'Exercise.dart';
+import 'exercise.dart';
 
 class ValidatedTextInput extends StatefulWidget {
   Function userInformationGetter;
