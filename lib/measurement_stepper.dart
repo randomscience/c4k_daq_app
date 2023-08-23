@@ -136,10 +136,10 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   }
 
   void _animateToIndex(int index) {
-    if (index <= 6) {
+    if (index <= 5) {
       scrollController.animateTo(
-        index * 40,
-        duration: const Duration(seconds: 1),
+        index * 30,
+        duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn,
       );
     }

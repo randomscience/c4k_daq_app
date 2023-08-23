@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 
