@@ -21,11 +21,12 @@ class UploadDataDialog extends StatefulWidget {
 
 class UploadDataDialogState extends State<UploadDataDialog> {
   bool isAwaiting = true;
-  String description = 'Uploading data to remote database.';
+  String description = 'Trwa wysyłanie danych na zewnętrzny serwer.';
 
-  TextButton okButton = TextButton(
+  ElevatedButton okButton = ElevatedButton(
     onPressed: () => {},
-    child: const CircularProgressIndicator(),
+    child: const Padding(
+        padding: EdgeInsets.all(8), child: CircularProgressIndicator()),
   );
 
   _runAwaitedFunction() async {
@@ -33,8 +34,9 @@ class UploadDataDialogState extends State<UploadDataDialog> {
 
     for (MapEntry<String, String?> field in userInformation.entries) {
       if (field.value == null) {
-        description = "Fill out all required fields before uploading data!";
-        okButton = TextButton(
+        description =
+            "Wszystkie wymagane pola muszą być wypełnione przed wysłaniem danych.";
+        okButton = ElevatedButton(
             onPressed: () => widget.exitButton(), child: const Text('ok'));
         setState(() => isAwaiting = false);
         return;
@@ -47,8 +49,8 @@ class UploadDataDialogState extends State<UploadDataDialog> {
     for (MapEntry<String, String?> field in exerciseVideoMapping.entries) {
       if (field.value == null) {
         description =
-            "Record all required exercises before uploading data! Missing exercise: ${field.key}";
-        okButton = TextButton(
+            "Wszystkie wymagane ćwiczenia muszą być nagrane przed wysłaniem danych. Brakujące nagranie: ${field.key}";
+        okButton = ElevatedButton(
             onPressed: () => widget.exitButton(), child: const Text('ok'));
         setState(() => isAwaiting = false);
         return;
@@ -59,8 +61,8 @@ class UploadDataDialogState extends State<UploadDataDialog> {
     try {
       result = await widget.awaitedFunction();
     } catch (e) {
-      description = 'Unknown Application Error accrued. details:$e';
-      okButton = TextButton(
+      description = 'Nieznany błąd został napotkany w aplikacji. Szczegóły: $e';
+      okButton = ElevatedButton(
           onPressed: () => widget.exitButton(), child: const Text('ok'));
       setState(() => isAwaiting = false);
       return;
@@ -74,20 +76,20 @@ class UploadDataDialogState extends State<UploadDataDialog> {
       }
 
       if (singleOverallResult) {
-        description = "Upload succeeded! There's no more to be done.";
-        okButton = TextButton(
-            onPressed: () => widget.exitButton(), child: const Text('ok'));
+        description = "Wysyłanie danych zakończyło się powodzeniem.";
+        okButton = ElevatedButton(
+            onPressed: () => widget.exitButton(), child: const Text('Ok'));
         setState(() => isAwaiting = false);
         return;
       } else {
-        description = "Upload failed, here's list of responses:";
+        description = "Nastąpił błąd połączenia z serwerem. Szczegóły:";
 
         for (var element in result) {
           description = '$description\n${element.body}';
         }
 
-        okButton = TextButton(
-            onPressed: () => widget.exitButton(), child: const Text('ok'));
+        okButton = ElevatedButton(
+            onPressed: () => widget.exitButton(), child: const Text('Ok'));
 
         setState(() => isAwaiting = false);
         return;

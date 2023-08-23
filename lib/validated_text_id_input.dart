@@ -1,14 +1,15 @@
+import 'package:c4k_daq/measurement_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ValidatedTextInput extends StatefulWidget {
+class ValidatedTextIDInput extends StatefulWidget {
   final Function userInformationGetter;
   final String mapKey;
   final String title;
   final String hintText;
   final TextEditingController controller = TextEditingController();
 
-  ValidatedTextInput(
+  ValidatedTextIDInput(
       {super.key,
       required this.userInformationGetter,
       required this.mapKey,
@@ -26,20 +27,15 @@ class ValidatedTextInput extends StatefulWidget {
     } catch (e) {
       return 'Wprowadź liczbę';
     }
-    if (textInt >= 200) {
-      return 'Wprowadzono za dużą wartość';
-    }
-    if (textInt < 20) {
-      return 'Wprowadzono za małą wartość';
-    }
+
     return null;
   }
 
   @override
-  State<ValidatedTextInput> createState() => ValidatedTextInputState();
+  State<ValidatedTextIDInput> createState() => ValidatedTextIDInputState();
 }
 
-class ValidatedTextInputState extends State<ValidatedTextInput> {
+class ValidatedTextIDInputState extends State<ValidatedTextIDInput> {
   @override
   void initState() {
     super.initState();

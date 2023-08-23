@@ -1,5 +1,6 @@
 import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
+import 'validated_text_id_input.dart';
 import 'validated_text_input.dart';
 
 enum StepTypes { inputBox, camera, info, save }
@@ -30,20 +31,33 @@ class MeasurementStepper extends StatefulWidget {
 
   _steps() {
     return <Step>[
-      _textFieldGenerator(id, 'Wpisz ID ktore otrzymales z ankiety', 'Unikatowe ID dziecka'),
+      _textFieldGenerator(
+          id, 'Wpisz ID ktore otrzymałeś z ankiety', 'Unikatowe ID dziecka',
+          isID: true),
       _textFieldGenerator(height, 'Wpisz wzrost dziecka', 'Wzrost [cm]'),
-      _textFieldGenerator(noseToFloor, 'Wpisz odleglosc od ziemi do nosa', 'Odleglosc od ziemi do nosa [cm]'),
+      _textFieldGenerator(noseToFloor, 'Wpisz odległość od ziemi do nosa',
+          'Odległość od ziemi do nosa [cm]'),
       _textFieldGenerator(
-          collarBoneToFloor, 'Wpisz odleglosc od obojczyka do ziemi', 'Odleglosc od obojczyka do ziemi [cm]'),
-      _textFieldGenerator(
-          pelvisToFloor, 'Wpisz odleglosc od pasa do ziemi', 'Odleglosc od pasa do ziemi [cm]'),
-      _exerciseGenerator("Cwiczenie 1", "Nagraj dziecko idace od punktu N do punktu S"),
-      _exerciseGenerator("Cwiczenie 2", "Nagraj dziecko wykonujace sklony w punkcie O"),
+          collarBoneToFloor,
+          'Wpisz odległość od obojczyka do ziemi',
+          'Odległość od obojczyka do ziemi [cm]'),
+      _textFieldGenerator(pelvisToFloor, 'Wpisz odległość od pasa do ziemi',
+          'Odległość od pasa do ziemi [cm]'),
+      _exerciseGenerator(
+          "Ćwiczenie 1", "Nagraj dziecko idace od punktu N do punktu S"),
+      _exerciseGenerator(
+          "Ćwiczenie 2", "Nagraj dziecko wykonujace skłony w punkcie O"),
       const Step(
-          title: Text("Obroc telefon"),
-          content: Text("Obroc telefon tak zeby znajdowal sie w pozycji horyzontalnej")),
-      _exerciseGenerator("Cwiczenie 3", "Nagraj dziecko idace od punktu L do punktu P"),
-      const Step(title: Text("Zapisz pomiar"), content: Text("TODO: Opis koniec pomiaru")),
+          state: StepState.complete,
+          title: Text("Obróć telefon"),
+          content: Text(
+              "Obróć telefon tak zeby znajdował sie w pozycji horyzontalnej")),
+      _exerciseGenerator(
+          "Ćwiczenie 3", "Nagraj dziecko idace od punktu L do punktu P"),
+      const Step(
+          state: StepState.complete,
+          title: Text("Zapisz pomiar"),
+          content: Text("TODO: Opis koniec pomiaru")),
     ];
   }
 
@@ -55,6 +69,7 @@ class MeasurementStepper extends StatefulWidget {
       StepTypes.inputBox,
       StepTypes.inputBox,
       StepTypes.camera,
+      StepTypes.camera,
       StepTypes.info,
       StepTypes.camera,
       StepTypes.save
@@ -62,22 +77,38 @@ class MeasurementStepper extends StatefulWidget {
     return listOfStepTypes[index];
   }
 
-  _textFieldGenerator(String mapKey, String title, String hintText) {
+  _infoGenerator(title, content) {
+    return Step(
+        state: StepState.indexed, title: Text(title), content: Text(content));
+  }
+
+  _textFieldGenerator(String mapKey, String title, String hintText,
+      {bool isID = false}) {
     StepState state = StepState.indexed;
 
     if (userInformationGetter()[mapKey] != null) {
       state = StepState.complete;
+    }
+    var inputBox;
+    if (isID) {
+      inputBox = ValidatedTextIDInput(
+          mapKey: mapKey,
+          title: hintText,
+          hintText: '',
+          userInformationGetter: userInformationGetter);
+    } else {
+      inputBox = ValidatedTextInput(
+          mapKey: mapKey,
+          title: hintText,
+          hintText: '',
+          userInformationGetter: userInformationGetter);
     }
 
     return Step(
         isActive: state == StepState.complete ? true : false,
         state: state,
         title: Text(title),
-        content: ValidatedTextInput(
-            mapKey: mapKey,
-            title: title,
-            hintText: hintText,
-            userInformationGetter: userInformationGetter));
+        content: inputBox);
   }
 
   _exerciseGenerator(String title, String exerciseExplanation) {
@@ -152,25 +183,25 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                   widget._stepType(_index) == StepTypes.info)
                 ElevatedButton(
                   onPressed: controls.onStepContinue,
-                  child: const Text('NEXT'),
+                  child: const Text('DALEJ'),
                 ),
               if (widget._stepType(_index) == StepTypes.camera)
                 ElevatedButton(
                   onPressed: _recordVideo,
                   child: const Text(
-                    "RECORD VIDEO",
+                    "NAGRAJ WIDEO",
                   ),
                 ),
               if (widget._stepType(_index) == StepTypes.save)
                 ElevatedButton(
                   onPressed: _saveMeasurement,
-                  child: const Text('SAVE'),
+                  child: const Text('WYŚLIJ'),
                 ),
               if (_index != 0)
                 TextButton(
                   onPressed: controls.onStepCancel,
                   child: const Text(
-                    'BACK',
+                    'WRÓĆ',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),

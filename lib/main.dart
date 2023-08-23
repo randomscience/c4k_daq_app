@@ -56,22 +56,22 @@ class MyHomePageState extends State<MyHomePage> {
             NavigationDestination(
               selectedIcon: Icon(Icons.info),
               icon: Icon(Icons.info_outlined),
-              label: 'Information',
+              label: 'Instrukcja',
             ),
             NavigationDestination(
               selectedIcon: Icon(Icons.compass_calibration),
               icon: Icon(Icons.compass_calibration_outlined),
-              label: 'Calibration',
+              label: 'Kalibracja',
             ),
             NavigationDestination(
               selectedIcon: Icon(Icons.add_circle),
               icon: Icon(Icons.add_circle_outline),
-              label: 'New Recording',
+              label: 'Nowy Pomiar',
             ),
             NavigationDestination(
               selectedIcon: Icon(Icons.bookmark),
               icon: Icon(Icons.bookmark_border),
-              label: 'Library',
+              label: 'Biblioteka',
             ),
           ],
         ),
