@@ -21,13 +21,14 @@ class NewRecording extends StatefulWidget {
 
   Map<String, String?> exerciseVideoMapping = {
     "Exercise 1": null,
+    "Exercise 2": null,
   };
 
   NewRecording({super.key});
 
   clearData() {
-    userInformation = emptyUserInformation;
-    exerciseVideoMapping = emptyExerciseVideoMapping;
+    userInformation = Map<String, String?>.from(emptyUserInformation);
+    exerciseVideoMapping = Map<String, String?>.from(emptyExerciseVideoMapping);
   }
 
   setUserInformation(Map<String, String?> userInformation) {

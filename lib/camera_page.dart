@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 
 class CameraPage extends StatefulWidget {
   final Function pathToVideoSetter;
   final Function exitButton;
   final String exerciseTitle;
+  final bool verticalOrientation;
 
-  const CameraPage(
-      {super.key,
-      required this.pathToVideoSetter,
-      required this.exerciseTitle,
-      required this.exitButton});
+  const CameraPage({
+    super.key,
+    required this.pathToVideoSetter,
+    required this.exerciseTitle,
+    required this.exitButton,
+    this.verticalOrientation = true,
+  });
 
   @override
   CameraPageState createState() => CameraPageState();
@@ -24,12 +28,19 @@ class CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
     _initCamera();
   }
 
   @override
   void dispose() {
     _cameraController.dispose();
+
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
+    SystemChrome.setPreferredOrientations([]);
     super.dispose();
   }
 
@@ -87,31 +98,48 @@ class CameraPageState extends State<CameraPage> {
           // child: Center(
           child: Stack(
         children: [
-          CameraPreview(_cameraController),
+          Center(
+            child: CameraPreview(_cameraController),
+          ),
           Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.all(25),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: FloatingActionButton(
-                  backgroundColor: Colors.red,
-                  child: Icon(_isRecording ? Icons.stop : Icons.circle),
+                  backgroundColor: Colors.white,
+                  shape: const CircleBorder(eccentricity: 0.5),
+                  child: Icon(
+                    _isRecording ? Icons.stop_rounded : Icons.circle,
+                    color: Colors.red,
+                    size: 46,
+                  ),
                   onPressed: () => _recordVideo(),
                 ),
               )),
           Align(
-              alignment: Alignment.bottomRight,
+              alignment: Alignment.topLeft,
               child: Padding(
-                padding: const EdgeInsets.all(25),
+                padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
                 child: FloatingActionButton(
-                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                  child: const Icon(Icons.keyboard_return_outlined),
+                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    color: Colors.white,
+                    size: 34,
+                  ),
                   onPressed: () => _exitRecording(),
                 ),
               )),
-          Padding(
-            padding: const EdgeInsets.all(25),
-            child: Text(widget.exerciseTitle),
-          ),
+          Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                child: Text(widget.exerciseTitle,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: Colors.white)),
+              )),
         ],
         // ),
       ));

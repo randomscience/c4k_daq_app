@@ -24,7 +24,7 @@ class FullScreenModal extends ModalRoute {
   bool get barrierDismissible => false;
 
   @override
-  Color get barrierColor => Colors.black.withOpacity(0.9);
+  Color get barrierColor => Colors.black.withOpacity(1);
 
   @override
   String? get barrierLabel => null;

@@ -2,6 +2,8 @@ import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
 import 'validated_text_input.dart';
 
+enum StepTypes { inputBox, camera, info, save }
+
 class MeasurementStepper extends StatefulWidget {
   const MeasurementStepper(
       {super.key,
@@ -36,8 +38,27 @@ class MeasurementStepper extends StatefulWidget {
       _textFieldGenerator(
           pelvisToFloor, 'Enter d2f of the child', 'Height in [cm]'),
       _exerciseGenerator("Exercise 1", "do a flip, bitch!"),
+      const Step(
+          title: Text("Rotate the phone"),
+          content: Text("rotate horizontally")),
+      _exerciseGenerator("Exercise 2", "do a flip, bitch!"),
       const Step(title: Text("Save Measurement"), content: Text("that's it")),
     ];
+  }
+
+  _stepType(int index) {
+    const listOfStepTypes = [
+      StepTypes.inputBox,
+      StepTypes.inputBox,
+      StepTypes.inputBox,
+      StepTypes.inputBox,
+      StepTypes.inputBox,
+      StepTypes.camera,
+      StepTypes.info,
+      StepTypes.camera,
+      StepTypes.save
+    ];
+    return listOfStepTypes[index];
   }
 
   _textFieldGenerator(String mapKey, String title, String hintText) {
@@ -123,37 +144,23 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
       },
       controlsBuilder: (BuildContext context, ControlsDetails controls) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
           child: Row(
             children: <Widget>[
-              if (_index < widget.userInformationGetter().length)
+              if (widget._stepType(_index) == StepTypes.inputBox ||
+                  widget._stepType(_index) == StepTypes.info)
                 ElevatedButton(
                   onPressed: controls.onStepContinue,
                   child: const Text('NEXT'),
                 ),
-              if (_index >= widget.userInformationGetter().length &&
-                  _index < widget._noSteps() &&
-                  widget.exerciseVideoMappingGetter()[
-                          widget._steps()[_index].title] !=
-                      null)
-                ElevatedButton(
-                  onPressed: _recordVideo,
-                  child: const Text(
-                    "RE_RECORD VIDEO",
-                  ),
-                ),
-              if (_index >= widget.userInformationGetter().length &&
-                  _index < widget._noSteps() &&
-                  widget.exerciseVideoMappingGetter()[
-                          widget._steps()[_index].title] ==
-                      null)
+              if (widget._stepType(_index) == StepTypes.camera)
                 ElevatedButton(
                   onPressed: _recordVideo,
                   child: const Text(
                     "RECORD VIDEO",
                   ),
                 ),
-              if (_index == widget._noSteps())
+              if (widget._stepType(_index) == StepTypes.save)
                 ElevatedButton(
                   onPressed: _saveMeasurement,
                   child: const Text('SAVE'),

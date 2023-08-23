@@ -7,7 +7,8 @@ import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
   // Obtain a list of the available cameras on the device.
 
   // Get a specific camera from the list of available cameras.
@@ -63,8 +64,8 @@ class MyHomePageState extends State<MyHomePage> {
               label: 'Calibration',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.video_camera_back),
-              icon: Icon(Icons.video_camera_back_outlined),
+              selectedIcon: Icon(Icons.add_circle),
+              icon: Icon(Icons.add_circle_outline),
               label: 'New Recording',
             ),
             NavigationDestination(
