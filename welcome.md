@@ -2,11 +2,11 @@
 
 Aplikacja ma na celu umozliwiane zbieranie danych w celu przygotowania algorytmu pozwalajacego na zautomatyzowane wykrywanie wad postawy.
 
-Przygotowane zostaly 2 glowne ekrany:
-- `Intukcja` - Ekran na ktorym aktualnie sie znajdujesz zawiera informacje o aplikacji oraz dokladny opsi procedury wykonywania pomiarow
-- `Nowy Pommiar` - Glowny ekran aplikacji, przeprowadzi Ciebie przez wykonanie pomiaru i wysle zebrane dane do naszej bazy dancyh.
+Przygotowane zostały 2 głowne ekrany:
+- `Instrukcja` - Ekran na ktorym aktualnie sie znajdujesz zawiera informacje o aplikacji oraz dokładny opis procedury wykonywania pomiarow
+- `Nowy Pomiar` - Głowny ekran aplikacji, przeprowadzi Ciebie przez wykonanie pomiaru i wysle zebrane dane do naszej bazy danych.
 
-W razie problemow z aplikacja zapraszamy do wypelniania formularza: lub kontaktu z nami pod adresem e-mail: [contact@randomscience.org](mailto:contact@randomscience.org)
+W razie problemow z aplikacja zapraszamy do wypełniania formularza: lub kontaktu z nami pod adresem e-mail: [contact@randomscience.org](mailto:contact@randomscience.org)
 
 Zespół Random Science
 
@@ -22,16 +22,16 @@ Ustaw kamerę tak aby:
 Nanieść oznaczenia na podłogę zgodnie z poniższym schematem
 - W punktach `A`, `B`, `C` i `D` umieścić markery z taśmy malarskiej w kształcie X o długości ramienia około 20cm. Symbole wspomagają proces analizy wideo
 - W punktach `S`, `N`, `P` i `L` umieścić paski taśmy o długości około 20cm. Symbole te mają na celu oznaczenie punktów startowych i końcowych ruchów dziecka
-- W odległości TODO: odleglosc od kamery zaznaczyć punkt w którym dziecko wykonywać będzie skłony
+- W odległości TODO: odległosc od kamery zaznaczyć punkt w którym dziecko wykonywać będzie skłony
 
-## Wykonaie pomiaru
+## Wykonanie pomiaru
 
-### Wypelnienie formularza Connect 4 Kids
+### Wypełnienie formularza Connect 4 Kids
 
-TODO: Opis wypelniania formularza C4K
-Zanim wykonasz pomiar uzupelnij ankiete.
+TODO: Opis wypełniania formularza C4K
+Zanim wykonasz pomiar uzupełnij ankiete.
 
-### Nagranie cwiczeń
+### Nagranie cwiczen
 
 Wykonaj pomiary:
 
@@ -42,8 +42,8 @@ Wykonaj pomiary:
 
 Wykonaj nagranie zawierające w sobie w kolejności
 
-1. Dziecko idące od punktu `L` do `P` (glowa skierowana prosto patrzac przed siebie)
-2. Dziecko idące od punktu `N` do `S` (glowa skierowana prosto patrzac przed siebie)
+1. Dziecko idące od punktu `L` do `P` (głowa skierowana prosto patrzac przed siebie)
+2. Dziecko idące od punktu `N` do `S` (głowa skierowana prosto patrzac przed siebie)
 3. Skłony w punkcie `O` przodem do kamery
 4. Skłony w punkcie `O` tyłem do kamery
 
