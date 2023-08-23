@@ -42,6 +42,9 @@ Wykonaj pomiary:
 
 Wykonaj nagranie zawierające w sobie w kolejności
 
+> ❗ WAŻNE ❗
+> Włosy dziecka powinny być ułozone tak aby nie zasłaniały ramion
+
 1. Dziecko idące od punktu `L` do `P` (głowa skierowana prosto patrzac przed siebie)
 2. Dziecko idące od punktu `N` do `S` (głowa skierowana prosto patrzac przed siebie)
 3. Skłony w punkcie `O` przodem do kamery
