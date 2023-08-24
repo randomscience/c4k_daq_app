@@ -16,14 +16,17 @@ Zespół Random Science
 
 Ustaw kamerę tak aby:
 - Tło nagrania było jednolite
+- Scena była dobrze, jednolicie oświetlona 
 - Przed kamerą znajdowało się TODO: x na TODO: x wolnego miejsca
 - W kadrze znajdowało się tylko i wyłącznie badane dziecko
+ 
 
+Nanieś oznaczenia na podłogę zgodnie z poniższymi schemat:
+- W punktach oznaczonych symbolem *X* umieścić markery z taśmy malarskiej w kształcie X o długości ramienia około 20cm. Symbole wspomagają proces analizy wideo
+  
 ![image](resource:assets/setup_plan_simple.png)
 
-Nanieś oznaczenia na podłogę zgodnie z poniższym schematem
-- W punktach `A`, `B`, `C` i `D` umieścić markery z taśmy malarskiej w kształcie X o długości ramienia około 20cm. Symbole wspomagają proces analizy wideo
-- W punktach `S`, `N`, `P` i `L` umieścić paski taśmy o długości około 20cm. Symbole te mają na celu oznaczenie punktów startowych i końcowych ruchów dziecka
+- W punktach *B*, *D*, *P* i *L* umieścić paski taśmy o długości około 20cm. Symbole te mają na celu oznaczenie punktów startowych i końcowych ruchów dziecka
 - W odległości TODO: odległosc od kamery zaznaczyć punkt, w którym dziecko wykonywać będzie skłony
 
 ![image](resource:assets/setup_plan_a_b.png)
@@ -49,7 +52,7 @@ Wykonaj nagranie zawierające w sobie w kolejności
 > ❗ WAŻNE ❗
 > Włosy dziecka powinny być związane i ułożone tak aby nie zasłaniały ramion
 
-1. Dziecko idące od punktu `L` do `P` (głowa skierowana prosto patrzac przed siebie)
-2. Dziecko idące od punktu `N` do `S` (głowa skierowana prosto patrzac przed siebie)
-3. Skłony w punkcie `O` przodem do kamery
-4. Skłony w punkcie `O` tyłem do kamery
+1. Dziecko idące od punktu *L* do *P* (głowa skierowana prosto patrzac przed siebie)
+2. Dziecko idące od punktu *D* do *B* (głowa skierowana prosto patrzac przed siebie)
+3. Skłony w punkcie *S* przodem do kamery
+4. Skłony w punkcie *S* tyłem do kamery
