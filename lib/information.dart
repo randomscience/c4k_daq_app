@@ -23,8 +23,9 @@ class _Information extends State<Information> {
                   data: snapshot.data!,
                   selectable: false,
                   onTapLink: (text, url, title) {
-                    launchUrl(
-                        Uri.parse(url!)); /*For url_launcher 6.1.0 and higher*/
+                    launchUrl(Uri.parse(url!),
+                        mode: LaunchMode
+                            .externalApplication); /*For url_launcher 6.1.0 and higher*/
                     // launch(url);  /*For url_launcher 6.0.20 and lower*/
                   },
                 );
