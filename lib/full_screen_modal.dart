@@ -2,20 +2,20 @@ import 'package:c4k_daq/camera_page.dart';
 import 'package:flutter/material.dart';
 
 class FullScreenModal extends ModalRoute {
-  Function pathToVideoSetter;
-  String exerciseTitle;
+  final Function pathToVideoSetter;
+  final String exerciseTitle;
 
   // constructor
   FullScreenModal(
       {required this.pathToVideoSetter, required this.exerciseTitle});
 
   _closeModal(context) {
-    // close the modal dialog and return some data if needed
+    // close the modal dialog
     Navigator.pop(context);
   }
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 500);
+  Duration get transitionDuration => const Duration(milliseconds: 400);
 
   @override
   bool get opaque => false;

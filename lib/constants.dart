@@ -15,5 +15,7 @@ const Map<String, String?> emptyUserInformation = {
 };
 
 const Map<String, String?> emptyExerciseVideoMapping = {
-  "Exercise 1": null,
+  "Ćwiczenie 1": null,
+  "Ćwiczenie 2": null,
+  "Ćwiczenie 3": null,
 };

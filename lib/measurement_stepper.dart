@@ -22,6 +22,38 @@ class MeasurementStepper extends StatefulWidget {
   final Function saveMeasurement;
   final Function setUserInformation;
 
+  @override
+  State<MeasurementStepper> createState() => _MeasurementStepperState();
+}
+
+class _MeasurementStepperState extends State<MeasurementStepper> {
+  var rotateScreenVIsited = [false, false];
+  var scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    rotateScreenVIsited = [false, false];
+  }
+
+  _enableSave() {
+    for (MapEntry<String, String?> field
+        in widget.userInformationGetter().entries) {
+      if (field.value == null) {
+        return false;
+      }
+    }
+
+    for (MapEntry<String, String?> field
+        in widget.exerciseVideoMappingGetter().entries) {
+      if (field.value == null) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   _steps() {
     return <Step>[
       _textFieldGenerator(
@@ -36,21 +68,31 @@ class MeasurementStepper extends StatefulWidget {
           'Odległość od obojczyka do ziemi [cm]'),
       _textFieldGenerator(pelvisToFloor, 'Wpisz odległość od pasa do ziemi',
           'Odległość od pasa do ziemi [cm]'),
+      Step(
+          isActive: rotateScreenVIsited[0],
+          state:
+              rotateScreenVIsited[0] ? StepState.complete : StepState.indexed,
+          title: const Text("Obróć telefon"),
+          content: const Text(
+              "Obróć telefon tak żeby znajdował sie w pozycji wertykalnej")),
       _exerciseGenerator(
           "Ćwiczenie 1", "Nagraj dziecko idace od punktu N do punktu S"),
       _exerciseGenerator(
           "Ćwiczenie 2", "Nagraj dziecko wykonujące skłony w punkcie O"),
-      const Step(
-          state: StepState.indexed,
-          title: Text("Obróć telefon"),
-          content: Text(
+      Step(
+          isActive: rotateScreenVIsited[1],
+          state:
+              rotateScreenVIsited[1] ? StepState.complete : StepState.indexed,
+          title: const Text("Obróć telefon"),
+          content: const Text(
               "Obróć telefon tak żeby znajdował sie w pozycji horyzontalnej")),
       _exerciseGenerator(
           "Ćwiczenie 3", "Nagraj dziecko idace od punktu L do punktu P"),
-      const Step(
-          state: StepState.complete,
-          title: Text("Zapisz pomiar"),
-          content: Text("TODO: Opis koniec pomiaru")),
+      Step(
+          state: _enableSave() ? StepState.complete : StepState.disabled,
+          title: const Text("Zapisz pomiar"),
+          content: const Text(
+              "Dane wysłane zapisane zostaną do bazie i w razie nie powodzenia w pamięci urządzenia")),
     ];
   }
 
@@ -61,6 +103,7 @@ class MeasurementStepper extends StatefulWidget {
       StepTypes.inputBox,
       StepTypes.inputBox,
       StepTypes.inputBox,
+      StepTypes.info,
       StepTypes.camera,
       StepTypes.camera,
       StepTypes.info,
@@ -74,7 +117,7 @@ class MeasurementStepper extends StatefulWidget {
       {bool isID = false}) {
     StepState state = StepState.indexed;
 
-    if (userInformationGetter()[mapKey] != null) {
+    if (widget.userInformationGetter()[mapKey] != null) {
       state = StepState.complete;
     }
     var inputBox;
@@ -83,13 +126,13 @@ class MeasurementStepper extends StatefulWidget {
           mapKey: mapKey,
           title: hintText,
           hintText: '',
-          userInformationGetter: userInformationGetter);
+          userInformationGetter: widget.userInformationGetter);
     } else {
       inputBox = ValidatedTextInput(
           mapKey: mapKey,
           title: hintText,
           hintText: '',
-          userInformationGetter: userInformationGetter);
+          userInformationGetter: widget.userInformationGetter);
     }
 
     return Step(
@@ -102,7 +145,7 @@ class MeasurementStepper extends StatefulWidget {
   _exerciseGenerator(String title, String exerciseExplanation) {
     StepState state = StepState.indexed;
 
-    if (exerciseVideoMappingGetter()[title] != null) {
+    if (widget.exerciseVideoMappingGetter()[title] != null) {
       state = StepState.complete;
     }
 
@@ -115,20 +158,10 @@ class MeasurementStepper extends StatefulWidget {
     );
   }
 
-  @override
-  State<MeasurementStepper> createState() => _MeasurementStepperState();
-}
-
-class Steps {}
-
-class _MeasurementStepperState extends State<MeasurementStepper> {
-  var scrollController = ScrollController();
-
-  _recordVideo() {
-    Text textField = widget._steps()[_index].title;
-    widget.showModalBottomSheet(textField.data);
-    if (widget.exerciseVideoMappingGetter()[widget._steps()[_index].title] !=
-        null) {
+  _recordVideo() async {
+    Text textField = _steps()[_index].title;
+    await widget.showModalBottomSheet(textField.data);
+    if (widget.exerciseVideoMappingGetter()[_steps()[_index].title] != null) {
       setState(() {
         _index = _index + 1;
       });
@@ -147,8 +180,10 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
 
   _saveMeasurement() {
     widget.saveMeasurement();
+    _animateToIndex(0);
     setState(() {
       _index = 0;
+      rotateScreenVIsited = [false, false];
     });
   }
 
@@ -180,20 +215,30 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
           child: Row(
             children: <Widget>[
-              if (widget._stepType(_index) == StepTypes.inputBox ||
-                  widget._stepType(_index) == StepTypes.info)
+              if (_stepType(_index) == StepTypes.inputBox)
                 ElevatedButton(
                   onPressed: controls.onStepContinue,
                   child: const Text('DALEJ'),
                 ),
-              if (widget._stepType(_index) == StepTypes.camera)
+              if (_stepType(_index) == StepTypes.info)
+                ElevatedButton(
+                  onPressed: () => {
+                    rotateScreenVIsited = [
+                      rotateScreenVIsited[0] || _index == 5,
+                      rotateScreenVIsited[1] || _index == 8,
+                    ],
+                    controls.onStepContinue!(),
+                  },
+                  child: const Text('DALEJ'),
+                ),
+              if (_stepType(_index) == StepTypes.camera)
                 ElevatedButton(
                   onPressed: _recordVideo,
                   child: const Text(
                     "NAGRAJ WIDEO",
                   ),
                 ),
-              if (widget._stepType(_index) == StepTypes.save)
+              if (_stepType(_index) == StepTypes.save)
                 ElevatedButton(
                   onPressed: _saveMeasurement,
                   child: const Text('WYŚLIJ'),
@@ -210,7 +255,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           ),
         );
       },
-      steps: widget._steps(),
+      steps: _steps(),
     );
   }
 }

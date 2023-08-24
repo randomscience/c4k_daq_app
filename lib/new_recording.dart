@@ -12,19 +12,11 @@ import 'upload_measurement.dart';
 import 'upload_result.dart';
 
 class NewRecording extends StatefulWidget {
-  Map<String, String?> userInformation = {
-    id: null,
-    height: null,
-    noseToFloor: null,
-    collarBoneToFloor: null,
-    pelvisToFloor: null
-  };
+  Map<String, String?> userInformation =
+      Map<String, String?>.from(emptyUserInformation);
 
-  Map<String, String?> exerciseVideoMapping = {
-    "Ćwiczenie 1": null,
-    "Ćwiczenie 2": null,
-    "Ćwiczenie 3": null,
-  };
+  Map<String, String?> exerciseVideoMapping =
+      Map<String, String?>.from(emptyExerciseVideoMapping);
 
   NewRecording({super.key});
 
@@ -42,9 +34,18 @@ class NewRecording extends StatefulWidget {
     return directory.path;
   }
 
+  @override
+  State<NewRecording> createState() => _NewRecording();
+}
+
+class _NewRecording extends State<NewRecording> {
+  bool recordingVideo = false;
+
+  String currentlyRecorderExerciseTitle = "No_exercise_is_currently_recorded";
+
   saveMeasurement() async {
     var uuid = const Uuid().v4();
-    final path = await _localPath;
+    final path = await widget._localPath;
     var localFile = io.File('$path/c4k_daq/$uuid.json');
     localFile.create(recursive: true);
 
@@ -52,8 +53,8 @@ class NewRecording extends StatefulWidget {
     // but I call it crazy shit
     await localFile.writeAsString(json.encode({
       ...{"unique_id": uuid},
-      ...userInformation,
-      ...exerciseVideoMapping,
+      ...widget.userInformation,
+      ...widget.exerciseVideoMapping,
       ...{"measurement_time": "${DateTime.now()}"},
       ...{"app_version": (await PackageInfo.fromPlatform()).version.toString()}
     }));
@@ -63,7 +64,7 @@ class NewRecording extends StatefulWidget {
     Iterator serInformationIterator = {
       ...{"gateway_key": gatewayKey},
       ...{"unique_id": uuid},
-      ...userInformation,
+      ...widget.userInformation,
       ...{"app_version": (await PackageInfo.fromPlatform()).version.toString()}
     }.entries.iterator;
 
@@ -75,34 +76,24 @@ class NewRecording extends StatefulWidget {
     List<UploadResult> overallResult = [];
     overallResult.add(await uploadMeasurement(parsedUserInformation));
 
-    Iterator videoIterator = exerciseVideoMapping.entries.iterator;
+    Iterator videoIterator = widget.exerciseVideoMapping.entries.iterator;
     while (videoIterator.moveNext()) {
       MapEntry<String, String?> entry = videoIterator.current;
 
       overallResult.add(await uploadMeasurementVideo(
-          exerciseVideoMapping[entry.key]!, entry.key, uuid, gatewayKey));
+          widget.exerciseVideoMapping[entry.key]!,
+          entry.key,
+          uuid,
+          gatewayKey));
     }
-    clearData();
+    widget.clearData();
+    setState(() => {});
     return overallResult;
   }
-
-  @override
-  State<NewRecording> createState() => _NewRecording();
-}
-
-class _NewRecording extends State<NewRecording> {
-  bool recordingVideo = false;
-
-  String currentlyRecorderExerciseTitle = "No_exercise_is_currently_recorded";
 
   setExerciseVideoMapping(String exercise, String? videoPath) {
     if (videoPath != null) widget.exerciseVideoMapping[exercise] = videoPath;
     setState(() => recordingVideo = false);
-  }
-
-  recordVideo(String exerciseTitle) {
-    currentlyRecorderExerciseTitle = exerciseTitle;
-    setState(() => recordingVideo = true);
   }
 
   _showDialog() {
@@ -114,7 +105,7 @@ class _NewRecording extends State<NewRecording> {
                 exerciseVideoMappingGetter: () => widget.exerciseVideoMapping,
                 userInformationGetter: () => widget.userInformation,
                 exitButton: Navigator.of(context).pop,
-                awaitedFunction: widget.saveMeasurement)));
+                awaitedFunction: saveMeasurement)));
   }
 
   _showModal(BuildContext context, String exerciseTitle) async {
