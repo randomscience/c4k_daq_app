@@ -12,9 +12,9 @@ import 'upload_measurement.dart';
 import 'upload_result.dart';
 
 class NewRecording extends StatefulWidget {
-  final Function userInformation;
-  final Function exerciseVideoMapping;
-  final Function clearData;
+  final Map<String, String?> Function() userInformation;
+  final Map<String, String?> Function() exerciseVideoMapping;
+  final void Function() clearData;
 
   const NewRecording(
       {super.key,

@@ -10,21 +10,21 @@ const pelvisToFloor = "pelvis_to_floor";
 
 emptyUserInformation() {
   if (kDebugMode) {
-    return {
+    return Map<String, String?>.from({
       id: "1331231",
       height: "96",
       noseToFloor: "52",
       collarBoneToFloor: "98",
       pelvisToFloor: "133"
-    };
+    });
   }
-  return {
+  return Map<String, String?>.from({
     id: null,
     height: null,
     noseToFloor: null,
     collarBoneToFloor: null,
     pelvisToFloor: null
-  };
+  });
 }
 
 const Map<String, String?> emptyExerciseVideoMapping = {
