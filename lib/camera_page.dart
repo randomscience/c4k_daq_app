@@ -29,7 +29,7 @@ class CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -40,7 +40,7 @@ class CameraPageState extends State<CameraPage> {
   void dispose() {
     _cameraController.dispose();
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
     SystemChrome.setPreferredOrientations([]);
     super.dispose();
   }
@@ -105,7 +105,7 @@ class CameraPageState extends State<CameraPage> {
           Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 72),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 102),
                 child: FloatingActionButton(
                   backgroundColor: Colors.white,
                   shape: const CircleBorder(eccentricity: 0.5),
@@ -120,10 +120,10 @@ class CameraPageState extends State<CameraPage> {
           Align(
               alignment: Alignment.topLeft,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
-                child: FloatingActionButton(
-                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                  child: const Icon(
+                padding: const EdgeInsets.fromLTRB(0, 34, 0, 0),
+                child: IconButton(
+                  // backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                  icon: const Icon(
                     Icons.close_rounded,
                     color: Colors.white,
                     size: 34,
@@ -134,7 +134,7 @@ class CameraPageState extends State<CameraPage> {
           Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+                padding: const EdgeInsets.fromLTRB(0, 42, 0, 0),
                 child: Text(widget.exerciseTitle,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
@@ -145,7 +145,7 @@ class CameraPageState extends State<CameraPage> {
             Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 24, 76),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 24, 106),
                     child: ElevatedButton(
                         // backgroundColor:Colors.transparent,
                         // style: TextStyle(color: Colors.grey),
