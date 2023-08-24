@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'calibration.dart';
-import 'library.dart';
-import 'new_recording.dart';
+import 'calibration_view.dart';
+import 'library_view.dart';
+import 'new_recording_view.dart';
 import 'information.dart';
 import 'package:flutter/services.dart';
 
