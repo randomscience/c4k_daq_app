@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -13,19 +12,6 @@ class Information extends StatefulWidget {
 }
 
 class _Information extends State<Information> {
-  String version = 'seems empty guy';
-
-  _getVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    setState(() => version = packageInfo.version.toString());
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getVersion();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Center(

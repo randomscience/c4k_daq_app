@@ -1,6 +1,6 @@
 import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+
 import 'dart:io' as io;
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
@@ -56,7 +56,7 @@ class _NewRecording extends State<NewRecording> {
       ...widget.userInformation,
       ...widget.exerciseVideoMapping,
       ...{"measurement_time": "${DateTime.now()}"},
-      ...{"app_version": (await PackageInfo.fromPlatform()).version.toString()}
+      ...{"app_version": "0.1.dummy"}
     }));
 
     Map<String, String> parsedUserInformation = {};
@@ -65,7 +65,7 @@ class _NewRecording extends State<NewRecording> {
       ...{"gateway_key": gatewayKey},
       ...{"unique_id": uuid},
       ...widget.userInformation,
-      ...{"app_version": (await PackageInfo.fromPlatform()).version.toString()}
+      ...{"app_version": "0.1.dummy"}
     }.entries.iterator;
 
     while (serInformationIterator.moveNext()) {
