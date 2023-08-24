@@ -1,7 +1,8 @@
+import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
-import 'calibration.dart';
-import 'library.dart';
-import 'new_recording.dart';
+import 'calibration_view.dart';
+import 'library_view.dart';
+import 'new_recording_view.dart';
 import 'information.dart';
 import 'package:flutter/services.dart';
 
@@ -12,11 +13,23 @@ void main() async {
   // Obtain a list of the available cameras on the device.
 
   // Get a specific camera from the list of available cameras.
-  runApp(const MyHomePage());
+  runApp(MyHomePage());
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  // new recording information
+  Map<String, String?> userInformation =
+      Map<String, String?>.from(emptyUserInformation());
+
+  Map<String, String?> exerciseVideoMapping =
+      Map<String, String?>.from(emptyExerciseVideoMapping);
+
+  clearData() {
+    userInformation = Map<String, String?>.from(emptyUserInformation());
+    exerciseVideoMapping = Map<String, String?>.from(emptyExerciseVideoMapping);
+  }
+
+  MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => MyHomePageState();
@@ -27,16 +40,17 @@ class MyHomePageState extends State<MyHomePage> {
 
   _pageTitle() {
     if (currentPageIndex == 0) return "Instrukcja";
-    if (currentPageIndex == 1) return "Kalibracja";
-    if (currentPageIndex == 2) return "Nowy Pomiar";
-    return "Biblioteka";
+    return "Nowy Pomiar";
   }
 
   StatefulWidget _getCentralWidget() {
     if (currentPageIndex == 0) return const Information();
-    if (currentPageIndex == 1) return const Calibration();
-    if (currentPageIndex == 2) return NewRecording();
-    return const Library();
+
+    return NewRecording(
+      userInformation: () => widget.userInformation,
+      exerciseVideoMapping: () => widget.exerciseVideoMapping,
+      clearData: widget.clearData,
+    );
   }
 
   @override
@@ -66,19 +80,9 @@ class MyHomePageState extends State<MyHomePage> {
               label: 'Instrukcja',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.compass_calibration),
-              icon: Icon(Icons.compass_calibration_outlined),
-              label: 'Kalibracja',
-            ),
-            NavigationDestination(
               selectedIcon: Icon(Icons.add_circle),
               icon: Icon(Icons.add_circle_outline),
               label: 'Nowy Pomiar',
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.bookmark),
-              icon: Icon(Icons.bookmark_border),
-              label: 'Biblioteka',
             ),
           ],
         ),

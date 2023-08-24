@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -13,32 +12,20 @@ class Information extends StatefulWidget {
 }
 
 class _Information extends State<Information> {
-  String version = 'seems empty guy';
-
-  _getVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    setState(() => version = packageInfo.version.toString());
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getVersion();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Center(
         child: FutureBuilder(
-            future: rootBundle.loadString("welcome.md"),
+            future: rootBundle.loadString("assets/welcome.md"),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (snapshot.hasData) {
                 return Markdown(
                   data: snapshot.data!,
                   selectable: false,
                   onTapLink: (text, url, title) {
-                    launchUrl(
-                        Uri.parse(url!)); /*For url_launcher 6.1.0 and higher*/
+                    launchUrl(Uri.parse(url!),
+                        mode: LaunchMode
+                            .externalApplication); /*For url_launcher 6.1.0 and higher*/
                     // launch(url);  /*For url_launcher 6.0.20 and lower*/
                   },
                 );

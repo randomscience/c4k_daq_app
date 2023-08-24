@@ -10,9 +10,8 @@ class MeasurementStepper extends StatefulWidget {
       {super.key,
       required this.showModalBottomSheet,
       required this.saveMeasurement,
-      required this.userInformationGetter,
       required this.exerciseVideoMappingGetter,
-      required this.setUserInformation});
+      required this.userInformationGetter});
 
   final Function userInformationGetter;
   final Function exerciseVideoMappingGetter;
@@ -20,7 +19,6 @@ class MeasurementStepper extends StatefulWidget {
   final Function showModalBottomSheet;
 
   final Function saveMeasurement;
-  final Function setUserInformation;
 
   @override
   State<MeasurementStepper> createState() => _MeasurementStepperState();
@@ -92,7 +90,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           state: _enableSave() ? StepState.complete : StepState.disabled,
           title: const Text("Zapisz pomiar"),
           content: const Text(
-              "Dane wysłane zapisane zostaną do bazie i w razie nie powodzenia w pamięci urządzenia")),
+              "Dziękujemy za wykonany pomiar, dane zostaną wysłane do naszej prywatnej bazy danych")),
     ];
   }
 
@@ -161,11 +159,11 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   _recordVideo() async {
     Text textField = _steps()[_index].title;
     await widget.showModalBottomSheet(textField.data);
-    if (widget.exerciseVideoMappingGetter()[_steps()[_index].title] != null) {
-      setState(() {
-        _index = _index + 1;
-      });
-    }
+    // if (widget.exerciseVideoMappingGetter()[_steps()[_index].title] != null) {
+    setState(() {
+      _index = _index + 1;
+    });
+    // }
   }
 
   void _animateToIndex(int index) {

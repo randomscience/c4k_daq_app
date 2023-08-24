@@ -1,1 +1,1 @@
-This is a initial internal only build of the app (0.1.1).
+Beta release for testing (0.1.2) 

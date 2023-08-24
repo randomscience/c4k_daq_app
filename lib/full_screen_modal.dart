@@ -15,7 +15,7 @@ class FullScreenModal extends ModalRoute {
   }
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 400);
+  Duration get transitionDuration => const Duration(milliseconds: 600);
 
   @override
   bool get opaque => false;
