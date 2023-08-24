@@ -12,22 +12,15 @@ import 'upload_measurement.dart';
 import 'upload_result.dart';
 
 class NewRecording extends StatefulWidget {
-  Map<String, String?> userInformation =
-      Map<String, String?>.from(emptyUserInformation);
+  final Function userInformation;
+  final Function exerciseVideoMapping;
+  final Function clearData;
 
-  Map<String, String?> exerciseVideoMapping =
-      Map<String, String?>.from(emptyExerciseVideoMapping);
-
-  NewRecording({super.key});
-
-  clearData() {
-    userInformation = Map<String, String?>.from(emptyUserInformation);
-    exerciseVideoMapping = Map<String, String?>.from(emptyExerciseVideoMapping);
-  }
-
-  setUserInformation(Map<String, String?> userInformation) {
-    this.userInformation = userInformation;
-  }
+  const NewRecording(
+      {super.key,
+      required this.userInformation,
+      required this.exerciseVideoMapping,
+      required this.clearData});
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -46,25 +39,30 @@ class _NewRecording extends State<NewRecording> {
   saveMeasurement() async {
     var uuid = const Uuid().v4();
     final path = await widget._localPath;
-    var localFile = io.File('$path/c4k_daq/$uuid.json');
-    localFile.create(recursive: true);
-
-    // '...' operator combines maps
-    // but I call it crazy shit
-    await localFile.writeAsString(json.encode({
-      ...{"unique_id": uuid},
-      ...widget.userInformation,
-      ...widget.exerciseVideoMapping,
-      ...{"measurement_time": "${DateTime.now()}"},
-      ...{"app_version": "0.1.dummy"}
-    }));
-
+    try {
+      var localFile = io.File('$path/c4k_daq/$uuid.json');
+      localFile.create(recursive: true);
+      // '...' operator combines maps
+      // but I call it crazy shit
+      await localFile.writeAsString(
+          json.encode({
+            ...{"unique_id": uuid},
+            ...widget.userInformation(),
+            ...widget.exerciseVideoMapping(),
+            ...{"measurement_time": "${DateTime.now()}"},
+            ...{"app_version": "0.1.dummy"}
+          }),
+          flush: true);
+    } catch (e) {
+      throw Exception(
+          "Exception occurred when data was saved to local file, error message: $e");
+    }
     Map<String, String> parsedUserInformation = {};
 
     Iterator serInformationIterator = {
       ...{"gateway_key": gatewayKey},
       ...{"unique_id": uuid},
-      ...widget.userInformation,
+      ...widget.userInformation(),
       ...{"app_version": "0.1.dummy"}
     }.entries.iterator;
 
@@ -76,12 +74,12 @@ class _NewRecording extends State<NewRecording> {
     List<UploadResult> overallResult = [];
     overallResult.add(await uploadMeasurement(parsedUserInformation));
 
-    Iterator videoIterator = widget.exerciseVideoMapping.entries.iterator;
+    Iterator videoIterator = widget.exerciseVideoMapping().entries.iterator;
     while (videoIterator.moveNext()) {
       MapEntry<String, String?> entry = videoIterator.current;
 
       overallResult.add(await uploadMeasurementVideo(
-          widget.exerciseVideoMapping[entry.key]!,
+          widget.exerciseVideoMapping()[entry.key]!,
           entry.key,
           uuid,
           gatewayKey));
@@ -92,7 +90,7 @@ class _NewRecording extends State<NewRecording> {
   }
 
   setExerciseVideoMapping(String exercise, String? videoPath) {
-    if (videoPath != null) widget.exerciseVideoMapping[exercise] = videoPath;
+    if (videoPath != null) widget.exerciseVideoMapping()[exercise] = videoPath;
     setState(() => recordingVideo = false);
   }
 
@@ -102,8 +100,8 @@ class _NewRecording extends State<NewRecording> {
         builder: (BuildContext context) => AlertDialog(
             title: const Text("Wysyłanie danych"),
             content: UploadDataDialog(
-                exerciseVideoMappingGetter: () => widget.exerciseVideoMapping,
-                userInformationGetter: () => widget.userInformation,
+                exerciseVideoMappingGetter: widget.exerciseVideoMapping,
+                userInformationGetter: widget.userInformation,
                 exitButton: Navigator.of(context).pop,
                 awaitedFunction: saveMeasurement)));
   }
@@ -121,9 +119,8 @@ class _NewRecording extends State<NewRecording> {
       showModalBottomSheet: (exerciseTitle) =>
           _showModal(context, exerciseTitle),
       saveMeasurement: _showDialog,
-      setUserInformation: widget.setUserInformation,
-      exerciseVideoMappingGetter: () => widget.exerciseVideoMapping,
-      userInformationGetter: () => widget.userInformation,
+      exerciseVideoMappingGetter: widget.exerciseVideoMapping,
+      userInformationGetter: widget.userInformation,
     );
   }
 }

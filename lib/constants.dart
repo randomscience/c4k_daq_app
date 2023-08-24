@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 const gatewayKey = "dc48813b9f2371df0479fa27b112b64d";
 
 const id = "id";
@@ -6,13 +8,24 @@ const noseToFloor = "nose_to_floor";
 const collarBoneToFloor = "collar_bone_to_floor";
 const pelvisToFloor = "pelvis_to_floor";
 
-const Map<String, String?> emptyUserInformation = {
-  id: null,
-  height: null,
-  noseToFloor: null,
-  collarBoneToFloor: null,
-  pelvisToFloor: null
-};
+emptyUserInformation() {
+  if (kDebugMode) {
+    return {
+      id: "1331231",
+      height: "96",
+      noseToFloor: "52",
+      collarBoneToFloor: "98",
+      pelvisToFloor: "133"
+    };
+  }
+  return {
+    id: null,
+    height: null,
+    noseToFloor: null,
+    collarBoneToFloor: null,
+    pelvisToFloor: null
+  };
+}
 
 const Map<String, String?> emptyExerciseVideoMapping = {
   "Ćwiczenie 1": null,

@@ -1,3 +1,4 @@
+import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
 import 'calibration_view.dart';
 import 'library_view.dart';
@@ -12,11 +13,23 @@ void main() async {
   // Obtain a list of the available cameras on the device.
 
   // Get a specific camera from the list of available cameras.
-  runApp(const MyHomePage());
+  runApp(MyHomePage());
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  // new recording information
+  Map<String, String?> userInformation =
+      Map<String, String?>.from(emptyUserInformation());
+
+  Map<String, String?> exerciseVideoMapping =
+      Map<String, String?>.from(emptyExerciseVideoMapping);
+
+  clearData() {
+    userInformation = Map<String, String?>.from(emptyUserInformation());
+    exerciseVideoMapping = Map<String, String?>.from(emptyExerciseVideoMapping);
+  }
+
+  MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => MyHomePageState();
@@ -35,7 +48,13 @@ class MyHomePageState extends State<MyHomePage> {
   StatefulWidget _getCentralWidget() {
     if (currentPageIndex == 0) return const Information();
     if (currentPageIndex == 1) return const Calibration();
-    if (currentPageIndex == 2) return NewRecording();
+    if (currentPageIndex == 2) {
+      return NewRecording(
+        userInformation: () => widget.userInformation,
+        exerciseVideoMapping: () => widget.exerciseVideoMapping,
+        clearData: widget.clearData,
+      );
+    }
     return const Library();
   }
 
