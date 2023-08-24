@@ -6,7 +6,7 @@ Przygotowane zostały 2 główne ekrany:
 - `Instrukcja` - Ekran na ktorym aktualnie sie znajdujesz zawiera informacje o aplikacji oraz dokładny opis procedury wykonywania pomiarów
 - `Nowy Pomiar` - Główny ekran aplikacji, przeprowadzi Ciebie przez wykonanie pomiaru i wyśle zebrane dane do naszej bazy danych.
 
-W razie problemów z aplikacją zapraszamy do wypełnienia formularza lub kontaktu z nami pod adresem e-mail: [contact@randomscience.org](mailto:contact@randomscience.org)
+W razie problemów z aplikacją zapraszamy do wypełnienia [formularza](https://forms.gle/2DyxaTooSF3JSwUG7) lub kontaktu z nami pod adresem e-mail: [contact@randomscience.org](mailto:contact@randomscience.org)
 
 Zespół Random Science
 
