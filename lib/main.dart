@@ -40,17 +40,22 @@ class MyHomePageState extends State<MyHomePage> {
 
   _pageTitle() {
     if (currentPageIndex == 0) return "Instrukcja";
-    return "Nowy Pomiar";
+    if (currentPageIndex == 1) return "Kalibracja";
+    if (currentPageIndex == 2) return "Nowy Pomiar";
+    return "Biblioteka";
   }
 
   StatefulWidget _getCentralWidget() {
     if (currentPageIndex == 0) return const Information();
-
-    return NewRecording(
-      userInformation: () => widget.userInformation,
-      exerciseVideoMapping: () => widget.exerciseVideoMapping,
-      clearData: widget.clearData,
-    );
+    if (currentPageIndex == 1) return const Calibration();
+    if (currentPageIndex == 2) {
+      return NewRecording(
+        userInformation: () => widget.userInformation,
+        exerciseVideoMapping: () => widget.exerciseVideoMapping,
+        clearData: widget.clearData,
+      );
+    }
+    return const Library();
   }
 
   @override
@@ -80,9 +85,19 @@ class MyHomePageState extends State<MyHomePage> {
               label: 'Instrukcja',
             ),
             NavigationDestination(
+              selectedIcon: Icon(Icons.compass_calibration),
+              icon: Icon(Icons.compass_calibration_outlined),
+              label: 'Kalibracja',
+            ),
+            NavigationDestination(
               selectedIcon: Icon(Icons.add_circle),
               icon: Icon(Icons.add_circle_outline),
               label: 'Nowy Pomiar',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.bookmark),
+              icon: Icon(Icons.bookmark_border),
+              label: 'Biblioteka',
             ),
           ],
         ),
