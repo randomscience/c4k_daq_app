@@ -59,7 +59,8 @@ class _Library extends State<Library> {
         itemCount: contentsInFiles.length,
         itemBuilder: (context, index) {
           return LibraryCard(
-              localJsonData: Map<String, dynamic>.from(contentsInFiles[index]));
+              localJsonData: Map<String, dynamic>.from(contentsInFiles[index]),
+              pathToFile: '');
         },
       ));
     }

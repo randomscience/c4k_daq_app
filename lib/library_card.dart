@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/upload_measurement.dart';
 import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LibraryCard extends StatefulWidget {
   final Map<String, dynamic> localJsonData;
-  const LibraryCard({super.key, required this.localJsonData});
+
+  final String pathToFile;
+  const LibraryCard(
+      {super.key, required this.localJsonData, required this.pathToFile});
 
   @override
   State<LibraryCard> createState() => _LibraryCard();
@@ -30,6 +36,19 @@ class _LibraryCard extends State<LibraryCard> {
     measurementTimeHour = DateFormat('H:mm').format(date.toLocal());
   }
 
+  deleteMeasurement(String pathToMeasurement) async {
+    Map<String, String?> exerciseVideoMapping =
+        Map<String, String?>.from(emptyExerciseVideoMapping);
+
+    var keysList = List.from(exerciseVideoMapping.keys);
+    for (var element in keysList) {
+      try {
+        File(widget.localJsonData[element].toString()).delete();
+      } catch (e) {}
+    }
+    File('$pathToMeasurement.json').delete();
+  }
+
   saveMeasurement() async {
     Map<String, String?> userInformation =
         Map<String, String?>.from(emptyUserInformation());
@@ -37,23 +56,16 @@ class _LibraryCard extends State<LibraryCard> {
     Map<String, String?> exerciseVideoMapping =
         Map<String, String?>.from(emptyExerciseVideoMapping);
 
-    // for (var key in userInformation.keys) {
-    //   userInformation[key] = widget.localJsonData[key];
-    // }
-
     var keysList = List.from(userInformation.keys);
 
-    keysList.forEach((element) {
+    for (var element in keysList) {
       userInformation[element] = widget.localJsonData[element].toString();
-    });
+    }
 
     keysList = List.from(exerciseVideoMapping.keys);
-    keysList.forEach((element) {
+    for (var element in keysList) {
       exerciseVideoMapping[element] = widget.localJsonData[element].toString();
-    });
-
-    print(exerciseVideoMapping);
-    print(userInformation);
+    }
 
     var uuid = widget.localJsonData['unique_id'].toString();
     var appVersion = widget.localJsonData['app_version'].toString();
@@ -88,8 +100,15 @@ class _LibraryCard extends State<LibraryCard> {
     }
   }
 
-  void _retryUpload() {
+  void _deleteMeasurement() async {
+    String directory = (await getApplicationDocumentsDirectory()).path;
+    deleteMeasurement(
+        '$directory/c4k_daq/${widget.localJsonData['unique_id']}');
+  }
+
+  void _retryUpload() async {
     saveMeasurement();
+    _deleteMeasurement();
   }
 
   @override
@@ -121,7 +140,7 @@ class _LibraryCard extends State<LibraryCard> {
                     child: TextButton(
                       // style: ElevatedButton.styleFrom(
                       //     backgroundColor: Colors.transparent),
-                      onPressed: () => {},
+                      onPressed: () => {_deleteMeasurement()},
                       child: const Text(
                         'Usuń',
                         style: TextStyle(color: Colors.red),
