@@ -27,6 +27,13 @@ emptyUserInformation() {
   });
 }
 
+String exerciseNameConverter(String escorcieName) {
+  if (escorcieName == "Ćwiczenie 1") return "exercise_1";
+  if (escorcieName == "Ćwiczenie 2") return "exercise_2";
+  if (escorcieName == "Ćwiczenie 3") return "exercise_3";
+  return "unknown_exercise";
+}
+
 const Map<String, String?> emptyExerciseVideoMapping = {
   "Ćwiczenie 1": null,
   "Ćwiczenie 2": null,

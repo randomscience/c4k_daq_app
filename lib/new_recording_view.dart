@@ -80,7 +80,7 @@ class _NewRecording extends State<NewRecording> {
 
       overallResult.add(await uploadMeasurementVideo(
           widget.exerciseVideoMapping()[entry.key]!,
-          entry.key,
+          exerciseNameConverter(entry.key),
           uuid,
           gatewayKey));
     }
