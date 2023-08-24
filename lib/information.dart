@@ -16,7 +16,7 @@ class _Information extends State<Information> {
   Widget build(BuildContext context) {
     return Center(
         child: FutureBuilder(
-            future: rootBundle.loadString("welcome.md"),
+            future: rootBundle.loadString("assets/welcome.md"),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (snapshot.hasData) {
                 return Markdown(
