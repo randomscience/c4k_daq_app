@@ -1,3 +1,6 @@
+import 'package:c4k_daq/constants.dart';
+import 'package:c4k_daq/upload_measurement.dart';
+import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -25,13 +28,69 @@ class _LibraryCard extends State<LibraryCard> {
 
     measurementTimeDay = DateFormat('dd-MM-yyyy').format(date.toLocal());
     measurementTimeHour = DateFormat('H:mm').format(date.toLocal());
-
-    // .parseUTC(widget.localJsonData['measurement_time'])
-    // .day
-    // .toString();
   }
 
-  void _retryUpload() {}
+  saveMeasurement() async {
+    Map<String, String?> userInformation =
+        Map<String, String?>.from(emptyUserInformation());
+
+    Map<String, String?> exerciseVideoMapping =
+        Map<String, String?>.from(emptyExerciseVideoMapping);
+
+    // for (var key in userInformation.keys) {
+    //   userInformation[key] = widget.localJsonData[key];
+    // }
+
+    var keysList = List.from(userInformation.keys);
+
+    keysList.forEach((element) {
+      userInformation[element] = widget.localJsonData[element].toString();
+    });
+
+    keysList = List.from(exerciseVideoMapping.keys);
+    keysList.forEach((element) {
+      exerciseVideoMapping[element] = widget.localJsonData[element].toString();
+    });
+
+    print(exerciseVideoMapping);
+    print(userInformation);
+
+    var uuid = widget.localJsonData['unique_id'].toString();
+    var appVersion = widget.localJsonData['app_version'].toString();
+
+    Map<String, String> parsedUserInformation = {};
+
+    Iterator informationIterator = {
+      ...{"gateway_key": gatewayKey},
+      ...{"unique_id": uuid},
+      ...userInformation,
+      ...{"app_version": appVersion}
+    }.entries.iterator;
+
+    while (informationIterator.moveNext()) {
+      MapEntry<String, String?> entry = informationIterator.current;
+      parsedUserInformation[entry.key] = entry.value!;
+    }
+
+    List<UploadResult> overallResult = [];
+    overallResult.add(await uploadMeasurement(parsedUserInformation));
+
+    Iterator videoIterator = exerciseVideoMapping.entries.iterator;
+
+    while (videoIterator.moveNext()) {
+      MapEntry<String, String?> entry = videoIterator.current;
+
+      overallResult.add(await uploadMeasurementVideo(
+          exerciseVideoMapping[entry.key]!,
+          exerciseNameConverter(entry.key),
+          uuid,
+          gatewayKey));
+    }
+  }
+
+  void _retryUpload() {
+    saveMeasurement();
+  }
 
   @override
   Widget build(BuildContext context) {
