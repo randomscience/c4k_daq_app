@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/upload_measurement.dart';
@@ -9,10 +9,14 @@ import 'package:path_provider/path_provider.dart';
 
 class LibraryCard extends StatefulWidget {
   final Map<String, dynamic> localJsonData;
+  final Function deleteMeasurement;
 
   final String pathToFile;
   const LibraryCard(
-      {super.key, required this.localJsonData, required this.pathToFile});
+      {super.key,
+      required this.localJsonData,
+      required this.pathToFile,
+      required this.deleteMeasurement});
 
   @override
   State<LibraryCard> createState() => _LibraryCard();
@@ -24,6 +28,8 @@ class _LibraryCard extends State<LibraryCard> {
   String measurementTimeDay = "";
   String measurementTimeHour = "";
 
+  bool isAwaiting = false;
+
   @override
   void initState() {
     super.initState();
@@ -34,19 +40,6 @@ class _LibraryCard extends State<LibraryCard> {
 
     measurementTimeDay = DateFormat('dd-MM-yyyy').format(date.toLocal());
     measurementTimeHour = DateFormat('H:mm').format(date.toLocal());
-  }
-
-  deleteMeasurement(String pathToMeasurement) async {
-    Map<String, String?> exerciseVideoMapping =
-        Map<String, String?>.from(emptyExerciseVideoMapping);
-
-    var keysList = List.from(exerciseVideoMapping.keys);
-    for (var element in keysList) {
-      try {
-        File(widget.localJsonData[element].toString()).delete();
-      } catch (e) {}
-    }
-    File('$pathToMeasurement.json').delete();
   }
 
   saveMeasurement() async {
@@ -85,30 +78,79 @@ class _LibraryCard extends State<LibraryCard> {
     }
 
     List<UploadResult> overallResult = [];
-    overallResult.add(await uploadMeasurement(parsedUserInformation));
+    try {
+      overallResult.add(await uploadMeasurement(parsedUserInformation)
+          .timeout(const Duration(seconds: 5)));
+    } on TimeoutException {
+      throw TimeoutException("parsedUserInformation upload took to long.");
+    }
 
     Iterator videoIterator = exerciseVideoMapping.entries.iterator;
 
     while (videoIterator.moveNext()) {
       MapEntry<String, String?> entry = videoIterator.current;
-
-      overallResult.add(await uploadMeasurementVideo(
-          exerciseVideoMapping[entry.key]!,
-          exerciseNameConverter(entry.key),
-          uuid,
-          gatewayKey));
+      try {
+        overallResult.add(await uploadMeasurementVideo(
+                exerciseVideoMapping[entry.key]!,
+                exerciseNameConverter(entry.key),
+                uuid,
+                gatewayKey)
+            .timeout(const Duration(seconds: 10)));
+      } on TimeoutException {
+        throw TimeoutException(
+            "${exerciseNameConverter(entry.key)} upload took to long.");
+      }
     }
+    return overallResult;
   }
 
   void _deleteMeasurement() async {
     String directory = (await getApplicationDocumentsDirectory()).path;
-    deleteMeasurement(
-        '$directory/c4k_daq/${widget.localJsonData['unique_id']}');
+    widget.deleteMeasurement(
+        '$directory/c4k_daq/${widget.localJsonData['unique_id']}.json');
   }
 
   void _retryUpload() async {
-    saveMeasurement();
-    _deleteMeasurement();
+    setState(() {
+      isAwaiting = true;
+    });
+    List<UploadResult> overallResult = [];
+    try {
+      overallResult = await saveMeasurement();
+    } on TimeoutException {
+      setState(() {
+        isAwaiting = false;
+      });
+      return;
+    }
+
+    bool singleOverallResult = true;
+
+    for (var element in overallResult) {
+      singleOverallResult = element.isSuccess() && singleOverallResult;
+    }
+    if (singleOverallResult) _deleteMeasurement();
+  }
+
+  ElevatedButton _sendButton() {
+    if (isAwaiting) {
+      return ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+          onPressed: () => {},
+          child: const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 3.0,
+                color: Colors.blueAccent,
+              )));
+    } else {
+      return ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+          onPressed: () => {_retryUpload()},
+          child:
+              const Text('Wyślij', style: TextStyle(color: Colors.blueAccent)));
+    }
   }
 
   @override
@@ -150,13 +192,7 @@ class _LibraryCard extends State<LibraryCard> {
               Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 8, 10),
                   child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent),
-                          onPressed: () => {_retryUpload()},
-                          child: const Text('Wyślij',
-                              style: TextStyle(color: Colors.white)))))
+                      alignment: Alignment.bottomRight, child: _sendButton()))
             ])
           ])),
         ));

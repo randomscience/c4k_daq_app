@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -39,20 +41,11 @@ class _NewRecording extends State<NewRecording> {
   saveMeasurement() async {
     var uuid = const Uuid().v4();
     final path = await widget._localPath;
+
+    var localFile = io.File('$path/c4k_daq/$uuid.json');
+    await localFile.create(recursive: true);
     try {
-      var localFile = io.File('$path/c4k_daq/$uuid.json');
-      localFile.create(recursive: true);
-      // '...' operator combines maps
-      // but I call it crazy shit
-      await localFile.writeAsString(
-          json.encode({
-            ...{"unique_id": uuid},
-            ...widget.userInformation(),
-            ...widget.exerciseVideoMapping(),
-            ...{"measurement_time": "${DateTime.now()}"},
-            ...{"app_version": "0.1.dummy"}
-          }),
-          flush: true);
+      await saveToFile(localFile, uuid);
     } catch (e) {
       throw Exception(
           "Exception occurred when data was saved to local file, error message: $e");
@@ -72,21 +65,57 @@ class _NewRecording extends State<NewRecording> {
     }
 
     List<UploadResult> overallResult = [];
-    overallResult.add(await uploadMeasurement(parsedUserInformation));
+    try {
+      overallResult.add(await uploadMeasurement(parsedUserInformation)
+          .timeout(const Duration(seconds: 5)));
+    } on TimeoutException {
+      widget.clearData();
+      setState(() => {});
+      throw TimeoutException("parsedUserInformation upload took to long.");
+    }
 
     Iterator videoIterator = widget.exerciseVideoMapping().entries.iterator;
     while (videoIterator.moveNext()) {
       MapEntry<String, String?> entry = videoIterator.current;
-
-      overallResult.add(await uploadMeasurementVideo(
-          widget.exerciseVideoMapping()[entry.key]!,
-          exerciseNameConverter(entry.key),
-          uuid,
-          gatewayKey));
+      try {
+        overallResult.add(await uploadMeasurementVideo(
+                widget.exerciseVideoMapping()[entry.key]!,
+                exerciseNameConverter(entry.key),
+                uuid,
+                gatewayKey)
+            .timeout(const Duration(seconds: 10)));
+      } on TimeoutException {
+        widget.clearData();
+        setState(() => {});
+        throw TimeoutException(
+            "${exerciseNameConverter(entry.key)} upload took to long.");
+      }
     }
     widget.clearData();
+    bool singleOverallResult = true;
+
+    for (var element in overallResult) {
+      singleOverallResult = element.isSuccess() && singleOverallResult;
+    }
+
+    if (singleOverallResult) {
+      deleteMeasurement('$path/c4k_daq/$uuid.json');
+    }
+
     setState(() => {});
     return overallResult;
+  }
+
+  Future<void> saveToFile(io.File localFile, String uuid) async {
+    await localFile.writeAsString(
+        json.encode({
+          ...{"unique_id": uuid},
+          ...widget.userInformation(),
+          ...widget.exerciseVideoMapping(),
+          ...{"measurement_time": "${DateTime.now()}"},
+          ...{"app_version": "0.1.4"}
+        }),
+        flush: true);
   }
 
   setExerciseVideoMapping(String exercise, String? videoPath) {
@@ -97,6 +126,7 @@ class _NewRecording extends State<NewRecording> {
   _showDialog() {
     showDialog<String>(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) => AlertDialog(
             title: const Text("Wysyłanie danych"),
             content: UploadDataDialog(

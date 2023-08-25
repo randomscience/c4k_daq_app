@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:c4k_daq/upload_measurement.dart';
 import 'package:flutter/material.dart';
 
 import 'package:path_provider/path_provider.dart';
@@ -17,12 +18,21 @@ class Library extends StatefulWidget {
 class _Library extends State<Library> {
   bool _isLoading = true;
   List<Map<String, dynamic>> contentsInFiles = [];
+  void _deleteMeasurement(String pathToMeasurement) async {
+    await deleteMeasurement(pathToMeasurement);
+    contentsInFiles = [];
+    _loadFiles();
+  }
 
   void _loadFiles() async {
     String directory = (await getApplicationDocumentsDirectory()).path;
-    List<FileSystemEntity> directoriesInFile =
-        Directory("$directory/c4k_daq/").listSync();
-
+    List<FileSystemEntity> directoriesInFile = [];
+    try {
+      directoriesInFile = Directory("$directory/c4k_daq/").listSync();
+    } on PathNotFoundException {
+      setState(() => _isLoading = false);
+      return;
+    }
     var iter = directoriesInFile.iterator;
 
     contentsInFiles = [];
@@ -53,16 +63,27 @@ class _Library extends State<Library> {
           child: CircularProgressIndicator(),
         ),
       );
-    } else {
+    } else if (contentsInFiles.isNotEmpty) {
       return Center(
           child: ListView.builder(
         itemCount: contentsInFiles.length,
         itemBuilder: (context, index) {
           return LibraryCard(
-              localJsonData: Map<String, dynamic>.from(contentsInFiles[index]),
-              pathToFile: '');
+            localJsonData: Map<String, dynamic>.from(contentsInFiles[index]),
+            pathToFile: '',
+            deleteMeasurement: _deleteMeasurement,
+          );
         },
       ));
+    } else {
+      return const Center(
+        child: Text("Nie masz żadnych zapisanych pomiarów",
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 38,
+            ),
+            textAlign: TextAlign.center),
+      );
     }
   }
 }

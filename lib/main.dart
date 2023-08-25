@@ -29,6 +29,12 @@ class MyHomePage extends StatefulWidget {
     exerciseVideoMapping = Map<String, String?>.from(emptyExerciseVideoMapping);
   }
 
+  bool isRecording() {
+    if (userInformation != emptyUserInformation()) return true;
+    if (exerciseVideoMapping != emptyExerciseVideoMapping) return true;
+    return false;
+  }
+
   MyHomePage({super.key});
 
   @override
@@ -80,25 +86,40 @@ class MyHomePageState extends State<MyHomePage> {
           },
           destinations: const <Widget>[
             NavigationDestination(
+              label: 'Instrukcja',
               selectedIcon: Icon(Icons.info),
               icon: Icon(Icons.info_outlined),
-              label: 'Instrukcja',
             ),
             NavigationDestination(
+              label: 'Kalibracja',
               selectedIcon: Icon(Icons.compass_calibration),
               icon: Icon(Icons.compass_calibration_outlined),
-              label: 'Kalibracja',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.add_circle),
-              icon: Icon(Icons.add_circle_outline),
               label: 'Nowy Pomiar',
+              selectedIcon: Badge(
+                backgroundColor: Colors.blueAccent,
+                label: Icon(Icons.edit, size: 12.0, color: Colors.white),
+                child: Icon(Icons.add_circle),
+              ),
+              icon: Badge(
+                backgroundColor: Colors.blueAccent,
+                label: Icon(Icons.edit, size: 12.0, color: Colors.white),
+                child: Icon(Icons.add_circle_outline_outlined),
+              ),
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.bookmark),
-              icon: Icon(Icons.bookmark_border),
-              label: 'Biblioteka',
-            ),
+                label: 'Biblioteka',
+                selectedIcon: Badge(
+                  backgroundColor: Colors.blueAccent,
+                  label: Text('3'),
+                  child: Icon(Icons.bookmark),
+                ),
+                icon: Badge(
+                  backgroundColor: Colors.blueAccent,
+                  label: Text('3'),
+                  child: Icon(Icons.bookmark_outline_outlined),
+                )),
           ],
         ),
         appBar: AppBar(

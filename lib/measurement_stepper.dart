@@ -190,7 +190,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   Widget build(BuildContext context) {
     return Stepper(
       controller: scrollController,
-      physics: const BouncingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       currentStep: _index,
       onStepCancel: () {
         setState(() {
