@@ -141,7 +141,7 @@ class CameraPageState extends State<CameraPage> {
                         fontSize: 28,
                         color: Colors.white)),
               )),
-          if (_recordingEnded)
+          if (_recordingEnded && !_isRecording && !_isLoading)
             Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(

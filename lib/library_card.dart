@@ -9,14 +9,16 @@ import 'package:path_provider/path_provider.dart';
 
 class LibraryCard extends StatefulWidget {
   final Map<String, dynamic> localJsonData;
-  final Function deleteMeasurement;
-
+  // final Function deleteMeasurement;
+  final void Function(String, String) runPopUp;
+  final void Function() snackBar;
   final String pathToFile;
   const LibraryCard(
       {super.key,
       required this.localJsonData,
       required this.pathToFile,
-      required this.deleteMeasurement});
+      required this.runPopUp,
+      required this.snackBar});
 
   @override
   State<LibraryCard> createState() => _LibraryCard();
@@ -83,6 +85,8 @@ class _LibraryCard extends State<LibraryCard> {
           .timeout(const Duration(seconds: 5)));
     } on TimeoutException {
       throw TimeoutException("parsedUserInformation upload took to long.");
+    } catch (x) {
+      rethrow;
     }
 
     Iterator videoIterator = exerciseVideoMapping.entries.iterator;
@@ -99,6 +103,8 @@ class _LibraryCard extends State<LibraryCard> {
       } on TimeoutException {
         throw TimeoutException(
             "${exerciseNameConverter(entry.key)} upload took to long.");
+      } catch (x) {
+        rethrow;
       }
     }
     return overallResult;
@@ -106,7 +112,8 @@ class _LibraryCard extends State<LibraryCard> {
 
   void _deleteMeasurement() async {
     String directory = (await getApplicationDocumentsDirectory()).path;
-    widget.deleteMeasurement(
+
+    widget.runPopUp(widget.localJsonData['id'],
         '$directory/c4k_daq/${widget.localJsonData['unique_id']}.json');
   }
 
@@ -118,9 +125,12 @@ class _LibraryCard extends State<LibraryCard> {
     try {
       overallResult = await saveMeasurement();
     } on TimeoutException {
-      setState(() {
-        isAwaiting = false;
-      });
+      widget.snackBar();
+      setState(() => isAwaiting = false);
+      return;
+    } catch (x) {
+      widget.snackBar();
+      setState(() => isAwaiting = false);
       return;
     }
 
@@ -129,7 +139,12 @@ class _LibraryCard extends State<LibraryCard> {
     for (var element in overallResult) {
       singleOverallResult = element.isSuccess() && singleOverallResult;
     }
-    if (singleOverallResult) _deleteMeasurement();
+
+    if (singleOverallResult) {
+      _deleteMeasurement();
+    } else {
+      widget.snackBar();
+    }
   }
 
   ElevatedButton _sendButton() {

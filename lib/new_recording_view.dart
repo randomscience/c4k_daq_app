@@ -47,6 +47,8 @@ class _NewRecording extends State<NewRecording> {
     try {
       await saveToFile(localFile, uuid);
     } catch (e) {
+      widget.clearData();
+      setState(() => {});
       throw Exception(
           "Exception occurred when data was saved to local file, error message: $e");
     }
@@ -56,7 +58,7 @@ class _NewRecording extends State<NewRecording> {
       ...{"gateway_key": gatewayKey},
       ...{"unique_id": uuid},
       ...widget.userInformation(),
-      ...{"app_version": "0.1.dummy"}
+      ...{"app_version": "0.1.3"}
     }.entries.iterator;
 
     while (serInformationIterator.moveNext()) {
@@ -72,6 +74,10 @@ class _NewRecording extends State<NewRecording> {
       widget.clearData();
       setState(() => {});
       throw TimeoutException("parsedUserInformation upload took to long.");
+    } catch (x) {
+      widget.clearData();
+      setState(() => {});
+      rethrow;
     }
 
     Iterator videoIterator = widget.exerciseVideoMapping().entries.iterator;
@@ -89,6 +95,10 @@ class _NewRecording extends State<NewRecording> {
         setState(() => {});
         throw TimeoutException(
             "${exerciseNameConverter(entry.key)} upload took to long.");
+      } catch (x) {
+        widget.clearData();
+        setState(() => {});
+        rethrow;
       }
     }
     widget.clearData();
@@ -100,6 +110,7 @@ class _NewRecording extends State<NewRecording> {
 
     if (singleOverallResult) {
       deleteMeasurement('$path/c4k_daq/$uuid.json');
+      widget.clearData();
     }
 
     setState(() => {});

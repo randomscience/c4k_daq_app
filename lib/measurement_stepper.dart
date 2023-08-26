@@ -193,6 +193,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
       physics: const ClampingScrollPhysics(),
       currentStep: _index,
       onStepCancel: () {
+        _animateToIndex(_index - 1);
         setState(() {
           _index = _index - 1;
         });
