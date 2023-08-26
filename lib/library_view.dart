@@ -80,7 +80,7 @@ class _LibraryState extends State<Library> {
     List<Map<String, dynamic>> localContentsInFiles = [];
 
     setState(() => {_isLoading = false, contentsInFiles = []});
-    sleep(Duration(seconds: 1));
+
     String directory = (await getApplicationDocumentsDirectory()).path;
     try {
       directoriesInFile = Directory("$directory/c4k_daq/").listSync();
