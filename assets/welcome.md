@@ -3,7 +3,7 @@
 Aplikacja ma na celu umożliwienie zbierania danych w celu przygotowania algorytmu pozwalajacego na zautomatyzowane wykrywania wad postawy.
 
 Przygotowane zostały 3 główne ekrany:
-- `Instrukcja` - Ekran na ktorym aktualnie sie znajdujesz zawiera informacje o aplikacji oraz dokładny opis procedury wykonywania pomiarów
+- `Instrukcja` - Ekran na ktorym aktualnie się znajdujesz zawiera informacje o aplikacji oraz dokładny opis procedury wykonywania pomiarów
 - `Nowy Pomiar` - Główny ekran aplikacji, przeprowadzi Ciebie przez wykonanie pomiaru i wyśle zebrane dane do naszej bazy danych.
 - `Oczekujące` - Ekran zawierający listę niewysłanych pomiarów, wraz z możliwością zapisania i usnięcia ich.
 
@@ -22,7 +22,6 @@ Ustaw kamerę tak aby:
 - Przed kamerą znajdowało się TODO: x na TODO: x wolnego miejsca
 - W kadrze znajdowało się tylko i wyłącznie badane dziecko
  
-
 Nanieś oznaczenia na podłogę zgodnie z poniższymi schematami:
 - W punktach oznaczonych symbolem *X* umieść markery z taśmy malarskiej w kształcie X o długości ramienia około 20cm. Symbole wspomagają proces analizy wideo
   
