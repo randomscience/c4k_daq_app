@@ -29,7 +29,7 @@ class CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
+
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -134,28 +134,33 @@ class CameraPageState extends State<CameraPage> {
           Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 42, 0, 0),
-                child: Text(widget.exerciseTitle,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        color: Colors.white)),
-              )),
-          if (_recordingEnded)
+                  padding: const EdgeInsets.fromLTRB(42, 42, 42, 0),
+                  child: SizedBox(
+                    // width: 1200,
+                    height: 36,
+                    child: Center(
+                        child: Text(widget.exerciseTitle,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.white))),
+                  ))),
+          if (_recordingEnded && !_isRecording && !_isLoading)
             Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 24, 106),
-                    child: ElevatedButton(
+                    child: FilledButton(
                         // backgroundColor:Colors.transparent,
                         // style: TextStyle(color: Colors.grey),
                         onPressed: () => widget.exitButton(),
                         child: const Text(
                           'Zapisz',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         )))),
         ],
         // ),

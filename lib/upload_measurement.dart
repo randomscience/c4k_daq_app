@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:c4k_daq/constants.dart';
+import 'package:c4k_daq/version.dart';
 import 'package:c4k_daq/upload_result.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io' as io;
@@ -39,4 +41,40 @@ uploadMeasurementVideo(
 
   return UploadResult(
       statusCode: resp.statusCode, body: await resp.stream.bytesToString());
+}
+
+deleteMeasurement(String pathToMeasurement) async {
+  var file = io.File(pathToMeasurement);
+  String content = await file.readAsString();
+
+  if (content.isEmpty) {
+    file.delete();
+  }
+
+  var localJsonData = json.decode(content);
+
+  Map<String, String?> exerciseVideoMapping =
+      Map<String, String?>.from(emptyExerciseVideoMapping);
+
+  var keysList = List.from(exerciseVideoMapping.keys);
+  for (var element in keysList) {
+    io.File(localJsonData[element].toString()).delete();
+  }
+  file.delete();
+}
+
+Future<void> saveToFile(
+    io.File localFile,
+    String uuid,
+    Map<String, String?> userInformation,
+    Map<String, String?> exerciseVideoMapping) async {
+  await localFile.writeAsString(
+      json.encode({
+        ...{"unique_id": uuid},
+        ...userInformation,
+        ...exerciseVideoMapping,
+        ...{"measurement_time": "${DateTime.now()}"},
+        ...{"app_version": appVersion}
+      }),
+      flush: true);
 }

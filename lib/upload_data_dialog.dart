@@ -23,7 +23,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
   bool isAwaiting = true;
   String description = 'Trwa wysyłanie danych do zewnętrznego serwera.';
 
-  ElevatedButton okButton = ElevatedButton(
+  FilledButton okButton = FilledButton(
     onPressed: () => {},
     child: const Padding(
         padding: EdgeInsets.all(8),
@@ -32,6 +32,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
             height: 20,
             child: CircularProgressIndicator(
               strokeWidth: 3.0,
+              color: Colors.white,
             ))),
   );
 
@@ -42,7 +43,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
       if (field.value == null) {
         description =
             "Wszystkie wymagane pola muszą być wypełnione przed wysłaniem danych.";
-        okButton = ElevatedButton(
+        okButton = FilledButton(
             onPressed: () => widget.exitButton(), child: const Text('Ok'));
         setState(() => isAwaiting = false);
         return;
@@ -56,7 +57,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
       if (field.value == null) {
         description =
             "Wszystkie wymagane ćwiczenia muszą być nagrane przed wysłaniem danych. Brakujące nagranie: ${field.key}";
-        okButton = ElevatedButton(
+        okButton = FilledButton(
             onPressed: () => widget.exitButton(), child: const Text('Ok'));
         setState(() => isAwaiting = false);
         return;
@@ -68,7 +69,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
       result = await widget.awaitedFunction();
     } catch (e) {
       description = "Napotkano błąd w aplikacji. Szczegóły dla deweloperów: $e";
-      okButton = ElevatedButton(
+      okButton = FilledButton(
           onPressed: () => widget.exitButton(), child: const Text('Ignoruj'));
       setState(() => isAwaiting = false);
       return;
@@ -83,7 +84,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
 
       if (singleOverallResult) {
         description = "Wysyłanie danych zakończyło się powodzeniem.";
-        okButton = ElevatedButton(
+        okButton = FilledButton(
             onPressed: () => widget.exitButton(), child: const Text('Ok'));
         setState(() => isAwaiting = false);
         return;
@@ -95,7 +96,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
           description = '$description\n${element.body}';
         }
 
-        okButton = ElevatedButton(
+        okButton = FilledButton(
             onPressed: () => widget.exitButton(), child: const Text('Ok'));
 
         setState(() => isAwaiting = false);
