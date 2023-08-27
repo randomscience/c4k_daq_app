@@ -49,27 +49,27 @@ class _NewRecording extends State<NewRecording> {
       await saveToFile(localFile, uuid, widget.userInformation(),
           widget.exerciseVideoMapping());
     } catch (e) {
-      widget.clearData();
+      // widget.clearData();
       setState(() => {});
       throw Exception(
           "Exception occurred when data was saved to local file, error message: $e");
     }
-    widget.clearData();
+    // widget.clearData();
     setState(() => {});
   }
 
   saveMeasurement() async {
     var uuid = const Uuid().v4();
     final path = await widget._localPath;
-    _saveToFile(uuid: uuid);
-
     late Map<String, String?> localExerciseVideoMapping =
         Map<String, String?>.from(widget.exerciseVideoMapping());
     late Map<String, String?> localUserInformation =
         Map<String, String?>.from(widget.userInformation());
 
-    Map<String, String> parsedUserInformation = {};
+    _saveToFile(uuid: uuid);
 
+    Map<String, String> parsedUserInformation = {};
+    print("here");
     Iterator serInformationIterator = {
       ...{"gateway_key": gatewayKey},
       ...{"unique_id": uuid},
@@ -81,6 +81,7 @@ class _NewRecording extends State<NewRecording> {
       MapEntry<String, String?> entry = serInformationIterator.current;
       parsedUserInformation[entry.key] = entry.value!;
     }
+    print("here");
 
     List<UploadResult> overallResult = [];
     try {
@@ -95,6 +96,7 @@ class _NewRecording extends State<NewRecording> {
       setState(() => {});
       rethrow;
     }
+    print("here");
 
     Iterator videoIterator = localExerciseVideoMapping.entries.iterator;
     while (videoIterator.moveNext()) {
@@ -117,6 +119,7 @@ class _NewRecording extends State<NewRecording> {
         rethrow;
       }
     }
+    print("here");
 
     widget.clearData();
     bool singleOverallResult = true;
