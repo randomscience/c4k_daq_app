@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:c4k_daq/constants.dart';
+import 'package:c4k_daq/version.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:io' as io;
@@ -62,13 +63,18 @@ class _NewRecording extends State<NewRecording> {
     final path = await widget._localPath;
     _saveToFile(uuid: uuid);
 
+    late Map<String, String?> localExerciseVideoMapping =
+        Map<String, String?>.from(widget.exerciseVideoMapping());
+    late Map<String, String?> localUserInformation =
+        Map<String, String?>.from(widget.userInformation());
+
     Map<String, String> parsedUserInformation = {};
 
     Iterator serInformationIterator = {
       ...{"gateway_key": gatewayKey},
       ...{"unique_id": uuid},
-      ...widget.userInformation(),
-      ...{"app_version": "0.1.3"}
+      ...localUserInformation,
+      ...{"app_version": appVersion}
     }.entries.iterator;
 
     while (serInformationIterator.moveNext()) {
@@ -79,7 +85,7 @@ class _NewRecording extends State<NewRecording> {
     List<UploadResult> overallResult = [];
     try {
       overallResult.add(await uploadMeasurement(parsedUserInformation)
-          .timeout(const Duration(seconds: 5)));
+          .timeout(const Duration(seconds: 10)));
     } on TimeoutException {
       widget.clearData();
       setState(() => {});
@@ -90,12 +96,12 @@ class _NewRecording extends State<NewRecording> {
       rethrow;
     }
 
-    Iterator videoIterator = widget.exerciseVideoMapping().entries.iterator;
+    Iterator videoIterator = localExerciseVideoMapping.entries.iterator;
     while (videoIterator.moveNext()) {
       MapEntry<String, String?> entry = videoIterator.current;
       try {
         overallResult.add(await uploadMeasurementVideo(
-                widget.exerciseVideoMapping()[entry.key]!,
+                localExerciseVideoMapping[entry.key]!,
                 exerciseNameConverter(entry.key),
                 uuid,
                 gatewayKey)
@@ -111,6 +117,7 @@ class _NewRecording extends State<NewRecording> {
         rethrow;
       }
     }
+
     widget.clearData();
     bool singleOverallResult = true;
 

@@ -79,9 +79,17 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           title: const Text("Ustaw telefon w pozycji pionowej"),
           content: const Text(
               "Obróć telefon tak żeby znajdował sie w pozycji pionowej")),
-      _exerciseGenerator("Przejście z punktu D do punktu B",
+      _exerciseGenerator(exercise1,
           "Nagraj dziecko idace przodem do kamery, z punktu D do punktu B"),
-      _exerciseGenerator("Skłon w punkcie S",
+      _exerciseGenerator(exercise2,
+          "Nagraj dziecko idace przodem do kamery, z punktu D do punktu B"),
+      _exerciseGenerator(exercise3,
+          "Nagraj dziecko idace przodem do kamery, z punktu D do punktu B"),
+      _exerciseGenerator(exercise4,
+          "Nagraj dziecko wykonujące skłony przodem do kamery, w punkcie S"),
+      _exerciseGenerator(exercise5,
+          "Nagraj dziecko wykonujące skłony przodem do kamery, w punkcie S"),
+      _exerciseGenerator(exercise6,
           "Nagraj dziecko wykonujące skłony przodem do kamery, w punkcie S"),
       Step(
           isActive: rotateScreenVIsited[1],
@@ -90,7 +98,11 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           title: const Text("Ustaw telefon w pozycji poziomej"),
           content: const Text(
               "Obróć telefon tak żeby znajdował sie w pozycji poziomej")),
-      _exerciseGenerator("Przejście z punktu L do punktu P",
+      _exerciseGenerator(exercise7,
+          "Nagraj dziecko idace profilem do kamery, z punktu L do punktu P"),
+      _exerciseGenerator(exercise8,
+          "Nagraj dziecko idace profilem do kamery, z punktu L do punktu P"),
+      _exerciseGenerator(exercise9,
           "Nagraj dziecko idace profilem do kamery, z punktu L do punktu P"),
       Step(
           state: _enableSave() ? StepState.complete : StepState.disabled,
@@ -110,7 +122,13 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
       StepTypes.info,
       StepTypes.camera,
       StepTypes.camera,
+      StepTypes.camera,
+      StepTypes.camera,
+      StepTypes.camera,
+      StepTypes.camera,
       StepTypes.info,
+      StepTypes.camera,
+      StepTypes.camera,
       StepTypes.camera,
       StepTypes.save
     ];
@@ -173,7 +191,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   }
 
   void _animateToIndex(int index) {
-    if (index <= 5) {
+    if (index <= 9) {
       scrollController.animateTo(
         index * 30,
         duration: const Duration(milliseconds: 500),
@@ -230,7 +248,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                   onPressed: () => {
                     rotateScreenVIsited = [
                       rotateScreenVIsited[0] || _index == 5,
-                      rotateScreenVIsited[1] || _index == 8,
+                      rotateScreenVIsited[1] || _index == 12,
                     ],
                     controls.onStepContinue!(),
                   },

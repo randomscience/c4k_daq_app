@@ -143,7 +143,7 @@ class CameraPageState extends State<CameraPage> {
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                fontSize: 16,
                                 color: Colors.white))),
                   ))),
           if (_recordingEnded && !_isRecording && !_isLoading)

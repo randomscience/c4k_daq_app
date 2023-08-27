@@ -32,6 +32,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
             height: 20,
             child: CircularProgressIndicator(
               strokeWidth: 3.0,
+              color: Colors.white,
             ))),
   );
 

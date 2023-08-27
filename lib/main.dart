@@ -44,7 +44,7 @@ class MyHomePage extends StatefulWidget {
 
   bool isRecording() {
     for (var element in userInformation.values) {
-      if (element == null) return true;
+      if (element != null && element != "") return true;
     }
     for (var element in exerciseVideoMapping.values) {
       if (element != null) return true;
@@ -89,6 +89,8 @@ class MyHomePageState extends State<MyHomePage> {
 
       if (content.isEmpty) {
         noDirectoriesInFile -= 1;
+      } else {
+        file.delete();
       }
     }
 

@@ -27,15 +27,41 @@ emptyUserInformation() {
   });
 }
 
+const String exercise1 = "(1) Przejście z punktu D do punktu B";
+const String exercise2 = "(2) Przejście z punktu D do punktu B";
+const String exercise3 = "(3) Przejście z punktu D do punktu B";
+
+const String exercise4 = "(1) Skłon w punkcie S";
+const String exercise5 = "(2) Skłon w punkcie S";
+const String exercise6 = "(3) Skłon w punkcie S";
+
+const String exercise7 = "(1) Przejście z punktu L do punktu P";
+const String exercise8 = "(2) Przejście z punktu L do punktu P";
+const String exercise9 = "(3) Przejście z punktu L do punktu P";
+
 String exerciseNameConverter(String escorcieName) {
-  if (escorcieName == "Ćwiczenie 1") return "exercise_1";
-  if (escorcieName == "Ćwiczenie 2") return "exercise_2";
-  if (escorcieName == "Ćwiczenie 3") return "exercise_3";
+  if (escorcieName == exercise1) return "exercise_1";
+  if (escorcieName == exercise2) return "exercise_2";
+  if (escorcieName == exercise3) return "exercise_3";
+  if (escorcieName == exercise4) return "exercise_4";
+  if (escorcieName == exercise5) return "exercise_5";
+  if (escorcieName == exercise6) return "exercise_6";
+
+  if (escorcieName == exercise7) return "exercise_7";
+  if (escorcieName == exercise8) return "exercise_8";
+  if (escorcieName == exercise9) return "exercise_9";
+
   return "unknown_exercise";
 }
 
 const Map<String, String?> emptyExerciseVideoMapping = {
-  "Ćwiczenie 1": null,
-  "Ćwiczenie 2": null,
-  "Ćwiczenie 3": null,
+  exercise1: null,
+  exercise2: null,
+  exercise3: null,
+  exercise4: null,
+  exercise5: null,
+  exercise6: null,
+  exercise7: null,
+  exercise8: null,
+  exercise9: null,
 };

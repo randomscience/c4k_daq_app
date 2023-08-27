@@ -164,7 +164,7 @@ class _LibraryCard extends State<LibraryCard> {
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 3.0,
-                // color: Colors.blueAccent,
+                color: Colors.white,
               )));
     } else {
       return FilledButton(

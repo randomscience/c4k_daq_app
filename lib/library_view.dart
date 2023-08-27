@@ -203,7 +203,7 @@ class _LibraryState extends State<Library> {
         child: Text("Nie masz żadnych pomiarów oczekujących na wysłanie",
             style: TextStyle(
               color: Colors.grey,
-              fontSize: 38,
+              fontSize: 24,
             ),
             textAlign: TextAlign.center),
       );
