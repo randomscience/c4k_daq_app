@@ -1,1 +1,1 @@
-Beta release for testing (0.1.5) 
+Beta release for testing (0.1.7) 
