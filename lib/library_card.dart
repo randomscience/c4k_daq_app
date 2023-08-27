@@ -154,10 +154,10 @@ class _LibraryCard extends State<LibraryCard> {
     // });
   }
 
-  ElevatedButton _sendButton() {
+  FilledButton _sendButton() {
     if (isAwaiting) {
-      return ElevatedButton(
-          // style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+      return FilledButton(
+          // style: FilledButton.styleFrom(backgroundColor: Colors.white),
           onPressed: () => {},
           child: const SizedBox(
               width: 20,
@@ -167,8 +167,8 @@ class _LibraryCard extends State<LibraryCard> {
                 // color: Colors.blueAccent,
               )));
     } else {
-      return ElevatedButton(
-          // style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+      return FilledButton(
+          // style: FilledButton.styleFrom(backgroundColor: Colors.white),
           onPressed: () => {_retryUpload()},
           child: const Text(
             'Wyślij',

@@ -38,20 +38,22 @@ class _DeleteDataDialogState extends State<DeleteDataDialog> {
           children: [
             Align(
                 alignment: Alignment.bottomRight,
-                child: ElevatedButton(
+                child: FilledButton.tonal(
                     onPressed: () => widget.exitButton(),
                     child: const Text('Anuluj'))),
             Align(
                 alignment: Alignment.bottomRight,
-                child: TextButton(
-                    onPressed: () => {
-                          widget.deleteFile(widget.pathToFile),
-                          widget.exitButton()
-                        },
-                    child: const Text(
-                      'Usuń',
-                      style: TextStyle(color: Colors.red),
-                    )))
+                child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                    child: FilledButton(
+                        onPressed: () => {
+                              widget.deleteFile(widget.pathToFile),
+                              widget.exitButton()
+                            },
+                        child: const Text(
+                          'Usuń',
+                          // style: TextStyle(color: Colors.red),
+                        ))))
           ],
         )
       ],
@@ -193,7 +195,7 @@ class _LibraryState extends State<Library> {
       );
     } else if (measurementFiles.keys.isNotEmpty) {
       return Center(
-          child: Column(
+          child: ListView(
         children: _generateCards(context),
       ));
     } else {

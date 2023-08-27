@@ -221,12 +221,12 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           child: Row(
             children: <Widget>[
               if (_stepType(_index) == StepTypes.inputBox)
-                FilledButton.tonal(
+                FilledButton(
                   onPressed: controls.onStepContinue,
                   child: const Text('Dalej'),
                 ),
               if (_stepType(_index) == StepTypes.info)
-                FilledButton.tonal(
+                FilledButton(
                   onPressed: () => {
                     rotateScreenVIsited = [
                       rotateScreenVIsited[0] || _index == 5,
@@ -237,37 +237,41 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                   child: const Text('Dalej'),
                 ),
               if (_stepType(_index) == StepTypes.camera)
-                FilledButton.tonal(
+                FilledButton(
                   onPressed: _recordVideo,
                   child: const Text(
                     "Nagraj wideo",
                   ),
                 ),
               if (_stepType(_index) == StepTypes.save)
-                FilledButton.tonal(
+                FilledButton(
                   onPressed: _saveMeasurement,
                   child: const Text('Wyślij'),
                 ),
               if (_stepType(_index) == StepTypes.save)
-                OutlinedButton(
-                  onPressed: () async => {
-                    widget.saveToFile(),
-                    _animateToIndex(0),
-                    setState(() {
-                      _index = 0;
-                      rotateScreenVIsited = [false, false];
-                    })
-                  },
-                  child: const Text('Zapisz'),
-                ),
-              if (_index != 0)
-                OutlinedButton(
-                  onPressed: controls.onStepCancel,
-                  child: const Text(
-                    'Wróć',
-                    // style: TextStyle(color: Colors.grey),
-                  ),
-                ),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                    child: FilledButton.tonal(
+                      onPressed: () async => {
+                        widget.saveToFile(),
+                        _animateToIndex(0),
+                        setState(() {
+                          _index = 0;
+                          rotateScreenVIsited = [false, false];
+                        })
+                      },
+                      child: const Text('Zapisz'),
+                    )),
+              if (_index != 0 && _stepType(_index) != StepTypes.save)
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                    child: FilledButton.tonal(
+                      onPressed: controls.onStepCancel,
+                      child: const Text(
+                        'Wróć',
+                        // style: TextStyle(color: Colors.grey),
+                      ),
+                    )),
             ],
           ),
         );

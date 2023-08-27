@@ -146,16 +146,16 @@ class CameraPageState extends State<CameraPage> {
                 alignment: Alignment.bottomRight,
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 24, 106),
-                    child: ElevatedButton(
+                    child: FilledButton(
                         // backgroundColor:Colors.transparent,
                         // style: TextStyle(color: Colors.grey),
                         onPressed: () => widget.exitButton(),
                         child: const Text(
                           'Zapisz',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         )))),
         ],
         // ),

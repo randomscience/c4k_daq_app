@@ -175,7 +175,7 @@ class MyHomePageState extends State<MyHomePage> {
         title: const Text('C4K DAQ'),
         content: const Text('Wersja Aplikacji: $appVersion'),
         actions: <Widget>[
-          TextButton(
+          FilledButton(
             onPressed: () => Navigator.pop(context, 'OK'),
             child: const Text('OK'),
           ),
