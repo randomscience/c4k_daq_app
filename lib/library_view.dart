@@ -200,7 +200,7 @@ class _LibraryState extends State<Library> {
       ));
     } else {
       return const Center(
-        child: Text("Nie masz żadnych zapisanych pomiarów",
+        child: Text("Nie masz żadnych pomiarów oczekujących na wysłanie",
             style: TextStyle(
               color: Colors.grey,
               fontSize: 38,

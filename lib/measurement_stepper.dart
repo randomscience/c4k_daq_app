@@ -68,30 +68,30 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           'Odległość od ziemi do nosa [cm]'),
       _textFieldGenerator(
           collarBoneToFloor,
-          'Wpisz odległość od obojczyka do ziemi',
-          'Odległość od obojczyka do ziemi [cm]'),
-      _textFieldGenerator(pelvisToFloor, 'Wpisz odległość od pasa do ziemi',
-          'Odległość od pasa do ziemi [cm]'),
+          'Wpisz odległość od ziemi do obojczyka',
+          'Odległość od ziemi do obojczyka [cm]'),
+      _textFieldGenerator(pelvisToFloor, 'Wpisz odległość od ziemi do pasa',
+          'Odległość od ziemi do pasa [cm]'),
       Step(
           isActive: rotateScreenVIsited[0],
           state:
               rotateScreenVIsited[0] ? StepState.complete : StepState.indexed,
-          title: const Text("Obróć telefon"),
+          title: const Text("Ustaw telefon w pozycji pionowej"),
           content: const Text(
-              "Obróć telefon tak żeby znajdował sie w pozycji wertykalnej")),
-      _exerciseGenerator(
-          "Ćwiczenie 1", "Nagraj dziecko idace od punktu N do punktu S"),
-      _exerciseGenerator(
-          "Ćwiczenie 2", "Nagraj dziecko wykonujące skłony w punkcie O"),
+              "Obróć telefon tak żeby znajdował sie w pozycji pionowej")),
+      _exerciseGenerator("Przejście z punktu D do punktu B",
+          "Nagraj dziecko idace przodem do kamery, z punktu D do punktu B"),
+      _exerciseGenerator("Skłon w punkcie S",
+          "Nagraj dziecko wykonujące skłony przodem do kamery, w punkcie S"),
       Step(
           isActive: rotateScreenVIsited[1],
           state:
               rotateScreenVIsited[1] ? StepState.complete : StepState.indexed,
-          title: const Text("Obróć telefon"),
+          title: const Text("Ustaw telefon w pozycji poziomej"),
           content: const Text(
-              "Obróć telefon tak żeby znajdował sie w pozycji horyzontalnej")),
-      _exerciseGenerator(
-          "Ćwiczenie 3", "Nagraj dziecko idace od punktu L do punktu P"),
+              "Obróć telefon tak żeby znajdował sie w pozycji poziomej")),
+      _exerciseGenerator("Przejście z punktu L do punktu P",
+          "Nagraj dziecko idace profilem do kamery, z punktu L do punktu P"),
       Step(
           state: _enableSave() ? StepState.complete : StepState.disabled,
           title: const Text("Zapisz pomiar"),
