@@ -38,20 +38,30 @@ class _NewRecording extends State<NewRecording> {
 
   String currentlyRecorderExerciseTitle = "No_exercise_is_currently_recorded";
 
-  saveMeasurement() async {
-    var uuid = const Uuid().v4();
-    final path = await widget._localPath;
+  _saveToFile({String? uuid}) async {
+    uuid ??= const Uuid().v4();
 
-    var localFile = io.File('$path/c4k_daq/$uuid.json');
+    var localFile = io.File(
+        '${(await getApplicationDocumentsDirectory()).path}/c4k_daq/$uuid.json');
     await localFile.create(recursive: true);
     try {
-      await saveToFile(localFile, uuid);
+      await saveToFile(localFile, uuid, widget.userInformation(),
+          widget.exerciseVideoMapping());
     } catch (e) {
       widget.clearData();
       setState(() => {});
       throw Exception(
           "Exception occurred when data was saved to local file, error message: $e");
     }
+    widget.clearData();
+    setState(() => {});
+  }
+
+  saveMeasurement() async {
+    var uuid = const Uuid().v4();
+    final path = await widget._localPath;
+    _saveToFile(uuid: uuid);
+
     Map<String, String> parsedUserInformation = {};
 
     Iterator serInformationIterator = {
@@ -117,18 +127,6 @@ class _NewRecording extends State<NewRecording> {
     return overallResult;
   }
 
-  Future<void> saveToFile(io.File localFile, String uuid) async {
-    await localFile.writeAsString(
-        json.encode({
-          ...{"unique_id": uuid},
-          ...widget.userInformation(),
-          ...widget.exerciseVideoMapping(),
-          ...{"measurement_time": "${DateTime.now()}"},
-          ...{"app_version": "0.1.4"}
-        }),
-        flush: true);
-  }
-
   setExerciseVideoMapping(String exercise, String? videoPath) {
     if (videoPath != null) widget.exerciseVideoMapping()[exercise] = videoPath;
     setState(() => recordingVideo = false);
@@ -162,6 +160,7 @@ class _NewRecording extends State<NewRecording> {
       saveMeasurement: _showDialog,
       exerciseVideoMappingGetter: widget.exerciseVideoMapping,
       userInformationGetter: widget.userInformation,
+      saveToFile: _saveToFile,
     );
   }
 }

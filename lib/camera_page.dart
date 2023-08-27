@@ -29,7 +29,7 @@ class CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
+
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 

@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:c4k_daq/constants.dart';
+import 'package:c4k_daq/upload_measurement.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'validated_text_id_input.dart';
 import 'validated_text_input.dart';
 
@@ -11,7 +15,8 @@ class MeasurementStepper extends StatefulWidget {
       required this.showModalBottomSheet,
       required this.saveMeasurement,
       required this.exerciseVideoMappingGetter,
-      required this.userInformationGetter});
+      required this.userInformationGetter,
+      required this.saveToFile});
 
   final Function userInformationGetter;
   final Function exerciseVideoMappingGetter;
@@ -19,6 +24,7 @@ class MeasurementStepper extends StatefulWidget {
   final Function showModalBottomSheet;
 
   final Function saveMeasurement;
+  final void Function({String? uuid}) saveToFile;
 
   @override
   State<MeasurementStepper> createState() => _MeasurementStepperState();
@@ -215,12 +221,12 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           child: Row(
             children: <Widget>[
               if (_stepType(_index) == StepTypes.inputBox)
-                ElevatedButton(
+                FilledButton.tonal(
                   onPressed: controls.onStepContinue,
-                  child: const Text('DALEJ'),
+                  child: const Text('Dalej'),
                 ),
               if (_stepType(_index) == StepTypes.info)
-                ElevatedButton(
+                FilledButton.tonal(
                   onPressed: () => {
                     rotateScreenVIsited = [
                       rotateScreenVIsited[0] || _index == 5,
@@ -228,26 +234,38 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                     ],
                     controls.onStepContinue!(),
                   },
-                  child: const Text('DALEJ'),
+                  child: const Text('Dalej'),
                 ),
               if (_stepType(_index) == StepTypes.camera)
-                ElevatedButton(
+                FilledButton.tonal(
                   onPressed: _recordVideo,
                   child: const Text(
-                    "NAGRAJ WIDEO",
+                    "Nagraj wideo",
                   ),
                 ),
               if (_stepType(_index) == StepTypes.save)
-                ElevatedButton(
+                FilledButton.tonal(
                   onPressed: _saveMeasurement,
-                  child: const Text('WYŚLIJ'),
+                  child: const Text('Wyślij'),
+                ),
+              if (_stepType(_index) == StepTypes.save)
+                OutlinedButton(
+                  onPressed: () async => {
+                    widget.saveToFile(),
+                    _animateToIndex(0),
+                    setState(() {
+                      _index = 0;
+                      rotateScreenVIsited = [false, false];
+                    })
+                  },
+                  child: const Text('Zapisz'),
                 ),
               if (_index != 0)
-                TextButton(
+                OutlinedButton(
                   onPressed: controls.onStepCancel,
                   child: const Text(
-                    'WRÓĆ',
-                    style: TextStyle(color: Colors.grey),
+                    'Wróć',
+                    // style: TextStyle(color: Colors.grey),
                   ),
                 ),
             ],

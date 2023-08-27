@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/upload_measurement.dart';
@@ -9,16 +10,18 @@ import 'package:path_provider/path_provider.dart';
 
 class LibraryCard extends StatefulWidget {
   final Map<String, dynamic> localJsonData;
-  // final Function deleteMeasurement;
+  final void Function(String) deleteMeasurement;
   final void Function(String, String) runPopUp;
   final void Function() snackBar;
   final String pathToFile;
+
   const LibraryCard(
       {super.key,
       required this.localJsonData,
       required this.pathToFile,
       required this.runPopUp,
-      required this.snackBar});
+      required this.snackBar,
+      required this.deleteMeasurement});
 
   @override
   State<LibraryCard> createState() => _LibraryCard();
@@ -82,7 +85,7 @@ class _LibraryCard extends State<LibraryCard> {
     List<UploadResult> overallResult = [];
     try {
       overallResult.add(await uploadMeasurement(parsedUserInformation)
-          .timeout(const Duration(seconds: 5)));
+          .timeout(const Duration(seconds: 10)));
     } on TimeoutException {
       throw TimeoutException("parsedUserInformation upload took to long.");
     } catch (x) {
@@ -99,7 +102,7 @@ class _LibraryCard extends State<LibraryCard> {
                 exerciseNameConverter(entry.key),
                 uuid,
                 gatewayKey)
-            .timeout(const Duration(seconds: 10)));
+            .timeout(const Duration(seconds: 30)));
       } on TimeoutException {
         throw TimeoutException(
             "${exerciseNameConverter(entry.key)} upload took to long.");
@@ -121,6 +124,7 @@ class _LibraryCard extends State<LibraryCard> {
     setState(() {
       isAwaiting = true;
     });
+
     List<UploadResult> overallResult = [];
     try {
       overallResult = await saveMeasurement();
@@ -141,30 +145,35 @@ class _LibraryCard extends State<LibraryCard> {
     }
 
     if (singleOverallResult) {
-      _deleteMeasurement();
+      widget.deleteMeasurement(widget.pathToFile);
     } else {
       widget.snackBar();
     }
+    // setState(() {
+    //   isAwaiting = false;
+    // });
   }
 
   ElevatedButton _sendButton() {
     if (isAwaiting) {
       return ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+          // style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
           onPressed: () => {},
           child: const SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 3.0,
-                color: Colors.blueAccent,
+                // color: Colors.blueAccent,
               )));
     } else {
       return ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+          // style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
           onPressed: () => {_retryUpload()},
-          child:
-              const Text('Wyślij', style: TextStyle(color: Colors.blueAccent)));
+          child: const Text(
+            'Wyślij',
+            // style: TextStyle(color: Colors.blueAccent)
+          ));
     }
   }
 

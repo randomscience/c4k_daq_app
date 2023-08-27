@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:c4k_daq/constants.dart';
+import 'package:c4k_daq/version.dart';
 import 'package:c4k_daq/upload_result.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io' as io;
@@ -47,7 +48,7 @@ deleteMeasurement(String pathToMeasurement) async {
   String content = await file.readAsString();
 
   if (content.isEmpty) {
-    io.File(pathToMeasurement).delete();
+    file.delete();
   }
 
   var localJsonData = json.decode(content);
@@ -57,9 +58,23 @@ deleteMeasurement(String pathToMeasurement) async {
 
   var keysList = List.from(exerciseVideoMapping.keys);
   for (var element in keysList) {
-    try {
-      io.File(localJsonData[element].toString()).delete();
-    } catch (e) {}
+    io.File(localJsonData[element].toString()).delete();
   }
-  io.File(pathToMeasurement).delete();
+  file.delete();
+}
+
+Future<void> saveToFile(
+    io.File localFile,
+    String uuid,
+    Map<String, String?> userInformation,
+    Map<String, String?> exerciseVideoMapping) async {
+  await localFile.writeAsString(
+      json.encode({
+        ...{"unique_id": uuid},
+        ...userInformation,
+        ...exerciseVideoMapping,
+        ...{"measurement_time": "${DateTime.now()}"},
+        ...{"app_version": appVersion}
+      }),
+      flush: true);
 }

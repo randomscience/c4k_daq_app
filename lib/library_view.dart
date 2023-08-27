@@ -14,12 +14,13 @@ class DeleteDataDialog extends StatefulWidget {
   final void Function(String) deleteFile;
   final void Function() exitButton;
 
-  const DeleteDataDialog(
-      {super.key,
-      required this.id,
-      required this.pathToFile,
-      required this.deleteFile,
-      required this.exitButton});
+  const DeleteDataDialog({
+    super.key,
+    required this.id,
+    required this.pathToFile,
+    required this.deleteFile,
+    required this.exitButton,
+  });
 
   @override
   State<DeleteDataDialog> createState() => _DeleteDataDialogState();
@@ -59,7 +60,9 @@ class _DeleteDataDialogState extends State<DeleteDataDialog> {
 }
 
 class Library extends StatefulWidget {
-  const Library({super.key});
+  final void Function(int) updateBadgeNumber;
+
+  const Library({super.key, required this.updateBadgeNumber});
 
   @override
   State<Library> createState() => _LibraryState();
@@ -67,45 +70,74 @@ class Library extends StatefulWidget {
 
 class _LibraryState extends State<Library> {
   bool _isLoading = true;
-  List<Map<String, dynamic>> contentsInFiles = [];
-  List<String> pathsToFiles = [];
+  // List<Map<String, dynamic>> contentsInFiles = [];
+  Map<String, Map<String, dynamic>?> measurementFiles = {};
+  // List<String> pathsToFiles = [];
 
-  void _deleteMeasurement(String pathToMeasurement) async {
-    await deleteMeasurement(pathToMeasurement);
-    _loadFiles();
+  void _deleteMeasurement(String pathToMeasurement) {
+    deleteMeasurement(pathToMeasurement);
+
+    widget.updateBadgeNumber(measurementFiles.length - 1);
+
+    setState(() {
+      measurementFiles.remove(pathToMeasurement);
+    });
+
+    // _loadFiles();
+  }
+
+  List<Widget> _generateCards(context) {
+    List<Widget> cards = [];
+    measurementFiles.forEach((key, value) => cards.add(LibraryCard(
+          key: Key(key),
+          localJsonData: value!,
+          pathToFile: key,
+          runPopUp: _showDialog,
+          deleteMeasurement: _deleteMeasurement,
+          snackBar: () => _showSnackBar(context),
+        )));
+
+    return cards;
   }
 
   void _loadFiles() async {
-    List<FileSystemEntity> directoriesInFile = [];
-    List<Map<String, dynamic>> localContentsInFiles = [];
+    // List<FileSystemEntity> directoriesInFile = [];
+    // List<Map<String, dynamic>> localContentsInFiles = [];
 
-    setState(() => {_isLoading = false, contentsInFiles = []});
+    setState(() => {_isLoading = false, measurementFiles = {}});
 
     String directory = (await getApplicationDocumentsDirectory()).path;
+
     try {
-      directoriesInFile = Directory("$directory/c4k_daq/").listSync();
+      Directory("$directory/c4k_daq/")
+          .listSync()
+          .forEach((element) => measurementFiles[element.path] = null);
     } on PathNotFoundException {
-      setState(
-          () => {_isLoading = false, contentsInFiles = localContentsInFiles});
+      setState(() => {_isLoading = false, measurementFiles = {}});
       return;
     } catch (x) {
-      setState(
-          () => {_isLoading = false, contentsInFiles = localContentsInFiles});
+      setState(() => {_isLoading = false, measurementFiles = {}});
       return;
     }
-    var iter = directoriesInFile.iterator;
+
+    Iterator iter = measurementFiles.keys.iterator;
 
     while (iter.moveNext()) {
-      var file = File(iter.current.path);
+      var file = File(iter.current);
       String content = await file.readAsString();
 
       if (content.isNotEmpty) {
-        localContentsInFiles.add(json.decode(content));
-        pathsToFiles.add(iter.current.path);
+        measurementFiles[iter.current] = json.decode(content);
+      } else {
+        measurementFiles.remove(iter.current);
       }
     }
-    setState(
-        () => {_isLoading = false, contentsInFiles = localContentsInFiles});
+
+    var sortedByValueMap = Map.fromEntries(measurementFiles.entries.toList()
+      ..sort((e1, e2) => DateTime.parse(e2.value!['measurement_time'])
+          .compareTo(DateTime.parse(e1.value!['measurement_time']))));
+
+    setState(() => {_isLoading = false, measurementFiles = sortedByValueMap});
   }
 
   @override
@@ -156,24 +188,13 @@ class _LibraryState extends State<Library> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Container(
-        color: Colors.white,
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
+      return const Center(
+        child: CircularProgressIndicator(),
       );
-    } else if (contentsInFiles.isNotEmpty) {
+    } else if (measurementFiles.keys.isNotEmpty) {
       return Center(
-          child: ListView.builder(
-        itemCount: contentsInFiles.length,
-        itemBuilder: (context, index) {
-          return LibraryCard(
-            localJsonData: Map<String, dynamic>.from(contentsInFiles[index]),
-            pathToFile: pathsToFiles[index],
-            runPopUp: _showDialog,
-            snackBar: () => _showSnackBar(context),
-          );
-        },
+          child: Column(
+        children: _generateCards(context),
       ));
     } else {
       return const Center(
