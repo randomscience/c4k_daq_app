@@ -15,7 +15,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: Update version in YAML
         run: sed -i 's/99.99.99/${{ github.ref_name }}/g' pubspec.yaml
-      - name: Create key.properties
+      - name: Update version in `lib/version.dart`
+        run: echo 'const appVersion = "${{ github.ref_name }}";' > lib/version.dart
+      - name: Download JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
