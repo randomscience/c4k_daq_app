@@ -133,7 +133,7 @@ class _LibraryState extends State<Library> {
         }
       }
     }
-
+    print(measurementFiles);
     var sortedByValueMap = Map.fromEntries(measurementFiles.entries.toList()
       ..sort((e1, e2) => DateTime.parse(e2.value!['measurement_time'])
           .compareTo(DateTime.parse(e1.value!['measurement_time']))));

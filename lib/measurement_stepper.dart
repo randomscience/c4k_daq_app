@@ -72,8 +72,8 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           collarBoneToFloor,
           'Wpisz odległość od ziemi do obojczyka',
           'Odległość od ziemi do obojczyka [cm]'),
-      _textFieldGenerator(pelvisToFloor, 'Wpisz odległość od ziemi do pasa',
-          'Odległość od ziemi do pasa [cm]'),
+      _textFieldGenerator(pelvisToFloor, 'Wpisz odległość od ziemi do bioder',
+          'Odległość od ziemi do bioder [cm]'),
       Step(
           isActive: rotateScreenVIsited[0],
           state:

@@ -94,6 +94,7 @@ Future<void> saveToFile(
         ...{"unique_id": uuid},
         ...userInformation,
         ...exerciseVideoMapping,
+        ...{"measurement_time": "${DateTime.now()}"},
         ...{"app_version": appVersion}
       }),
       flush: true);

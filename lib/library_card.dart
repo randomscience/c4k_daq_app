@@ -38,6 +38,7 @@ class _LibraryCard extends State<LibraryCard> {
     super.initState();
     id = widget.localJsonData['id'];
 
+    print(widget.localJsonData);
     final DateTime date =
         DateTime.parse(widget.localJsonData['measurement_time']);
 
