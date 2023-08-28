@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:c4k_daq/constants.dart';
-import 'package:c4k_daq/upload_measurement.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import 'validated_text_id_input.dart';
 import 'validated_text_input.dart';
 
@@ -18,13 +14,19 @@ class MeasurementStepper extends StatefulWidget {
       required this.userInformationGetter,
       required this.saveToFile});
 
-  final Function userInformationGetter;
-  final Function exerciseVideoMappingGetter;
+  // _saveToFile(Map<String, String?> userInformation,
+  //     Map<String, String?> exerciseVideoMapping,
+  //     {String? uuid})
+
+  final Map<String, String?> Function() userInformationGetter;
+  final Map<String, String?> Function() exerciseVideoMappingGetter;
 
   final Function showModalBottomSheet;
 
   final Function saveMeasurement;
-  final void Function({String? uuid}) saveToFile;
+
+  final void Function(Map<String, String?>, Map<String, String?>,
+      {String? uuid}) saveToFile;
 
   @override
   State<MeasurementStepper> createState() => _MeasurementStepperState();
@@ -271,7 +273,8 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: FilledButton.tonal(
                       onPressed: () async => {
-                        widget.saveToFile(),
+                        widget.saveToFile(widget.userInformationGetter(),
+                            widget.exerciseVideoMappingGetter()),
                         _animateToIndex(0),
                         setState(() {
                           _index = 0;

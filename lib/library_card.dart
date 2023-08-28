@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/upload_measurement.dart';
 import 'package:c4k_daq/upload_result.dart';

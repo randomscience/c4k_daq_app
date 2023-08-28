@@ -73,7 +73,7 @@ class MyHomePageState extends State<MyHomePage> {
     setState(() => noDirectoriesInFile = newNoDirectoriesInFile);
   }
 
-  void _noLoadedFiles() async {
+  void listFilesInDirectory() async {
     String directory = (await getApplicationDocumentsDirectory()).path;
     List<FileSystemEntity> directoriesInFile = [];
     try {
@@ -81,16 +81,33 @@ class MyHomePageState extends State<MyHomePage> {
     } on PathNotFoundException {
       debugPrint("No directory named c4k_daq");
     }
+    debugPrint(directoriesInFile.toString());
+  }
+
+  void _noLoadedFiles() async {
+    String directory = (await getApplicationDocumentsDirectory()).path;
+    List<String> directoriesInFile = [];
+    try {
+      Directory("$directory/c4k_daq/")
+          .listSync()
+          .forEach((element) => directoriesInFile.add(element.path));
+    } on PathNotFoundException {
+      debugPrint("No directory named c4k_daq");
+    }
     var iter = directoriesInFile.iterator;
     noDirectoriesInFile = directoriesInFile.length;
-    while (iter.moveNext()) {
-      var file = File(iter.current.path);
-      String content = await file.readAsString();
 
-      if (content.isEmpty) {
-        noDirectoriesInFile -= 1;
+    while (iter.moveNext()) {
+      if (iter.current.contains('.json')) {
+        var file = File(iter.current);
+        String content = await file.readAsString();
+
+        if (content.isEmpty) {
+          noDirectoriesInFile -= 1;
+          file.delete();
+        }
       } else {
-        file.delete();
+        noDirectoriesInFile -= 1;
       }
     }
 
@@ -178,7 +195,7 @@ class MyHomePageState extends State<MyHomePage> {
         content: const Text('Wersja Aplikacji: $appVersion'),
         actions: <Widget>[
           FilledButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
+            onPressed: () => {Navigator.pop(context, 'OK')},
             child: const Text('OK'),
           ),
         ],

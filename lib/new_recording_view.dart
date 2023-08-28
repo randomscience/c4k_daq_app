@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import 'dart:io' as io;
 import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'measurement_stepper.dart';
 import 'full_screen_modal.dart';
@@ -39,22 +38,21 @@ class _NewRecording extends State<NewRecording> {
 
   String currentlyRecorderExerciseTitle = "No_exercise_is_currently_recorded";
 
-  _saveToFile({String? uuid}) async {
+  _saveToFile(Map<String, String?> userInformation,
+      Map<String, String?> exerciseVideoMapping,
+      {String? uuid}) async {
     uuid ??= const Uuid().v4();
 
     var localFile = io.File(
         '${(await getApplicationDocumentsDirectory()).path}/c4k_daq/$uuid.json');
     await localFile.create(recursive: true);
     try {
-      await saveToFile(localFile, uuid, widget.userInformation(),
-          widget.exerciseVideoMapping());
+      await saveToFile(localFile, uuid, userInformation, exerciseVideoMapping);
     } catch (e) {
-      // widget.clearData();
-      setState(() => {});
       throw Exception(
           "Exception occurred when data was saved to local file, error message: $e");
     }
-    // widget.clearData();
+    widget.clearData();
     setState(() => {});
   }
 
@@ -66,13 +64,18 @@ class _NewRecording extends State<NewRecording> {
     late Map<String, String?> localUserInformation =
         Map<String, String?>.from(widget.userInformation());
 
-    _saveToFile(uuid: uuid);
+    await _saveToFile(localUserInformation, localExerciseVideoMapping,
+        uuid: uuid);
+
+    // widget.clearData();
+    // setState(() => {});
 
     Map<String, String> parsedUserInformation = {};
-    print("here");
+
     Iterator serInformationIterator = {
       ...{"gateway_key": gatewayKey},
       ...{"unique_id": uuid},
+      ...{"measurement_time": "${DateTime.now()}"},
       ...localUserInformation,
       ...{"app_version": appVersion}
     }.entries.iterator;
@@ -81,22 +84,16 @@ class _NewRecording extends State<NewRecording> {
       MapEntry<String, String?> entry = serInformationIterator.current;
       parsedUserInformation[entry.key] = entry.value!;
     }
-    print("here");
 
     List<UploadResult> overallResult = [];
     try {
       overallResult.add(await uploadMeasurement(parsedUserInformation)
           .timeout(const Duration(seconds: 10)));
     } on TimeoutException {
-      widget.clearData();
-      setState(() => {});
       throw TimeoutException("parsedUserInformation upload took to long.");
     } catch (x) {
-      widget.clearData();
-      setState(() => {});
       rethrow;
     }
-    print("here");
 
     Iterator videoIterator = localExerciseVideoMapping.entries.iterator;
     while (videoIterator.moveNext()) {
@@ -109,31 +106,28 @@ class _NewRecording extends State<NewRecording> {
                 gatewayKey)
             .timeout(const Duration(seconds: 10)));
       } on TimeoutException {
-        widget.clearData();
-        setState(() => {});
         throw TimeoutException(
             "${exerciseNameConverter(entry.key)} upload took to long.");
       } catch (x) {
-        widget.clearData();
-        setState(() => {});
         rethrow;
       }
     }
-    print("here");
 
-    widget.clearData();
     bool singleOverallResult = true;
 
     for (var element in overallResult) {
-      singleOverallResult = element.isSuccess() && singleOverallResult;
+      if (!element.isSuccess()) {
+        singleOverallResult = false;
+        break;
+      }
     }
 
     if (singleOverallResult) {
       deleteMeasurement('$path/c4k_daq/$uuid.json');
       widget.clearData();
+      setState(() => {});
     }
 
-    setState(() => {});
     return overallResult;
   }
 

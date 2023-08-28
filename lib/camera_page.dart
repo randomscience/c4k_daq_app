@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CameraPage extends StatefulWidget {
   final Function pathToVideoSetter;
@@ -74,8 +75,13 @@ class CameraPageState extends State<CameraPage> {
 
   _recordVideo() async {
     if (_isRecording) {
-      final file = await _cameraController.stopVideoRecording();
-      widget.pathToVideoSetter(widget.exerciseTitle, file.path);
+      XFile file = await _cameraController.stopVideoRecording();
+
+      String filepath =
+          '${(await getApplicationDocumentsDirectory()).path}/c4k_daq/${file.name}';
+
+      file.saveTo(filepath);
+      widget.pathToVideoSetter(widget.exerciseTitle, filepath);
       setState(() => {_isRecording = false, _recordingEnded = true});
       // widget.exitButton();
     } else {

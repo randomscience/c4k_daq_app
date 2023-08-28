@@ -103,8 +103,7 @@ class _LibraryState extends State<Library> {
   }
 
   void _loadFiles() async {
-    // List<FileSystemEntity> directoriesInFile = [];
-    // List<Map<String, dynamic>> localContentsInFiles = [];
+    List<String> directoriesInFile = [];
 
     setState(() => {_isLoading = false, measurementFiles = {}});
 
@@ -113,7 +112,7 @@ class _LibraryState extends State<Library> {
     try {
       Directory("$directory/c4k_daq/")
           .listSync()
-          .forEach((element) => measurementFiles[element.path] = null);
+          .forEach((element) => directoriesInFile.add(element.path));
     } on PathNotFoundException {
       setState(() => {_isLoading = false, measurementFiles = {}});
       return;
@@ -122,16 +121,16 @@ class _LibraryState extends State<Library> {
       return;
     }
 
-    Iterator iter = measurementFiles.keys.iterator;
+    Iterator iter = directoriesInFile.iterator;
 
     while (iter.moveNext()) {
-      var file = File(iter.current);
-      String content = await file.readAsString();
+      if (iter.current.contains('.json')) {
+        var file = File(iter.current);
+        String content = await file.readAsString();
 
-      if (content.isNotEmpty) {
-        measurementFiles[iter.current] = json.decode(content);
-      } else {
-        measurementFiles.remove(iter.current);
+        if (content.isNotEmpty) {
+          measurementFiles[iter.current] = json.decode(content);
+        }
       }
     }
 
