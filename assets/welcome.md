@@ -55,6 +55,9 @@ Wykonaj nagranie zawierające w sobie w kolejności:
 > ❗ WAŻNE ❗
 > Włosy dziecka powinny być związane i ułożone tak aby nie zasłaniały ramion
 
+> ❗ WAŻNE ❗
+> W każdym momencie nagrania widoczna powinna być cała sylwetka dziecka
+
 1. Dziecko idące od punktu *L* do *P* (głowa skierowana prosto patrząc przed siebie)
 2. Dziecko idące od punktu *D* do *B* (głowa skierowana prosto patrząc przed siebie)
 3. Skłony w punkcie *S* przodem do kamery

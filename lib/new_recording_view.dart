@@ -38,6 +38,30 @@ class _NewRecording extends State<NewRecording> {
 
   String currentlyRecorderExerciseTitle = "No_exercise_is_currently_recorded";
 
+  _showSnackBar(BuildContext context, String text) {
+    // show the modal dialog and pass some data to it
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            // Code to execute.
+          },
+        ),
+        content: Text(text),
+        duration: const Duration(seconds: 5),
+        width: 280.0, // Width of the SnackBar.
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8.0, // Inner padding for SnackBar content.
+        ),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+    );
+  }
+
   _saveToFile(Map<String, String?> userInformation,
       Map<String, String?> exerciseVideoMapping,
       {String? uuid}) async {
@@ -90,8 +114,10 @@ class _NewRecording extends State<NewRecording> {
       overallResult.add(await uploadMeasurement(parsedUserInformation)
           .timeout(const Duration(seconds: 10)));
     } on TimeoutException {
+      _showSnackBar(context, "Pomiar zapisano w oczekujących");
       throw TimeoutException("parsedUserInformation upload took to long.");
     } catch (x) {
+      _showSnackBar(context, "Pomiar zapisano w oczekujących");
       rethrow;
     }
 
@@ -106,9 +132,11 @@ class _NewRecording extends State<NewRecording> {
                 gatewayKey)
             .timeout(const Duration(seconds: 10)));
       } on TimeoutException {
+        _showSnackBar(context, "Pomiar zapisano w oczekujących");
         throw TimeoutException(
             "${exerciseNameConverter(entry.key)} upload took to long.");
       } catch (x) {
+        _showSnackBar(context, "Pomiar zapisano w oczekujących");
         rethrow;
       }
     }
@@ -164,7 +192,10 @@ class _NewRecording extends State<NewRecording> {
       saveMeasurement: _showDialog,
       exerciseVideoMappingGetter: widget.exerciseVideoMapping,
       userInformationGetter: widget.userInformation,
-      saveToFile: _saveToFile,
+      saveToFile: (userInformation, exerciseVideoMapping, {String? uuid}) => {
+        _saveToFile(userInformation, exerciseVideoMapping, uuid: uuid),
+        _showSnackBar(context, "Pomiar zapisano w oczekujących")
+      },
     );
   }
 }

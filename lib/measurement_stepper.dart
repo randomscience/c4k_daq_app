@@ -62,8 +62,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
 
   _steps() {
     return <Step>[
-      _textFieldGenerator(
-          id, 'Wpisz ID ktore otrzymałeś z ankiety', 'Unikatowe ID dziecka',
+      _textFieldGenerator(id, 'Wpisz ID z ankiety', 'Unikatowe ID dziecka',
           isID: true),
       _textFieldGenerator(height, 'Wpisz wzrost dziecka', 'Wzrost [cm]'),
       _textFieldGenerator(noseToFloor, 'Wpisz odległość od ziemi do nosa',
@@ -82,11 +81,11 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           content: const Text(
               "Obróć telefon tak żeby znajdował sie w pozycji pionowej")),
       _exerciseGenerator(exercise1,
-          "Nagraj dziecko idace przodem do kamery, z punktu D do punktu B"),
+          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
       _exerciseGenerator(exercise2,
-          "Nagraj dziecko idace przodem do kamery, z punktu D do punktu B"),
+          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
       _exerciseGenerator(exercise3,
-          "Nagraj dziecko idace przodem do kamery, z punktu D do punktu B"),
+          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
       _exerciseGenerator(exercise4,
           "Nagraj dziecko wykonujące skłony przodem do kamery, w punkcie S"),
       _exerciseGenerator(exercise5,
@@ -101,11 +100,11 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           content: const Text(
               "Obróć telefon tak żeby znajdował sie w pozycji poziomej")),
       _exerciseGenerator(exercise7,
-          "Nagraj dziecko idace profilem do kamery, z punktu L do punktu P"),
+          "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
       _exerciseGenerator(exercise8,
-          "Nagraj dziecko idace profilem do kamery, z punktu L do punktu P"),
+          "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
       _exerciseGenerator(exercise9,
-          "Nagraj dziecko idace profilem do kamery, z punktu L do punktu P"),
+          "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
       Step(
           state: _enableSave() ? StepState.complete : StepState.disabled,
           title: const Text("Zapisz pomiar"),
