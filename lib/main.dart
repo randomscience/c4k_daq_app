@@ -200,7 +200,7 @@ class MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) => AlertDialog(
         title: const Text('C4K DAQ'),
         content: SizedBox(
-            height: 100,
+            height: 120,
             child: Column(children: [
               const Text('Wersja Aplikacji: $appVersion'),
               Text('Wersja urządzenia: $deviceID'),

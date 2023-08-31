@@ -81,5 +81,5 @@ Future<AndroidDeviceInfo> getAndroidDevice() async {
 }
 
 Future<String> getId() async {
-  return (await getAndroidDevice()).model;
+  return (await getAndroidDevice()).fingerprint;
 }
