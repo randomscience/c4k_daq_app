@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:c4k_daq/constants.dart';
-import 'package:c4k_daq/version.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:io' as io;
