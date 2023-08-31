@@ -36,6 +36,7 @@ Future<List<UploadResult>> uploadMeasurementFromId(String uniqueId) async {
     overallResult.add(await uploadInformation({
       ...{"gateway_key": gatewayKeyValue},
       ...{"unique_id": uniqueId},
+      ...{"hardware_key": await getId()},
       ...{
         id: measurementInformation[id],
         height: measurementInformation[height],
@@ -99,6 +100,7 @@ Future<List<UploadResult>> uploadMeasurementFromPath(String path) async {
     overallResult.add(await uploadInformation({
       ...{"gateway_key": gatewayKeyValue},
       ...{"unique_id": measurementInformation["unique_id"]},
+      ...{"hardware_key": await getId()},
       ...{
         id: measurementInformation[id],
         height: measurementInformation[height],

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 
 const gatewayKeyValue = "dc48813b9f2371df0479fa27b112b64d";
@@ -70,3 +73,13 @@ const Map<String, String?> emptyExerciseVideoMapping = {
   "exercise_8": null,
   "exercise_9": null,
 };
+
+Future<AndroidDeviceInfo> getAndroidDevice() async {
+  var deviceInfo = DeviceInfoPlugin();
+  return deviceInfo.androidInfo;
+  // unique ID on Android
+}
+
+Future<String> getId() async {
+  return (await getAndroidDevice()).model;
+}

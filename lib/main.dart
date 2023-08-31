@@ -134,9 +134,16 @@ class MyHomePageState extends State<MyHomePage> {
     return Library(updateBadgeNumber: _updateBadge);
   }
 
+  String deviceID = '';
+
+  _getID() async {
+    deviceID = await getId();
+  }
+
   @override
   void initState() {
     super.initState();
+    _getID();
     _noLoadedFiles();
   }
 
@@ -192,7 +199,12 @@ class MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('C4K DAQ'),
-        content: const Text('Wersja Aplikacji: $appVersion'),
+        content: SizedBox(
+            height: 100,
+            child: Column(children: [
+              const Text('Wersja Aplikacji: $appVersion'),
+              Text('Wersja urządzenia: $deviceID'),
+            ])),
         actions: <Widget>[
           FilledButton(
             onPressed: () => {Navigator.pop(context, 'OK')},

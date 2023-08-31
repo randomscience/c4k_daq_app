@@ -72,6 +72,7 @@ class _LibraryCard extends State<LibraryCard> {
     Iterator informationIterator = {
       ...{"gateway_key": gatewayKeyValue},
       ...{"unique_id": uuid},
+      ...{"hardware_key": await getId()},
       ...userInformation,
       ...{"app_version": appVersion}
     }.entries.iterator;
