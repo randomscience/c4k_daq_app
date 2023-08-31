@@ -65,8 +65,10 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
       _textFieldGenerator(id, 'Wpisz ID z ankiety', 'Unikatowe ID dziecka',
           isID: true),
       _textFieldGenerator(height, 'Wpisz wzrost dziecka', 'Wzrost [cm]'),
-      _textFieldGenerator(noseToFloor, 'Wpisz odległość od ziemi do nosa',
-          'Odległość od ziemi do nosa [cm]'),
+      _textFieldGenerator(
+          noseToFloor,
+          'Wpisz odległość od ziemi do czubka nosa',
+          'Odległość od ziemi do czubka nosa [cm]'),
       _textFieldGenerator(
           collarBoneToFloor,
           'Wpisz odległość od ziemi do obojczyka',
@@ -168,7 +170,8 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   _exerciseGenerator(String title, String exerciseExplanation) {
     StepState state = StepState.indexed;
 
-    if (widget.exerciseVideoMappingGetter()[title] != null) {
+    if (widget.exerciseVideoMappingGetter()[exerciseNameConverter(title)] !=
+        null) {
       state = StepState.complete;
     }
 

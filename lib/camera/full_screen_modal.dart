@@ -1,4 +1,4 @@
-import 'package:c4k_daq/camera_page.dart';
+import 'package:c4k_daq/camera/camera_page.dart';
 import 'package:flutter/material.dart';
 
 class FullScreenModal extends ModalRoute {

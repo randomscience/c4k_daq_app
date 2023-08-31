@@ -20,12 +20,6 @@ class ValidatedTextIDInput extends StatefulWidget {
     if (text.isEmpty) {
       return 'Pole nie może być puste';
     }
-    try {
-      int.parse(text);
-    } catch (e) {
-      return 'Wprowadź liczbę';
-    }
-
     return null;
   }
 
@@ -51,8 +45,7 @@ class ValidatedTextIDInputState extends State<ValidatedTextIDInput> {
     return TextField(
       // onChanged: (text) => setState(),
       controller: widget.controller,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      keyboardType: TextInputType.number,
+
       decoration: InputDecoration(
         errorText: widget._errorText(),
         labelText: widget.title,

@@ -8,10 +8,10 @@ import 'dart:io' as io;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'measurement_stepper.dart';
-import 'full_screen_modal.dart';
+import '../camera/full_screen_modal.dart';
 import 'upload_data_dialog.dart';
-import 'upload_measurement.dart';
-import 'upload_result.dart';
+import '../upload_measurement.dart';
+import '../upload_result.dart';
 
 class NewRecording extends StatefulWidget {
   final Map<String, String?> Function() userInformation;
@@ -83,62 +83,24 @@ class _NewRecording extends State<NewRecording> {
   saveMeasurement() async {
     var uuid = const Uuid().v4();
     final path = await widget._localPath;
+
     late Map<String, String?> localExerciseVideoMapping =
         Map<String, String?>.from(widget.exerciseVideoMapping());
+
     late Map<String, String?> localUserInformation =
         Map<String, String?>.from(widget.userInformation());
+
+    localUserInformation[measurementTime] = "${DateTime.now()}";
 
     await _saveToFile(localUserInformation, localExerciseVideoMapping,
         uuid: uuid);
 
-    // widget.clearData();
-    // setState(() => {});
-
-    Map<String, String> parsedUserInformation = {};
-
-    Iterator serInformationIterator = {
-      ...{"gateway_key": gatewayKey},
-      ...{"unique_id": uuid},
-      ...{"measurement_time": "${DateTime.now()}"},
-      ...localUserInformation,
-      ...{"app_version": appVersion}
-    }.entries.iterator;
-
-    while (serInformationIterator.moveNext()) {
-      MapEntry<String, String?> entry = serInformationIterator.current;
-      parsedUserInformation[entry.key] = entry.value!;
-    }
-
     List<UploadResult> overallResult = [];
     try {
-      overallResult.add(await uploadMeasurement(parsedUserInformation)
-          .timeout(const Duration(seconds: 10)));
-    } on TimeoutException {
-      _showSnackBar(context, "Pomiar zapisano w oczekujących");
-      throw TimeoutException("parsedUserInformation upload took to long.");
+      overallResult = await uploadMeasurementFromId(uuid);
     } catch (x) {
       _showSnackBar(context, "Pomiar zapisano w oczekujących");
       rethrow;
-    }
-
-    Iterator videoIterator = localExerciseVideoMapping.entries.iterator;
-    while (videoIterator.moveNext()) {
-      MapEntry<String, String?> entry = videoIterator.current;
-      try {
-        overallResult.add(await uploadMeasurementVideo(
-                localExerciseVideoMapping[entry.key]!,
-                exerciseNameConverter(entry.key),
-                uuid,
-                gatewayKey)
-            .timeout(const Duration(seconds: 10)));
-      } on TimeoutException {
-        _showSnackBar(context, "Pomiar zapisano w oczekujących");
-        throw TimeoutException(
-            "${exerciseNameConverter(entry.key)} upload took to long.");
-      } catch (x) {
-        _showSnackBar(context, "Pomiar zapisano w oczekujących");
-        rethrow;
-      }
     }
 
     bool singleOverallResult = true;

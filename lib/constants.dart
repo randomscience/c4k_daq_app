@@ -1,12 +1,17 @@
 import 'package:flutter/foundation.dart';
 
-const gatewayKey = "dc48813b9f2371df0479fa27b112b64d";
+const gatewayKeyValue = "dc48813b9f2371df0479fa27b112b64d";
 
 const id = "id";
 const height = "height";
 const noseToFloor = "nose_to_floor";
 const collarBoneToFloor = "collar_bone_to_floor";
 const pelvisToFloor = "pelvis_to_floor";
+
+const gatewayKey = "gateway_key";
+const uniqueID = "unique_id";
+const measurementTime = "measurement_time";
+const version = "app_version";
 
 emptyUserInformation() {
   if (kDebugMode) {
@@ -55,13 +60,13 @@ String exerciseNameConverter(String escorcieName) {
 }
 
 const Map<String, String?> emptyExerciseVideoMapping = {
-  exercise1: null,
-  exercise2: null,
-  exercise3: null,
-  exercise4: null,
-  exercise5: null,
-  exercise6: null,
-  exercise7: null,
-  exercise8: null,
-  exercise9: null,
+  "exercise_1": null,
+  "exercise_2": null,
+  "exercise_3": null,
+  "exercise_4": null,
+  "exercise_5": null,
+  "exercise_6": null,
+  "exercise_7": null,
+  "exercise_8": null,
+  "exercise_9": null,
 };

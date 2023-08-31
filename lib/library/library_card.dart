@@ -70,7 +70,7 @@ class _LibraryCard extends State<LibraryCard> {
     Map<String, String> parsedUserInformation = {};
 
     Iterator informationIterator = {
-      ...{"gateway_key": gatewayKey},
+      ...{"gateway_key": gatewayKeyValue},
       ...{"unique_id": uuid},
       ...userInformation,
       ...{"app_version": appVersion}
@@ -83,8 +83,8 @@ class _LibraryCard extends State<LibraryCard> {
 
     List<UploadResult> overallResult = [];
     try {
-      overallResult.add(await uploadMeasurement(parsedUserInformation)
-          .timeout(const Duration(seconds: 10)));
+      overallResult.add(await uploadInformation(parsedUserInformation)
+          .timeout(const Duration(minutes: 1)));
     } on TimeoutException {
       throw TimeoutException("parsedUserInformation upload took to long.");
     } catch (x) {
@@ -97,11 +97,8 @@ class _LibraryCard extends State<LibraryCard> {
       MapEntry<String, String?> entry = videoIterator.current;
       try {
         overallResult.add(await uploadMeasurementVideo(
-                exerciseVideoMapping[entry.key]!,
-                exerciseNameConverter(entry.key),
-                uuid,
-                gatewayKey)
-            .timeout(const Duration(seconds: 30)));
+                exerciseVideoMapping[entry.key]!, entry.key, uuid)
+            .timeout(const Duration(minutes: 5)));
       } on TimeoutException {
         throw TimeoutException(
             "${exerciseNameConverter(entry.key)} upload took to long.");

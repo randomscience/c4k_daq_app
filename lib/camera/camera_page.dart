@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +29,7 @@ class CameraPageState extends State<CameraPage> {
   bool _isRecording = false;
   bool _recordingEnded = false;
   late CameraController _cameraController;
-
+  XFile file = XFile("");
   @override
   void initState() {
     super.initState();
@@ -68,20 +71,26 @@ class CameraPageState extends State<CameraPage> {
   }
 
   _exitRecording() async {
-    widget.pathToVideoSetter(widget.exerciseTitle, null);
+    // widget.pathToVideoSetter(exerciseNameConverter(widget.exerciseTitle), null);
     setState(() => _isRecording = false);
     widget.exitButton();
   }
 
   _recordVideo() async {
     if (_isRecording) {
-      XFile file = await _cameraController.stopVideoRecording();
-
+      // XFile file = await _cameraController.
+      file = await _cameraController.stopVideoRecording();
       String filepath =
           '${(await getApplicationDocumentsDirectory()).path}/c4k_daq/${file.name}';
 
-      file.saveTo(filepath);
-      widget.pathToVideoSetter(widget.exerciseTitle, filepath);
+      Directory("/data/user/0/com.example.c4k_daq/app_flutter/c4k_daq")
+          .createSync();
+
+      await file.saveTo(filepath);
+
+      widget.pathToVideoSetter(
+          exerciseNameConverter(widget.exerciseTitle), filepath);
+
       setState(() => {_isRecording = false, _recordingEnded = true});
       // widget.exitButton();
     } else {
@@ -134,7 +143,7 @@ class CameraPageState extends State<CameraPage> {
                     color: Colors.white,
                     size: 34,
                   ),
-                  onPressed: () => _exitRecording(),
+                  onPressed: () => {_exitRecording()},
                 ),
               )),
           Align(
@@ -160,7 +169,7 @@ class CameraPageState extends State<CameraPage> {
                     child: FilledButton(
                         // backgroundColor:Colors.transparent,
                         // style: TextStyle(color: Colors.grey),
-                        onPressed: () => widget.exitButton(),
+                        onPressed: () => {_exitRecording()},
                         child: const Text(
                           'Zapisz',
                           style: TextStyle(

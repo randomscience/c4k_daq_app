@@ -4,10 +4,10 @@ import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/version.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-// import 'calibration_view.dart';
-import 'library_view.dart';
-import 'new_recording_view.dart';
-import 'information.dart';
+
+import 'library/library_view.dart';
+import 'new_recording/new_recording_view.dart';
+import 'information/information_view.dart';
 import 'package:flutter/services.dart';
 
 void main() async {

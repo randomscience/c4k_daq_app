@@ -46,7 +46,7 @@ Zanim wykonasz pomiar uzupełnij ankiete.
 
 Wykonaj pomiary:
 1. Wzrost dziecka
-2. Odległość od ziemi do nosa dziecka
+2. Odległość od ziemi do czubka nosa dziecka
 3. Odległość od ziemi do najwyższego punktu na obojczyku
 4. Odległość od ziemi do bioder
 
