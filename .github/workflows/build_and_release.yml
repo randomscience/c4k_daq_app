@@ -14,9 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Update version in YAML
-        run: sed -i 's/99.99.99/${{ github.ref_name }}/g' pubspec.yaml
+        run: sed -i 's/99.99.99/${{ github.ref_name }}/g' pubspec.yaml && cat pubspec.yaml
       - name: Update version in `lib/version.dart`
         run: echo 'const appVersion = "${{ github.ref_name }}";' > lib/version.dart
+      - name: Update server url in `lib/gateway_url.dart`
+        run: echo 'const gatewayUrl = "https://external.randomscience.org/c4k/api/v1/";' > lib/gateway_url.dart
       - name: Download JDK
         uses: actions/setup-java@v3
         with:
