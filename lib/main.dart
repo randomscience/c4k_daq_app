@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:c4k_daq/constants.dart';
+import 'package:c4k_daq/gateway_url.dart';
 import 'package:c4k_daq/version.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -200,10 +201,13 @@ class MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) => AlertDialog(
         title: const Text('C4K DAQ'),
         content: SizedBox(
-            height: 120,
+            height: 200,
             child: Column(children: [
-              const Text('Wersja Aplikacji: $appVersion'),
+              const Text(
+                'Wersja Aplikacji: $appVersion',
+              ),
               Text('Wersja urządzenia: $deviceID'),
+              const Text('Ścieżka do bramki:\n$gatewayUrl'),
             ])),
         actions: <Widget>[
           FilledButton(
