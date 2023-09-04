@@ -81,7 +81,7 @@ class _LibraryState extends State<Library> {
         }
       }
     }
-    print(measurementFiles);
+
     var sortedByValueMap = Map.fromEntries(measurementFiles.entries.toList()
       ..sort((e1, e2) => DateTime.parse(e2.value!['measurement_time'])
           .compareTo(DateTime.parse(e1.value!['measurement_time']))));
@@ -141,10 +141,22 @@ class _LibraryState extends State<Library> {
         child: CircularProgressIndicator(),
       );
     } else if (measurementFiles.keys.isNotEmpty) {
-      return Center(
-          child: ListView(
-        children: _generateCards(context),
-      ));
+      return Stack(children: [
+        ListView(
+          children: _generateCards(context),
+        ),
+        Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: FloatingActionButton.extended(
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.navigation),
+                  label: const Text('Wyślij'),
+                )))
+      ]);
     } else {
       return const Center(
         child: Text("Nie masz żadnych pomiarów oczekujących na wysłanie",
