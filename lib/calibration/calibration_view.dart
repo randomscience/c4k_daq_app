@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart'
-    show BuildContext, Center, State, StatefulWidget, Text, Theme, Widget;
+    show
+        BuildContext,
+        Center,
+        State,
+        StatefulWidget,
+        Text,
+        TextButton,
+        Theme,
+        Widget;
 
 class Calibration extends StatefulWidget {
   const Calibration({super.key});
@@ -12,7 +20,10 @@ class _Calibration extends State<Calibration> {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Text("Calibration view is not yet implemented",
-            style: Theme.of(context).textTheme.headlineMedium));
+      child: TextButton(
+        child: const Text("Calibration"),
+        onPressed: () {},
+      ),
+    );
   }
 }
