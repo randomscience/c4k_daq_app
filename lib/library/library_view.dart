@@ -36,6 +36,7 @@ class _LibraryState extends State<Library> {
     // _loadFiles();
   }
 
+  void uploadMeasurement() {}
   List<Widget> _generateCards(context) {
     List<Widget> cards = [];
     measurementFiles.forEach((key, value) => cards.add(LibraryCard(

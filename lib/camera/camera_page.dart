@@ -80,11 +80,10 @@ class CameraPageState extends State<CameraPage> {
     if (_isRecording) {
       // XFile file = await _cameraController.
       file = await _cameraController.stopVideoRecording();
-      String filepath =
-          '${(await getApplicationDocumentsDirectory()).path}/c4k_daq/${file.name}';
+      String directory = (await getApplicationDocumentsDirectory()).path;
+      Directory("$directory/c4k_daq").createSync();
 
-      Directory("/data/user/0/com.example.c4k_daq/app_flutter/c4k_daq")
-          .createSync();
+      String filepath = '$directory/c4k_daq/${file.name}';
 
       await file.saveTo(filepath);
 
