@@ -109,7 +109,7 @@ Future<List<UploadResult>> uploadMeasurementFromPath(String path) async {
         pelvisToFloor: measurementInformation[pelvisToFloor],
       },
       // ...{"app_version": appVersion}
-    }).timeout(const Duration(seconds: 10)));
+    }).timeout(const Duration(minutes: 1)));
   } on TimeoutException {
     throw TimeoutException("parsedUserInformation upload took to long.");
   } catch (x) {
@@ -131,7 +131,7 @@ Future<List<UploadResult>> uploadMeasurementFromPath(String path) async {
               exerciseVideoMapping[entry.key]!,
               entry.key,
               measurementInformation["unique_id"])
-          .timeout(const Duration(seconds: 30)));
+          .timeout(const Duration(minutes: 5)));
     } on TimeoutException {
       throw TimeoutException("${entry.key} upload took to long.");
     } catch (x) {

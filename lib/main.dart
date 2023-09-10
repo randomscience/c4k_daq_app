@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:permission_handler/permission_handler.dart';
 import 'package:c4k_daq/calibration/calibration_view.dart';
 import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/gateway_url.dart';
@@ -10,7 +11,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:video_player/video_player.dart';
 
 import 'library/library_view.dart';
 import 'new_recording/new_recording_view.dart';
@@ -28,9 +28,9 @@ void main() async {
       title: 'C4K DAQ',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromRGBO(22, 88, 232, 1),
+            seedColor: const Color.fromRGBO(57, 165, 221, 1),
             background: Colors.white,
-            primary: const Color.fromRGBO(22, 88, 232, 1)),
+            primary: const Color.fromRGBO(57, 165, 221, 1)),
         // primaryColor: const Color.fromRGBO(22, 88, 232, 1),
         // scaffoldBackgroundColor: Colors.white,
         // secondaryHeaderColor: Colors.white,
@@ -74,6 +74,34 @@ class MyHomePageState extends State<MyHomePage> {
         Map<String, String?>.from(emptyExerciseVideoMapping);
     widget.userInformation = Map<String, String?>.from(emptyUserInformation());
     _noLoadedFiles();
+  }
+
+  void copyToSDCard() async {
+    String originalDirectory = (await getApplicationDocumentsDirectory()).path;
+    List<FileSystemEntity> directoriesInFile = [];
+    try {
+      directoriesInFile = Directory("$originalDirectory/c4k_daq/").listSync();
+    } on PathNotFoundException {
+      debugPrint("No directory named c4k_daq");
+      return;
+    }
+    if (directoriesInFile.isEmpty) return;
+
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+
+    String finalDirectoryPath = '/storage/emulated/0/Download/c4k_daq/';
+    Directory(finalDirectoryPath).createSync();
+    for (FileSystemEntity file in directoriesInFile) {
+      String filename = file.path.toString().split('/').last;
+      if (filename.contains(".mp4")) {
+        File(file.path).copy("$finalDirectoryPath$filename.encrypted");
+      } else {
+        File(file.path).copy("$finalDirectoryPath$filename");
+      }
+    }
   }
 
   void addMeasurementForDebug() async {
@@ -179,15 +207,15 @@ class MyHomePageState extends State<MyHomePage> {
 
   _pageTitle() {
     if (currentPageIndex == 0) return "Instrukcja";
-    if (currentPageIndex == 1) return "Kalibracja";
-    if (currentPageIndex == 2) return "Nowy Pomiar";
+    // if (currentPageIndex == 1) return "Kalibracja";
+    if (currentPageIndex == 1) return "Nowy Pomiar";
     return "Oczekujące";
   }
 
   StatefulWidget _getCentralWidget() {
     if (currentPageIndex == 0) return const Information();
-    if (currentPageIndex == 1) return const Calibration();
-    if (currentPageIndex == 2) {
+    // if (currentPageIndex == 1) return const Calibration();
+    if (currentPageIndex == 1) {
       return NewRecording(
         userInformation: () => widget.userInformation,
         exerciseVideoMapping: () => widget.exerciseVideoMapping,
@@ -278,7 +306,11 @@ class MyHomePageState extends State<MyHomePage> {
           ),
           FilledButton(
             onPressed: () => {addMeasurementForDebug()},
-            child: const Text('FUCK YEA'),
+            child: const Text('Add'),
+          ),
+          FilledButton(
+            onPressed: () => {copyToSDCard()},
+            child: const Text('Move'),
           ),
         ],
       ),
@@ -303,11 +335,11 @@ class MyHomePageState extends State<MyHomePage> {
             selectedIcon: Icon(Icons.info),
             icon: Icon(Icons.info_outlined),
           ),
-          const NavigationDestination(
-            label: 'Kalibracja',
-            selectedIcon: Icon(Icons.compass_calibration),
-            icon: Icon(Icons.compass_calibration_outlined),
-          ),
+          // const NavigationDestination(
+          // label: 'Kalibracja',
+          // selectedIcon: Icon(Icons.compass_calibration),
+          // icon: Icon(Icons.compass_calibration_outlined),
+          // ),
           _newMeasurementIcon(),
           _libraryIcon()
         ],
@@ -323,10 +355,10 @@ class MyHomePageState extends State<MyHomePage> {
               IconButton(
                   onPressed: () => _showDialog(),
                   icon: const Image(
-                    image: AssetImage('assets/logo_light.png'),
+                    image: AssetImage('assets/connect4kids_logo_kolor.png'),
 
                     // width: 100,
-                    height: 30,
+                    height: 25,
                   ))
             ],
           )),

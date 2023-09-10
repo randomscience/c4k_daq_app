@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:c4k_daq/library/upload_all_dialog.dart';
 import 'package:c4k_daq/upload_measurement.dart';
+import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 
 import 'package:path_provider/path_provider.dart';
@@ -20,6 +23,8 @@ class Library extends StatefulWidget {
 
 class _LibraryState extends State<Library> {
   bool _isLoading = true;
+  bool _isUploadingAll = false;
+
   // List<Map<String, dynamic>> contentsInFiles = [];
   Map<String, Map<String, dynamic>?> measurementFiles = {};
   // List<String> pathsToFiles = [];
@@ -36,14 +41,13 @@ class _LibraryState extends State<Library> {
     // _loadFiles();
   }
 
-  void uploadMeasurement() {}
   List<Widget> _generateCards(context) {
     List<Widget> cards = [];
     measurementFiles.forEach((key, value) => cards.add(LibraryCard(
           key: Key(key),
           localJsonData: value!,
           pathToFile: key,
-          runPopUp: _showDialog,
+          runPopUp: _showDeleteDialog,
           deleteMeasurement: _deleteMeasurement,
           snackBar: () => _showSnackBar(context),
         )));
@@ -52,7 +56,7 @@ class _LibraryState extends State<Library> {
   }
 
   void _loadFiles() async {
-    List<String> directoriesInFile = [];
+    List<String> measurementsInFile = [];
 
     setState(() => {_isLoading = false, measurementFiles = {}});
 
@@ -61,7 +65,7 @@ class _LibraryState extends State<Library> {
     try {
       Directory("$directory/c4k_daq/")
           .listSync()
-          .forEach((element) => directoriesInFile.add(element.path));
+          .forEach((element) => measurementsInFile.add(element.path));
     } on PathNotFoundException {
       setState(() => {_isLoading = false, measurementFiles = {}});
       return;
@@ -70,7 +74,7 @@ class _LibraryState extends State<Library> {
       return;
     }
 
-    Iterator iter = directoriesInFile.iterator;
+    Iterator iter = measurementsInFile.iterator;
 
     while (iter.moveNext()) {
       if (iter.current.contains('.json')) {
@@ -87,6 +91,8 @@ class _LibraryState extends State<Library> {
       ..sort((e1, e2) => DateTime.parse(e2.value!['measurement_time'])
           .compareTo(DateTime.parse(e1.value!['measurement_time']))));
 
+    widget.updateBadgeNumber(measurementFiles.entries.length);
+
     setState(() => {_isLoading = false, measurementFiles = sortedByValueMap});
   }
 
@@ -94,10 +100,11 @@ class _LibraryState extends State<Library> {
   void initState() {
     super.initState();
     _loadFiles();
+
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
   }
 
-  _showDialog(String id, String pathToFile) {
+  _showDeleteDialog(String id, String pathToFile) {
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -107,6 +114,18 @@ class _LibraryState extends State<Library> {
               id: id,
               pathToFile: pathToFile,
               deleteFile: _deleteMeasurement,
+            )));
+  }
+
+  _showUploadAllDialog() {
+    showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+            title: const Text("Usuń"),
+            content: UploadAllDialog(
+              exitButton: Navigator.of(context).pop,
+              updateBadgeNumber: widget.updateBadgeNumber,
+              measurementFiles: measurementFiles,
             )));
   }
 
@@ -137,6 +156,11 @@ class _LibraryState extends State<Library> {
 
   @override
   Widget build(BuildContext context) {
+    Widget uploadAllText = const Text('Wyślij wszystkie');
+    if (_isUploadingAll) {
+      uploadAllText = const CircularProgressIndicator();
+    }
+
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -152,10 +176,12 @@ class _LibraryState extends State<Library> {
                 padding: const EdgeInsets.all(12),
                 child: FloatingActionButton.extended(
                   onPressed: () {
-                    setState(() {});
+                    setState(() {
+                      _showUploadAllDialog();
+                    });
                   },
-                  icon: const Icon(Icons.navigation),
-                  label: const Text('Wyślij'),
+                  // icon: const Icon(Icons.navigation),
+                  label: uploadAllText,
                 )))
       ]);
     } else {
