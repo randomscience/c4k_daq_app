@@ -33,8 +33,6 @@ class _UploadAllDialogState extends State<UploadAllDialog>
     _noMeasurements = widget.measurementFiles.keys.length;
     _currentNoMeasurements = widget.measurementFiles.keys.length;
     controller = AnimationController(
-      /// [AnimationController]s can be created with `vsync: this` because of
-      /// [TickerProviderStateMixin].
       vsync: this,
       duration: const Duration(seconds: 2),
     )..addListener(() {
@@ -58,9 +56,9 @@ class _UploadAllDialogState extends State<UploadAllDialog>
         overallResult =
             await uploadMeasurementFromPath(measurementConfigFilePath);
       } on TimeoutException {
-        // logError(
-        // "Measurement upload failed, measurement path: $measurementConfigFilePath",
-        // errorType: "TimeoutException");
+        logError(
+            "Measurement upload failed, measurement path: $measurementConfigFilePath",
+            errorType: "TimeoutException");
         setState(() => {
               _currentNoMeasurements = widget.measurementFiles.keys.length,
               _message =
@@ -75,8 +73,9 @@ class _UploadAllDialogState extends State<UploadAllDialog>
             });
         return;
       } catch (x) {
-        // logError(
-        // "Measurement upload failed, Unknown error: $x, measurement path: $measurementConfigFilePath");
+        logError(
+            "Measurement upload failed, Unknown error: $x, measurement path: $measurementConfigFilePath",
+            errorType: x.runtimeType.toString());
         setState(() => {
               _currentNoMeasurements = widget.measurementFiles.keys.length,
               _message =

@@ -23,11 +23,8 @@ class Library extends StatefulWidget {
 
 class _LibraryState extends State<Library> {
   bool _isLoading = true;
-  bool _isUploadingAll = false;
 
-  // List<Map<String, dynamic>> contentsInFiles = [];
   Map<String, Map<String, dynamic>?> measurementFiles = {};
-  // List<String> pathsToFiles = [];
 
   void _deleteMeasurement(String pathToMeasurement) {
     deleteMeasurement(pathToMeasurement);
@@ -37,8 +34,6 @@ class _LibraryState extends State<Library> {
     setState(() {
       measurementFiles.remove(pathToMeasurement);
     });
-
-    // _loadFiles();
   }
 
   List<Widget> _generateCards(context) {
@@ -100,8 +95,6 @@ class _LibraryState extends State<Library> {
   void initState() {
     super.initState();
     _loadFiles();
-
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
   }
 
   _showDeleteDialog(String id, String pathToFile) {
@@ -130,20 +123,17 @@ class _LibraryState extends State<Library> {
   }
 
   _showSnackBar(BuildContext context, message) {
-    // show the modal dialog and pass some data to it
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         action: SnackBarAction(
           label: 'Ok',
-          onPressed: () {
-            // Code to execute.
-          },
+          onPressed: () {},
         ),
         content: Text(message),
         duration: const Duration(seconds: 5),
-        width: 280.0, // Width of the SnackBar.
+        width: 280.0,
         padding: const EdgeInsets.symmetric(
-          horizontal: 8.0, // Inner padding for SnackBar content.
+          horizontal: 8.0,
         ),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -155,11 +145,6 @@ class _LibraryState extends State<Library> {
 
   @override
   Widget build(BuildContext context) {
-    Widget uploadAllText = const Text('Wyślij wszystkie');
-    if (_isUploadingAll) {
-      uploadAllText = const CircularProgressIndicator();
-    }
-
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -170,7 +155,7 @@ class _LibraryState extends State<Library> {
           children: _generateCards(context),
         ),
         Align(
-            alignment: Alignment.bottomRight,
+            alignment: Alignment.bottomLeft,
             child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: FloatingActionButton.extended(
@@ -179,8 +164,7 @@ class _LibraryState extends State<Library> {
                       _showUploadAllDialog();
                     });
                   },
-                  // icon: const Icon(Icons.navigation),
-                  label: uploadAllText,
+                  label: const Text('Wyślij wszystkie'),
                 )))
       ]);
     } else {

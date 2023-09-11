@@ -26,7 +26,6 @@ class _Information extends State<Information> {
                     launchUrl(Uri.parse(url!),
                         mode: LaunchMode
                             .externalApplication); /*For url_launcher 6.1.0 and higher*/
-                    // launch(url);  /*For url_launcher 6.0.20 and lower*/
                   },
                 );
               }

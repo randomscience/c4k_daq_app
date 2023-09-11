@@ -59,6 +59,7 @@ Future<List<UploadResult>> uploadMeasurementFromId(String uniqueId) async {
       ...{"gateway_key": gatewayKeyValue},
       ...{"unique_id": uniqueId},
       ...{"hardware_key": await getId()},
+      ...{"app_version": appVersion},
       ...{
         id: measurementInformation[id],
         height: measurementInformation[height],
@@ -66,7 +67,6 @@ Future<List<UploadResult>> uploadMeasurementFromId(String uniqueId) async {
         collarBoneToFloor: measurementInformation[collarBoneToFloor],
         pelvisToFloor: measurementInformation[pelvisToFloor],
       },
-      // ...{"app_version": appVersion}
     }).timeout(const Duration(seconds: 10)));
   } on TimeoutException {
     throw TimeoutException("parsedUserInformation upload took to long.");

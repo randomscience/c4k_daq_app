@@ -87,12 +87,13 @@ class _LibraryCard extends State<LibraryCard> {
       overallResult.add(await uploadInformation(parsedUserInformation)
           .timeout(const Duration(minutes: 1)));
     } on TimeoutException {
-      // logError("Measurement info upload failed, measurement uuid: $uuid",
-      // errorType: "TimeoutException");
+      logError("Measurement info upload failed, measurement uuid: $uuid",
+          errorType: "TimeoutException");
       throw TimeoutException("parsedUserInformation upload took to long.");
     } catch (x) {
-      // logError(
-      // "Measurement info upload failed, Unknown error: $x, measurement uuid: $uuid");
+      logError(
+          "Measurement info upload failed, Unknown error: $x, measurement uuid: $uuid",
+          errorType: x.runtimeType.toString());
       rethrow;
     }
 
@@ -105,14 +106,15 @@ class _LibraryCard extends State<LibraryCard> {
                 exerciseVideoMapping[entry.key]!, entry.key, uuid)
             .timeout(const Duration(minutes: 5)));
       } on TimeoutException {
-        // logError(
-        // // "Measurement video upload failed, video path: ${entry.key},  measurement uuid: $uuid",
-        // errorType: "TimeoutException");
+        logError(
+            "Measurement video upload failed, video path: ${entry.key},  measurement uuid: $uuid",
+            errorType: "TimeoutException");
         throw TimeoutException(
             "${exerciseNameConverter(entry.key)} upload took to long.");
       } catch (x) {
-        // logError(
-        // "Measurement video upload failed, video path: ${entry.key}, unknown error: $x, measurement uuid: $uuid");
+        logError(
+            "Measurement video upload failed, video path: ${entry.key}, unknown error: $x, measurement uuid: $uuid",
+            errorType: x.runtimeType.toString());
         rethrow;
       }
     }
@@ -160,15 +162,11 @@ class _LibraryCard extends State<LibraryCard> {
     } else {
       widget.snackBar("Wysyłanie nie powiodło się, spróbuj ponownie później");
     }
-    // setState(() {
-    //   isAwaiting = false;
-    // });
   }
 
   FilledButton _sendButton() {
     if (isAwaiting) {
       return FilledButton(
-          // style: FilledButton.styleFrom(backgroundColor: Colors.white),
           onPressed: () => {},
           child: const SizedBox(
               width: 20,
@@ -179,11 +177,9 @@ class _LibraryCard extends State<LibraryCard> {
               )));
     } else {
       return FilledButton(
-          // style: FilledButton.styleFrom(backgroundColor: Colors.white),
           onPressed: () => {_retryUpload()},
           child: const Text(
             'Wyślij',
-            // style: TextStyle(color: Colors.blueAccent)
           ));
     }
   }
@@ -215,8 +211,6 @@ class _LibraryCard extends State<LibraryCard> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 8, 10),
                     child: TextButton(
-                      // style: ElevatedButton.styleFrom(
-                      //     backgroundColor: Colors.transparent),
                       onPressed: () => {_deleteMeasurement()},
                       child: const Text(
                         'Usuń',

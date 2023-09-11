@@ -55,7 +55,6 @@ class ValidatedTextInputState extends State<ValidatedTextInput> {
     }
 
     return TextField(
-      // onChanged: (text) => setState(),
       controller: widget.controller,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,

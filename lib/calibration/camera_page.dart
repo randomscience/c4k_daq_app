@@ -44,7 +44,6 @@ class CameraPageState extends State<CameraPage> {
   void dispose() {
     _cameraController.dispose();
 
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
     SystemChrome.setPreferredOrientations([]);
     super.dispose();
   }
@@ -71,14 +70,12 @@ class CameraPageState extends State<CameraPage> {
   }
 
   _exitRecording() async {
-    // widget.pathToVideoSetter(exerciseNameConverter(widget.exerciseTitle), null);
     setState(() => _isRecording = false);
     widget.exitButton();
   }
 
   _recordVideo() async {
     if (_isRecording) {
-      // XFile file = await _cameraController.
       file = await _cameraController.stopVideoRecording();
       String filepath =
           '${(await getApplicationDocumentsDirectory()).path}/c4k_daq/${file.name}';
@@ -92,7 +89,6 @@ class CameraPageState extends State<CameraPage> {
           exerciseNameConverter(widget.exerciseTitle), filepath);
 
       setState(() => {_isRecording = false, _recordingEnded = true});
-      // widget.exitButton();
     } else {
       await _cameraController.prepareForVideoRecording();
       await _cameraController.startVideoRecording();
@@ -111,7 +107,6 @@ class CameraPageState extends State<CameraPage> {
       );
     } else {
       return Center(
-          // child: Center(
           child: Stack(
         children: [
           Center(
@@ -137,7 +132,6 @@ class CameraPageState extends State<CameraPage> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 34, 0, 0),
                 child: IconButton(
-                  // backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                   icon: const Icon(
                     Icons.close_rounded,
                     color: Colors.white,
@@ -151,7 +145,6 @@ class CameraPageState extends State<CameraPage> {
               child: Padding(
                   padding: const EdgeInsets.fromLTRB(42, 42, 42, 0),
                   child: SizedBox(
-                    // width: 1200,
                     height: 36,
                     child: Center(
                         child: Text(widget.exerciseTitle,
@@ -167,8 +160,6 @@ class CameraPageState extends State<CameraPage> {
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 24, 106),
                     child: FilledButton(
-                        // backgroundColor:Colors.transparent,
-                        // style: TextStyle(color: Colors.grey),
                         onPressed: () => {_exitRecording()},
                         child: const Text(
                           'Zapisz',
@@ -178,7 +169,6 @@ class CameraPageState extends State<CameraPage> {
                           ),
                         )))),
         ],
-        // ),
       ));
     }
   }

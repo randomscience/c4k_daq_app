@@ -297,12 +297,10 @@ class MyHomePageState extends State<MyHomePage> {
       return const NavigationDestination(
         label: 'Nowy Pomiar',
         selectedIcon: Badge(
-          // backgroundColor: Colors.blueAccent,
           label: Icon(Icons.edit, size: 12.0, color: Colors.white),
           child: Icon(Icons.add_circle),
         ),
         icon: Badge(
-          // backgroundColor: Colors.blueAccent,
           label: Icon(Icons.edit, size: 12.0, color: Colors.white),
           child: Icon(Icons.add_circle_outline_outlined),
         ),
@@ -321,12 +319,10 @@ class MyHomePageState extends State<MyHomePage> {
       return NavigationDestination(
           label: 'Oczekujące',
           selectedIcon: Badge(
-            // backgroundColor: Theme.of(context).focusColor,
             label: Text('$noDirectoriesInFile'),
             child: const Icon(Icons.bookmark),
           ),
           icon: Badge(
-            // backgroundColor: Theme.of(context).,
             label: Text('$noDirectoriesInFile'),
             child: const Icon(Icons.bookmark_outline_outlined),
           ));

@@ -44,7 +44,6 @@ class _DeleteDataDialogState extends State<DeleteDataDialog> {
                             },
                         child: const Text(
                           'Usuń',
-                          // style: TextStyle(color: Colors.red),
                         ))))
           ],
         )
