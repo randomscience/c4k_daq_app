@@ -365,7 +365,8 @@ class MyHomePageState extends State<MyHomePage> {
               child: const Text('Add Incomplete'),
             ),
           FilledButton(
-            onPressed: () => {copyToSDCard(), Navigator.pop(context, 'MOVE')},
+            onPressed: () =>
+                {copyToSDCard(), Navigator.pop(context, 'Wyeksportuj')},
             child: const Text('Move'),
           ),
         ],

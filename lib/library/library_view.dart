@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 
 import 'package:c4k_daq/library/upload_all_dialog.dart';
 import 'package:c4k_daq/upload_measurement.dart';
-import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 
 import 'package:path_provider/path_provider.dart';
