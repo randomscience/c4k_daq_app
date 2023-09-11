@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/upload_measurement.dart';
 import 'package:c4k_daq/upload_result.dart';
@@ -10,7 +11,7 @@ class LibraryCard extends StatefulWidget {
   final Map<String, dynamic> localJsonData;
   final void Function(String) deleteMeasurement;
   final void Function(String, String) runPopUp;
-  final void Function() snackBar;
+  final void Function(String) snackBar;
   final String pathToFile;
 
   const LibraryCard(
@@ -86,8 +87,12 @@ class _LibraryCard extends State<LibraryCard> {
       overallResult.add(await uploadInformation(parsedUserInformation)
           .timeout(const Duration(minutes: 1)));
     } on TimeoutException {
+      // logError("Measurement info upload failed, measurement uuid: $uuid",
+      // errorType: "TimeoutException");
       throw TimeoutException("parsedUserInformation upload took to long.");
     } catch (x) {
+      // logError(
+      // "Measurement info upload failed, Unknown error: $x, measurement uuid: $uuid");
       rethrow;
     }
 
@@ -100,9 +105,14 @@ class _LibraryCard extends State<LibraryCard> {
                 exerciseVideoMapping[entry.key]!, entry.key, uuid)
             .timeout(const Duration(minutes: 5)));
       } on TimeoutException {
+        // logError(
+        // // "Measurement video upload failed, video path: ${entry.key},  measurement uuid: $uuid",
+        // errorType: "TimeoutException");
         throw TimeoutException(
             "${exerciseNameConverter(entry.key)} upload took to long.");
       } catch (x) {
+        // logError(
+        // "Measurement video upload failed, video path: ${entry.key}, unknown error: $x, measurement uuid: $uuid");
         rethrow;
       }
     }
@@ -125,11 +135,16 @@ class _LibraryCard extends State<LibraryCard> {
     try {
       overallResult = await saveMeasurement();
     } on TimeoutException {
-      widget.snackBar();
+      widget.snackBar(
+          "Wysyłanie nie powiodło się, połączenie internetowe jest za wolne, spróbuj ponownie później");
       setState(() => isAwaiting = false);
       return;
+    } on SocketException {
+      widget
+          .snackBar("Brak połączenia z serwerem, sprawdź ustawienia internetu");
+      setState(() => isAwaiting = false);
     } catch (x) {
-      widget.snackBar();
+      widget.snackBar("Wysyłanie nie powiodło się, spróbuj ponownie później");
       setState(() => isAwaiting = false);
       return;
     }
@@ -143,7 +158,7 @@ class _LibraryCard extends State<LibraryCard> {
     if (singleOverallResult) {
       widget.deleteMeasurement(widget.pathToFile);
     } else {
-      widget.snackBar();
+      widget.snackBar("Wysyłanie nie powiodło się, spróbuj ponownie później");
     }
     // setState(() {
     //   isAwaiting = false;

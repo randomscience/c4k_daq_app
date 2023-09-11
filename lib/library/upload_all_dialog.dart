@@ -58,6 +58,9 @@ class _UploadAllDialogState extends State<UploadAllDialog>
         overallResult =
             await uploadMeasurementFromPath(measurementConfigFilePath);
       } on TimeoutException {
+        // logError(
+        // "Measurement upload failed, measurement path: $measurementConfigFilePath",
+        // errorType: "TimeoutException");
         setState(() => {
               _currentNoMeasurements = widget.measurementFiles.keys.length,
               _message =
@@ -72,8 +75,8 @@ class _UploadAllDialogState extends State<UploadAllDialog>
             });
         return;
       } catch (x) {
-        print(x);
-        print(x.runtimeType);
+        // logError(
+        // "Measurement upload failed, Unknown error: $x, measurement path: $measurementConfigFilePath");
         setState(() => {
               _currentNoMeasurements = widget.measurementFiles.keys.length,
               _message =

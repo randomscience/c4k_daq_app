@@ -49,7 +49,7 @@ class _LibraryState extends State<Library> {
           pathToFile: key,
           runPopUp: _showDeleteDialog,
           deleteMeasurement: _deleteMeasurement,
-          snackBar: () => _showSnackBar(context),
+          snackBar: (String message) => _showSnackBar(context, message),
         )));
 
     return cards;
@@ -129,7 +129,7 @@ class _LibraryState extends State<Library> {
             )));
   }
 
-  _showSnackBar(BuildContext context) {
+  _showSnackBar(BuildContext context, message) {
     // show the modal dialog and pass some data to it
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -139,8 +139,7 @@ class _LibraryState extends State<Library> {
             // Code to execute.
           },
         ),
-        content:
-            const Text('Wysyłanie nie powiodło się, spróbuj ponownie później'),
+        content: Text(message),
         duration: const Duration(seconds: 5),
         width: 280.0, // Width of the SnackBar.
         padding: const EdgeInsets.symmetric(
