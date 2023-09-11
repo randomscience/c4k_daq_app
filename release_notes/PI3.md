@@ -8,4 +8,4 @@
 2. Logo 'Random Science', widoczne w prawym górnym rogu, zostało zamienione logiem 'Connect 4 kids'.
 3. Poprawiono informacje o błedach napotkanych podczas wysyłania pomiarów z biblioteki.
 4. Naprawiono błąd licznika oczekujących pomiarów.
-5. Dodano 'Wyeksportuj' przycisk, umożliwiający skopiowanie pomiarów do pamięci telefonu.
+5. Dodano przycisk 'Wyeksportuj', umożliwiający skopiowanie pomiarów do pamięci telefonu.
