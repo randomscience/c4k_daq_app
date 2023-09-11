@@ -37,14 +37,11 @@ class _NewRecording extends State<NewRecording> {
   String currentlyRecorderExerciseTitle = "No_exercise_is_currently_recorded";
 
   _showSnackBar(BuildContext context, String text) {
-    // show the modal dialog and pass some data to it
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         action: SnackBarAction(
           label: 'Ok',
-          onPressed: () {
-            // Code to execute.
-          },
+          onPressed: () {},
         ),
         content: Text(text),
         duration: const Duration(seconds: 5),

@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:c4k_daq/library/upload_all_dialog.dart';
 import 'package:c4k_daq/upload_measurement.dart';
+import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 
 import 'package:path_provider/path_provider.dart';
@@ -20,9 +23,8 @@ class Library extends StatefulWidget {
 
 class _LibraryState extends State<Library> {
   bool _isLoading = true;
-  // List<Map<String, dynamic>> contentsInFiles = [];
+
   Map<String, Map<String, dynamic>?> measurementFiles = {};
-  // List<String> pathsToFiles = [];
 
   void _deleteMeasurement(String pathToMeasurement) {
     deleteMeasurement(pathToMeasurement);
@@ -32,8 +34,6 @@ class _LibraryState extends State<Library> {
     setState(() {
       measurementFiles.remove(pathToMeasurement);
     });
-
-    // _loadFiles();
   }
 
   List<Widget> _generateCards(context) {
@@ -42,16 +42,16 @@ class _LibraryState extends State<Library> {
           key: Key(key),
           localJsonData: value!,
           pathToFile: key,
-          runPopUp: _showDialog,
+          runPopUp: _showDeleteDialog,
           deleteMeasurement: _deleteMeasurement,
-          snackBar: () => _showSnackBar(context),
+          snackBar: (String message) => _showSnackBar(context, message),
         )));
 
     return cards;
   }
 
   void _loadFiles() async {
-    List<String> directoriesInFile = [];
+    List<String> measurementsInFile = [];
 
     setState(() => {_isLoading = false, measurementFiles = {}});
 
@@ -60,7 +60,7 @@ class _LibraryState extends State<Library> {
     try {
       Directory("$directory/c4k_daq/")
           .listSync()
-          .forEach((element) => directoriesInFile.add(element.path));
+          .forEach((element) => measurementsInFile.add(element.path));
     } on PathNotFoundException {
       setState(() => {_isLoading = false, measurementFiles = {}});
       return;
@@ -69,7 +69,7 @@ class _LibraryState extends State<Library> {
       return;
     }
 
-    Iterator iter = directoriesInFile.iterator;
+    Iterator iter = measurementsInFile.iterator;
 
     while (iter.moveNext()) {
       if (iter.current.contains('.json')) {
@@ -81,10 +81,12 @@ class _LibraryState extends State<Library> {
         }
       }
     }
-    print(measurementFiles);
+
     var sortedByValueMap = Map.fromEntries(measurementFiles.entries.toList()
       ..sort((e1, e2) => DateTime.parse(e2.value!['measurement_time'])
           .compareTo(DateTime.parse(e1.value!['measurement_time']))));
+
+    widget.updateBadgeNumber(measurementFiles.entries.length);
 
     setState(() => {_isLoading = false, measurementFiles = sortedByValueMap});
   }
@@ -93,10 +95,9 @@ class _LibraryState extends State<Library> {
   void initState() {
     super.initState();
     _loadFiles();
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
   }
 
-  _showDialog(String id, String pathToFile) {
+  _showDeleteDialog(String id, String pathToFile) {
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -109,22 +110,30 @@ class _LibraryState extends State<Library> {
             )));
   }
 
-  _showSnackBar(BuildContext context) {
-    // show the modal dialog and pass some data to it
+  _showUploadAllDialog() {
+    showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+            title: const Text("Usuń"),
+            content: UploadAllDialog(
+              exitButton: Navigator.of(context).pop,
+              updateBadgeNumber: widget.updateBadgeNumber,
+              measurementFiles: measurementFiles,
+            )));
+  }
+
+  _showSnackBar(BuildContext context, message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         action: SnackBarAction(
           label: 'Ok',
-          onPressed: () {
-            // Code to execute.
-          },
+          onPressed: () {},
         ),
-        content:
-            const Text('Wysyłanie nie powiodło się, spróbuj ponownie później'),
+        content: Text(message),
         duration: const Duration(seconds: 5),
-        width: 280.0, // Width of the SnackBar.
+        width: 280.0,
         padding: const EdgeInsets.symmetric(
-          horizontal: 8.0, // Inner padding for SnackBar content.
+          horizontal: 8.0,
         ),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -141,10 +150,23 @@ class _LibraryState extends State<Library> {
         child: CircularProgressIndicator(),
       );
     } else if (measurementFiles.keys.isNotEmpty) {
-      return Center(
-          child: ListView(
-        children: _generateCards(context),
-      ));
+      return Stack(children: [
+        ListView(
+          children: _generateCards(context),
+        ),
+        Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: FloatingActionButton.extended(
+                  onPressed: () {
+                    setState(() {
+                      _showUploadAllDialog();
+                    });
+                  },
+                  label: const Text('Wyślij wszystkie'),
+                )))
+      ]);
     } else {
       return const Center(
         child: Text("Nie masz żadnych pomiarów oczekujących na wysłanie",

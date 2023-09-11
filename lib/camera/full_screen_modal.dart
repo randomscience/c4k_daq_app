@@ -5,12 +5,10 @@ class FullScreenModal extends ModalRoute {
   final Function pathToVideoSetter;
   final String exerciseTitle;
 
-  // constructor
   FullScreenModal(
       {required this.pathToVideoSetter, required this.exerciseTitle});
 
   _closeModal(context) {
-    // close the modal dialog
     Navigator.pop(context);
   }
 
@@ -51,16 +49,13 @@ class FullScreenModal extends ModalRoute {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    // add fade animation
     return FadeTransition(
       opacity: animation,
-      // add slide animation
       child: SlideTransition(
         position: Tween<Offset>(
           begin: const Offset(0, -1),
           end: Offset.zero,
         ).animate(animation),
-        // add scale animation
         child: ScaleTransition(
           scale: animation,
           child: child,

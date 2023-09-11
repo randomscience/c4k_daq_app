@@ -1,3 +1,4 @@
+import 'package:c4k_daq/upload_measurement.dart';
 import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 
@@ -22,8 +23,6 @@ class UploadDataDialog extends StatefulWidget {
 class UploadDataDialogState extends State<UploadDataDialog> {
   bool isAwaiting = true;
   String description = 'Trwa wysyłanie danych do zewnętrznego serwera.';
-  // String okButtonText = "";
-  // FilledButton okButton =
 
   _runAwaitedFunction() async {
     Map<String, String?> userInformation = widget.userInformationGetter();
@@ -54,6 +53,9 @@ class UploadDataDialogState extends State<UploadDataDialog> {
     try {
       result = await widget.awaitedFunction();
     } catch (e) {
+      logError(
+          "Measurement upload failed, upload triggered from New Measurement page, Unknown error: $e",
+          errorType: e.runtimeType.toString());
       description = "Napotkano błąd w aplikacji. Szczegóły dla deweloperów: $e";
 
       setState(() => isAwaiting = false);
@@ -74,7 +76,7 @@ class UploadDataDialogState extends State<UploadDataDialog> {
         return;
       } else {
         description =
-            "Nastąpił błąd połączenia z serwerem, dane zapisane zostały w pamięci urządzenia. Szczegóły dla deweloperów:";
+            "Wystąpił błąd połączenia z serwerem, dane zapisane zostały w pamięci urządzenia. Szczegóły dla deweloperów:";
 
         for (var element in result) {
           description = '$description\n${element.body}';

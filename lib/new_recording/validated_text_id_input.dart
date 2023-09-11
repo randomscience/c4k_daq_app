@@ -42,9 +42,7 @@ class ValidatedTextIDInputState extends State<ValidatedTextIDInput> {
     }
 
     return TextField(
-      // onChanged: (text) => setState(),
       controller: widget.controller,
-
       decoration: InputDecoration(
         errorText: widget._errorText(),
         labelText: widget.title,

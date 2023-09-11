@@ -10,6 +10,28 @@ import 'dart:io' as io;
 
 import 'package:path_provider/path_provider.dart';
 
+void logError(
+  String message, {
+  String errorType = "Unknown",
+}) async {
+  http
+      .post(
+        Uri.parse("${gatewayUrl}log_error"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          ...{"gateway_key": gatewayKeyValue},
+          ...{"message": message},
+          ...{"hardware_id": await getId()},
+          ...{"timestamp": "${DateTime.now()}"},
+          ...{"error_type": errorType},
+          ...{"app_version": appVersion}
+        }),
+      )
+      .timeout(const Duration(seconds: 5));
+}
+
 Future<List<UploadResult>> uploadMeasurementFromId(String uniqueId) async {
   String directory = (await getApplicationDocumentsDirectory()).path;
   io.File measurementInformationFile;
@@ -37,6 +59,7 @@ Future<List<UploadResult>> uploadMeasurementFromId(String uniqueId) async {
       ...{"gateway_key": gatewayKeyValue},
       ...{"unique_id": uniqueId},
       ...{"hardware_key": await getId()},
+      ...{"app_version": appVersion},
       ...{
         id: measurementInformation[id],
         height: measurementInformation[height],
@@ -44,7 +67,6 @@ Future<List<UploadResult>> uploadMeasurementFromId(String uniqueId) async {
         collarBoneToFloor: measurementInformation[collarBoneToFloor],
         pelvisToFloor: measurementInformation[pelvisToFloor],
       },
-      // ...{"app_version": appVersion}
     }).timeout(const Duration(seconds: 10)));
   } on TimeoutException {
     throw TimeoutException("parsedUserInformation upload took to long.");
@@ -109,7 +131,7 @@ Future<List<UploadResult>> uploadMeasurementFromPath(String path) async {
         pelvisToFloor: measurementInformation[pelvisToFloor],
       },
       // ...{"app_version": appVersion}
-    }).timeout(const Duration(seconds: 10)));
+    }).timeout(const Duration(minutes: 1)));
   } on TimeoutException {
     throw TimeoutException("parsedUserInformation upload took to long.");
   } catch (x) {
@@ -131,7 +153,7 @@ Future<List<UploadResult>> uploadMeasurementFromPath(String path) async {
               exerciseVideoMapping[entry.key]!,
               entry.key,
               measurementInformation["unique_id"])
-          .timeout(const Duration(seconds: 30)));
+          .timeout(const Duration(minutes: 5)));
     } on TimeoutException {
       throw TimeoutException("${entry.key} upload took to long.");
     } catch (x) {
@@ -210,17 +232,6 @@ Future<void> saveToFile(
     String uuid,
     Map<String, String?> userInformation,
     Map<String, String?> exerciseVideoMapping) async {
-  // String directory = (await getApplicationDocumentsDirectory()).path;
-
-  // Map<String, String> updatedExerciseVideoMapping = {};
-  // exerciseVideoMapping.forEach((key, value) async {
-  //   String filePath =
-  //       '$directory/c4k_daq/${uuid}_${exerciseNameConverter(key)}.mp4';
-
-  //   await io.File(exerciseVideoMapping[key]!).rename((filePath));
-  //   updatedExerciseVideoMapping[exerciseNameConverter(key)] = filePath;
-  // });
-
   await localFile.writeAsString(
       json.encode({
         ...{"unique_id": uuid},
