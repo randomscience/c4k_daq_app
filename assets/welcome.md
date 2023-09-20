@@ -16,7 +16,7 @@ Zespół Random Science
 
 ## Przygotowanie stanowiska pomiarowego
 
-UUstaw kamerę tak, aby:
+Ustaw kamerę tak, aby:
 - Tło nagrania było jednolite (np. biała ściana)
 - Markery na podłożu były dobrze widoczne
 - Kadr był dobrze i jednolicie oświetlony 
