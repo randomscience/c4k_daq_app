@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:c4k_daq/calibration/calibration_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:c4k_daq/constants.dart';
@@ -261,15 +262,15 @@ class MyHomePageState extends State<MyHomePage> {
 
   _pageTitle() {
     if (currentPageIndex == 0) return "Instrukcja";
-    // if (currentPageIndex == 1) return "Kalibracja";
-    if (currentPageIndex == 1) return "Nowy Pomiar";
+    if (currentPageIndex == 1) return "Kalibracja";
+    if (currentPageIndex == 2) return "Nowy Pomiar";
     return "Oczekujące";
   }
 
   StatefulWidget _getCentralWidget() {
     if (currentPageIndex == 0) return const Information();
-    // if (currentPageIndex == 1) return const Calibration();
-    if (currentPageIndex == 1) {
+    if (currentPageIndex == 1) return const Calibration();
+    if (currentPageIndex == 2) {
       return NewRecording(
         userInformation: () => widget.userInformation,
         exerciseVideoMapping: () => widget.exerciseVideoMapping,
@@ -392,11 +393,11 @@ class MyHomePageState extends State<MyHomePage> {
             selectedIcon: Icon(Icons.info),
             icon: Icon(Icons.info_outlined),
           ),
-          // const NavigationDestination(
-          // label: 'Kalibracja',
-          // selectedIcon: Icon(Icons.compass_calibration),
-          // icon: Icon(Icons.compass_calibration_outlined),
-          // ),
+          const NavigationDestination(
+            label: 'Kalibracja',
+            selectedIcon: Icon(Icons.compass_calibration),
+            icon: Icon(Icons.compass_calibration_outlined),
+          ),
           _newMeasurementIcon(),
           _libraryIcon()
         ],

@@ -6,28 +6,26 @@ import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
-class CameraPage extends StatefulWidget {
-  final Function pathToVideoSetter;
+class CameraPagePhoto extends StatefulWidget {
   final Function exitButton;
-  final String exerciseTitle;
+  final Function returnPicture;
+
   final bool verticalOrientation;
 
-  const CameraPage({
+  const CameraPagePhoto({
     super.key,
-    required this.pathToVideoSetter,
-    required this.exerciseTitle,
     required this.exitButton,
     this.verticalOrientation = true,
+    required this.returnPicture,
   });
 
   @override
-  CameraPageState createState() => CameraPageState();
+  CameraPagePhotoState createState() => CameraPagePhotoState();
 }
 
-class CameraPageState extends State<CameraPage> {
+class CameraPagePhotoState extends State<CameraPagePhoto> {
   bool _isLoading = true;
-  bool _isRecording = false;
-  bool _recordingEnded = false;
+  String? _picturePath;
   late CameraController _cameraController;
   XFile file = XFile("");
   @override
@@ -70,30 +68,23 @@ class CameraPageState extends State<CameraPage> {
   }
 
   _exitRecording() async {
-    setState(() => _isRecording = false);
+    setState(() => {});
     widget.exitButton();
   }
 
-  _recordVideo() async {
-    if (_isRecording) {
-      file = await _cameraController.stopVideoRecording();
-      String filepath =
-          '${(await getApplicationDocumentsDirectory()).path}/c4k_daq/${file.name}';
+  _takePicture() async {
+    try {
+      final image = await _cameraController.takePicture();
 
-      Directory("/data/user/0/com.example.c4k_daq/app_flutter/c4k_daq")
-          .createSync();
-
-      await file.saveTo(filepath);
-
-      widget.pathToVideoSetter(
-          exerciseNameConverter(widget.exerciseTitle), filepath);
-
-      setState(() => {_isRecording = false, _recordingEnded = true});
-    } else {
-      await _cameraController.prepareForVideoRecording();
-      await _cameraController.startVideoRecording();
-      setState(() => _isRecording = true);
+      _picturePath = image.path;
+    } catch (e) {
+      print("error?: $e");
     }
+
+    setState(
+      () => {},
+    );
+    // widget.pathToVideoSetter("calibration", "calibration") ;
   }
 
   @override
@@ -119,12 +110,12 @@ class CameraPageState extends State<CameraPage> {
                 child: FloatingActionButton(
                   backgroundColor: Colors.white,
                   shape: const CircleBorder(eccentricity: 0.5),
-                  child: Icon(
-                    _isRecording ? Icons.stop_rounded : Icons.circle,
+                  child: const Icon(
+                    Icons.circle,
                     color: Colors.red,
                     size: 46,
                   ),
-                  onPressed: () => _recordVideo(),
+                  onPressed: () => _takePicture(),
                 ),
               )),
           Align(
@@ -140,27 +131,13 @@ class CameraPageState extends State<CameraPage> {
                   onPressed: () => {_exitRecording()},
                 ),
               )),
-          Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(42, 42, 42, 0),
-                  child: SizedBox(
-                    height: 36,
-                    child: Center(
-                        child: Text(widget.exerciseTitle,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.white))),
-                  ))),
-          if (_recordingEnded && !_isRecording && !_isLoading)
+          if (!_isLoading && _picturePath != null)
             Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 24, 106),
                     child: FilledButton(
-                        onPressed: () => {_exitRecording()},
+                        onPressed: () => {widget.returnPicture(_picturePath)},
                         child: const Text(
                           'Zapisz',
                           style: TextStyle(

@@ -47,6 +47,7 @@ dependencies:
   flutter_markdown: ^0.6.17+1
   url_launcher: ^6.1.12
   device_info_plus: ^8.2.2
+  floating_overlay: ^1.2.1
   permission_handler:
 dev_dependencies:
   flutter_test:
