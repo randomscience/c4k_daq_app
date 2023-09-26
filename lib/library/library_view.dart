@@ -112,7 +112,7 @@ class _LibraryState extends State<Library> {
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-            title: const Text("Usuń"),
+            title: const Text("Wyślij Wszystkie"),
             content: UploadAllDialog(
               exitButton: Navigator.of(context).pop,
               updateBadgeNumber: widget.updateBadgeNumber,

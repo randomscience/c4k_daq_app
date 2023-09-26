@@ -157,7 +157,7 @@ class _LibraryCard extends State<LibraryCard> {
       singleOverallResult = element.isSuccess() && singleOverallResult;
     }
 
-    if (singleOverallResult) {
+    if (singleOverallResult && overallResult.isNotEmpty) {
       widget.deleteMeasurement(widget.pathToFile);
     } else {
       widget.snackBar("Wysyłanie nie powiodło się, spróbuj ponownie później");

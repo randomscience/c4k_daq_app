@@ -95,7 +95,7 @@ class _NewRecording extends State<NewRecording> {
       overallResult = await uploadMeasurementFromId(uuid);
     } catch (x) {
       _showSnackBar(context, "Pomiar zapisano w oczekujących");
-      rethrow;
+      return;
     }
 
     bool singleOverallResult = true;
@@ -107,12 +107,15 @@ class _NewRecording extends State<NewRecording> {
       }
     }
 
-    if (singleOverallResult) {
+    if (singleOverallResult && overallResult.isNotEmpty) {
       deleteMeasurement('$path/c4k_daq/$uuid.json');
       widget.clearData();
       setState(() => {});
+    } else {
+      _showSnackBar(context, "Pomiar zapisano w oczekujących");
+      return;
     }
-
+    setState(() => {});
     return overallResult;
   }
 
