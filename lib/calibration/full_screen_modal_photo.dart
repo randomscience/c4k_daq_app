@@ -2,8 +2,21 @@ import 'dart:io';
 
 import 'package:c4k_daq/calibration/camera_page_photo.dart';
 import 'package:flutter/material.dart';
-import 'package:floating_overlay/floating_overlay.dart';
 import 'package:flutter/services.dart';
+// import 'package:getwidget/getwidget.dart';
+// import 'package:floating_draggable_widget/floating_draggable_widget.dart';
+// import 'package:image_painter_extended/image_painter_extended.dart';
+
+import 'dart:typed_data';
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_painter/flutter_painter.dart';
+
+import 'dart:ui' as ui;
+
+// import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class MarkerPage extends StatefulWidget {
   final String picturePath;
@@ -16,23 +29,45 @@ class MarkerPage extends StatefulWidget {
 }
 
 class MarkerPageState extends State<MarkerPage> {
-  late Image image;
-  final controller = FloatingOverlayController.relativeSize(
-    maxScale: 2.0,
-    minScale: 1.0,
-    start: Offset.zero,
-    padding: const EdgeInsets.all(200.0),
-    // constrained: true,
-  );
+  late Image imag;
+  late Paint shapePaint;
+  late PainterController controller;
+  late ui.Image backgroundImage;
 
   @override
-  void initState() {
+  Future<void> initState() async {
     super.initState();
+    shapePaint = Paint()
+      ..strokeWidth = 5
+      ..color = Colors.red
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
 
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    image = Image.file(File(widget.picturePath));
+    controller = PainterController(
+        settings: PainterSettings(
+            text: const TextSettings(
+              // focusNode: textFocusNode,
+              textStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(255, 0, 0, 1),
+                  fontSize: 18),
+            ),
+            freeStyle: const FreeStyleSettings(
+              color: Color.fromRGBO(255, 0, 0, 1),
+              strokeWidth: 5,
+            ),
+            shape: ShapeSettings(
+              paint: shapePaint,
+            ),
+            scale: const ScaleSettings(
+              enabled: true,
+              minScale: 1,
+              maxScale: 5,
+            )));
 
+    backgroundImage =
+        await const NetworkImage('https://picsum.photos/1920/1080/').image;
+    controller.background = backgroundImage.backgroundDrawable;
     setState(() => {});
   }
 
@@ -40,26 +75,29 @@ class MarkerPageState extends State<MarkerPage> {
   Widget build(BuildContext context) {
     print(widget.picturePath);
 
+    // final _imageKey = GlobalKey<ImagePainterState>();
+
+    // Uint8List byteArray = await _imageKey.currentState.exportImage();
+
+    // File imgFile = new File('directoryPath/fileName.png');
+    // imgFile.writeAsBytesSync(image);
+
     return Center(
         child: Stack(children: [
-      Center(
-        child: FloatingOverlay(
-          controller: controller,
-          floatingChild: SizedBox.square(
-            dimension: 30.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 2.0,
+      Padding(
+          padding: EdgeInsets.only(top: 80),
+          child: Center(
+            child: Positioned.fill(
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: backgroundImage.width! / backgroundImage.height!,
+                  child: FlutterPainter(
+                    controller: controller,
+                  ),
                 ),
               ),
             ),
-          ),
-          child: image,
-        ),
-      ),
+          )),
       Align(
           alignment: Alignment.topLeft,
           child: Padding(
@@ -73,24 +111,6 @@ class MarkerPageState extends State<MarkerPage> {
               onPressed: () => widget.exitButton(),
             ),
           )),
-      Align(
-        alignment: Alignment.topCenter,
-        child: ElevatedButton(
-            child: const Text('Toggle'),
-            onPressed: () {
-              controller.toggle();
-            }),
-      ),
-      Align(
-        alignment: Alignment.topRight,
-        child: ElevatedButton(
-            child: const Text('position'),
-            onPressed: () {
-              print(controller.offset);
-              print(image.height);
-              print(image.width);
-            }),
-      )
     ]));
   }
 }

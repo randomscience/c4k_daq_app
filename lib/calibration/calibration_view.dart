@@ -2,7 +2,6 @@ import 'package:c4k_daq/calibration/full_screen_modal_photo.dart';
 import 'package:flutter/material.dart'
     show
         BuildContext,
-        Center,
         Column,
         Navigator,
         State,

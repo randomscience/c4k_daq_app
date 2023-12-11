@@ -47,8 +47,14 @@ dependencies:
   flutter_markdown: ^0.6.17+1
   url_launcher: ^6.1.12
   device_info_plus: ^8.2.2
-  floating_overlay: ^1.2.1
   permission_handler:
+  flutter_painter:
+
+  # floating_overlay: ^1.2.1 # does not return info about position
+  # getwidget: ^2.0.4 # cant even be moved
+  # floating_draggable_widget: ^2.1.4 # does not return info about position
+  # image_painter_extended:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
