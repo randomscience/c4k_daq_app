@@ -1,8 +1,4 @@
-import 'dart:async';
-import 'dart:io';
-import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/upload_measurement.dart';
-import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -46,81 +42,6 @@ class _LibraryCard extends State<LibraryCard> {
     measurementTimeHour = DateFormat('H:mm').format(date.toLocal());
   }
 
-  saveMeasurement() async {
-    Map<String, String?> userInformation =
-        Map<String, String?>.from(emptyUserInformation());
-
-    Map<String, String?> exerciseVideoMapping =
-        Map<String, String?>.from(emptyExerciseVideoMapping);
-
-    var keysList = List.from(userInformation.keys);
-
-    for (var element in keysList) {
-      userInformation[element] = widget.localJsonData[element].toString();
-    }
-
-    keysList = List.from(exerciseVideoMapping.keys);
-    for (var element in keysList) {
-      exerciseVideoMapping[element] = widget.localJsonData[element].toString();
-    }
-
-    var uuid = widget.localJsonData['unique_id'].toString();
-    var appVersion = widget.localJsonData['app_version'].toString();
-
-    Map<String, String> parsedUserInformation = {};
-
-    Iterator informationIterator = {
-      ...{"gateway_key": gatewayKeyValue},
-      ...{"unique_id": uuid},
-      ...{"hardware_key": await getId()},
-      ...userInformation,
-      ...{"app_version": appVersion}
-    }.entries.iterator;
-
-    while (informationIterator.moveNext()) {
-      MapEntry<String, String?> entry = informationIterator.current;
-      parsedUserInformation[entry.key] = entry.value!;
-    }
-
-    List<UploadResult> overallResult = [];
-    try {
-      overallResult.add(await uploadInformation(parsedUserInformation)
-          .timeout(const Duration(minutes: 1)));
-    } on TimeoutException {
-      logError("Measurement info upload failed, measurement uuid: $uuid",
-          errorType: "TimeoutException");
-      throw TimeoutException("parsedUserInformation upload took to long.");
-    } catch (x) {
-      logError(
-          "Measurement info upload failed, Unknown error: $x, measurement uuid: $uuid",
-          errorType: x.runtimeType.toString());
-      rethrow;
-    }
-
-    Iterator videoIterator = exerciseVideoMapping.entries.iterator;
-
-    while (videoIterator.moveNext()) {
-      MapEntry<String, String?> entry = videoIterator.current;
-      try {
-        overallResult.add(await uploadMeasurementVideo(
-                exerciseVideoMapping[entry.key]!, entry.key, uuid)
-            .timeout(const Duration(minutes: 5)));
-      } on TimeoutException {
-        logError(
-            "Measurement video upload failed, video path: ${entry.key},  measurement uuid: $uuid",
-            errorType: "TimeoutException");
-        throw TimeoutException(
-            "${exerciseNameConverter(entry.key)} upload took to long.");
-      } catch (x) {
-        logError(
-            "Measurement video upload failed, video path: ${entry.key}, unknown error: $x, measurement uuid: $uuid",
-            errorType: x.runtimeType.toString());
-        rethrow;
-      }
-    }
-    return overallResult;
-  }
-
   void _deleteMeasurement() async {
     String directory = (await getApplicationDocumentsDirectory()).path;
 
@@ -132,36 +53,14 @@ class _LibraryCard extends State<LibraryCard> {
     setState(() {
       isAwaiting = true;
     });
+    (bool, String) result = await uploadMeasurementFromPath(widget.pathToFile);
+    setState(() => isAwaiting = false);
 
-    List<UploadResult> overallResult = [];
-    try {
-      overallResult = await saveMeasurement();
-    } on TimeoutException {
-      widget.snackBar(
-          "Wysyłanie nie powiodło się, połączenie internetowe jest za wolne, spróbuj ponownie później");
-      setState(() => isAwaiting = false);
-      return;
-    } on SocketException {
-      widget
-          .snackBar("Brak połączenia z serwerem, sprawdź ustawienia internetu");
-      setState(() => isAwaiting = false);
-    } catch (x) {
-      widget.snackBar("Wysyłanie nie powiodło się, spróbuj ponownie później");
-      setState(() => isAwaiting = false);
+    if (!result.$1) {
+      widget.snackBar(result.$2);
       return;
     }
-
-    bool singleOverallResult = true;
-
-    for (var element in overallResult) {
-      singleOverallResult = element.isSuccess() && singleOverallResult;
-    }
-
-    if (singleOverallResult && overallResult.isNotEmpty) {
-      widget.deleteMeasurement(widget.pathToFile);
-    } else {
-      widget.snackBar("Wysyłanie nie powiodło się, spróbuj ponownie później");
-    }
+    widget.deleteMeasurement(widget.pathToFile);
   }
 
   FilledButton _sendButton() {

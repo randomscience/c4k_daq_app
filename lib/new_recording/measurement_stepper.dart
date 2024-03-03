@@ -9,21 +9,15 @@ class MeasurementStepper extends StatefulWidget {
   const MeasurementStepper(
       {super.key,
       required this.showModalBottomSheet,
-      required this.saveMeasurement,
       required this.exerciseVideoMappingGetter,
       required this.userInformationGetter,
       required this.saveToFile});
-
-  // _saveToFile(Map<String, String?> userInformation,
-  //     Map<String, String?> exerciseVideoMapping,
-  //     {String? uuid})
 
   final Map<String, String?> Function() userInformationGetter;
   final Map<String, String?> Function() exerciseVideoMappingGetter;
 
   final Function showModalBottomSheet;
 
-  final Function saveMeasurement;
 
   final void Function(Map<String, String?>, Map<String, String?>,
       {String? uuid}) saveToFile;
@@ -145,7 +139,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
     if (widget.userInformationGetter()[mapKey] != null) {
       state = StepState.complete;
     }
-    var inputBox;
+    StatefulWidget inputBox;
     if (isID) {
       inputBox = ValidatedTextIDInput(
           mapKey: mapKey,
@@ -204,15 +198,6 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
     }
   }
 
-  _saveMeasurement() {
-    widget.saveMeasurement();
-    _animateToIndex(0);
-    setState(() {
-      _index = 0;
-      rotateScreenVIsited = [false, false];
-    });
-  }
-
   int _index = 0;
   @override
   Widget build(BuildContext context) {
@@ -264,11 +249,6 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                   child: const Text(
                     "Nagraj wideo",
                   ),
-                ),
-              if (_stepType(_index) == StepTypes.save)
-                FilledButton(
-                  onPressed: _saveMeasurement,
-                  child: const Text('Wyślij'),
                 ),
               if (_stepType(_index) == StepTypes.save)
                 Padding(

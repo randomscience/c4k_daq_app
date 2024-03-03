@@ -1,8 +1,5 @@
-import 'dart:async';
-import 'dart:io';
 
 import 'package:c4k_daq/upload_measurement.dart';
-import 'package:c4k_daq/upload_result.dart';
 import 'package:flutter/material.dart';
 
 class UploadAllDialog extends StatefulWidget {
@@ -50,81 +47,43 @@ class _UploadAllDialogState extends State<UploadAllDialog>
     List<String> measurementsInFile = List.from(widget.measurementFiles.keys);
 
     for (String measurementConfigFilePath in measurementsInFile) {
-      List<UploadResult> overallResult = [];
-
-      try {
-        overallResult =
-            await uploadMeasurementFromPath(measurementConfigFilePath);
-      } on TimeoutException {
-        logError(
-            "Measurement upload failed, measurement path: $measurementConfigFilePath",
-            errorType: "TimeoutException");
+      (bool, String) overallResult =
+          await uploadMeasurementFromPath(measurementConfigFilePath);
+      if (!overallResult.$1) {
         setState(() => {
               _currentNoMeasurements = widget.measurementFiles.keys.length,
-              _message =
-                  "Wysyłanie pomiaru trwa za długo, połączenie internetowe jest za wolne"
-            });
-        return;
-      } on SocketException {
-        setState(() => {
-              _currentNoMeasurements = widget.measurementFiles.keys.length,
-              _message =
-                  "Brak połączenia z serwerem, sprawdź ustawienia internetu"
-            });
-        return;
-      } catch (x) {
-        logError(
-            "Measurement upload failed, Unknown error: $x, measurement path: $measurementConfigFilePath",
-            errorType: x.runtimeType.toString());
-        setState(() => {
-              _currentNoMeasurements = widget.measurementFiles.keys.length,
-              _message =
-                  "Napotkano nieznany błąd, szczegóły dla developerów: $x"
+              _message = overallResult.$2
             });
         return;
       }
 
-      bool singleOverallResult = true;
+      if (!mounted) return;
+      deleteMeasurement(measurementConfigFilePath);
+      widget.measurementFiles.remove(measurementConfigFilePath);
+      widget.updateBadgeNumber(widget.measurementFiles.keys.length);
 
-      for (var element in overallResult) {
-        singleOverallResult = element.isSuccess() && singleOverallResult;
-      }
-
-      if (singleOverallResult && overallResult.isNotEmpty) {
-        if (!mounted) return;
-        deleteMeasurement(measurementConfigFilePath);
-        widget.measurementFiles.remove(measurementConfigFilePath);
-        widget.updateBadgeNumber(widget.measurementFiles.keys.length);
-
-        if (!mounted) return;
-        if (_currentNoMeasurements <= 0) {
-          setState(() => {
-                _currentNoMeasurements = widget.measurementFiles.keys.length,
-                _message = "All measurements are uploaded"
-              });
-          return;
-        } else {
-          setState(() =>
-              _currentNoMeasurements = widget.measurementFiles.keys.length);
-        }
+      if (!mounted) return;
+      if (_currentNoMeasurements <= 0) {
+        setState(() => {
+              _currentNoMeasurements = widget.measurementFiles.keys.length,
+              _message = "Nie ma więcej pomiarów do przesłania"
+            });
+        return;
       } else {
-        setState(() => {
-              _currentNoMeasurements = widget.measurementFiles.keys.length,
-              _message = "upload failed"
-            });
-        return;
+        setState(
+            () => _currentNoMeasurements = widget.measurementFiles.keys.length);
       }
     }
-    if (!mounted) return;
-    if (_currentNoMeasurements <= 0) {
-      setState(() => {
-            _currentNoMeasurements = widget.measurementFiles.keys.length,
-            _message = "All measurements are uploaded"
-          });
-    } else {
-      setState(
-          () => _currentNoMeasurements = widget.measurementFiles.keys.length);
-    }
+    // if (!mounted) return;
+    // if (_currentNoMeasurements <= 0) {
+    //   setState(() => {
+    //         _currentNoMeasurements = widget.measurementFiles.keys.length,
+    //         _message = "All measurements are uploaded"
+    //       });
+    // } else {
+    //   setState(
+    //       () => _currentNoMeasurements = widget.measurementFiles.keys.length);
+    // }
   }
 
   @override

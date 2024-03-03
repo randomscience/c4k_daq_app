@@ -48,6 +48,9 @@ dependencies:
   url_launcher: ^6.1.12
   device_info_plus: ^8.2.2
   permission_handler:
+  pocketbase: ^0.11.0
+  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

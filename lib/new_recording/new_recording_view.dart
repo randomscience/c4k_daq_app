@@ -1,15 +1,12 @@
 import 'dart:async';
-import 'package:c4k_daq/constants.dart';
 import 'package:flutter/material.dart';
-
 import 'dart:io' as io;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'measurement_stepper.dart';
 import '../camera/full_screen_modal.dart';
-import 'upload_data_dialog.dart';
 import '../upload_measurement.dart';
-import '../upload_result.dart';
+
 
 class NewRecording extends StatefulWidget {
   final Map<String, String?> Function() userInformation;
@@ -75,70 +72,13 @@ class _NewRecording extends State<NewRecording> {
     setState(() => {});
   }
 
-  saveMeasurement() async {
-    var uuid = const Uuid().v4();
-    final path = await widget._localPath;
-
-    late Map<String, String?> localExerciseVideoMapping =
-        Map<String, String?>.from(widget.exerciseVideoMapping());
-
-    late Map<String, String?> localUserInformation =
-        Map<String, String?>.from(widget.userInformation());
-
-    localUserInformation[measurementTime] = "${DateTime.now()}";
-
-    await _saveToFile(localUserInformation, localExerciseVideoMapping,
-        uuid: uuid);
-
-    List<UploadResult> overallResult = [];
-    try {
-      overallResult = await uploadMeasurementFromId(uuid);
-    } catch (x) {
-      _showSnackBar(context, "Pomiar zapisano w oczekujących");
-      return;
-    }
-
-    bool singleOverallResult = true;
-
-    for (var element in overallResult) {
-      if (!element.isSuccess()) {
-        singleOverallResult = false;
-        break;
-      }
-    }
-
-    if (singleOverallResult && overallResult.isNotEmpty) {
-      deleteMeasurement('$path/c4k_daq/$uuid.json');
-      widget.clearData();
-      setState(() => {});
-    } else {
-      _showSnackBar(context, "Pomiar zapisano w oczekujących");
-      return;
-    }
-    setState(() => {});
-    return overallResult;
-  }
-
   setExerciseVideoMapping(String exercise, String? videoPath) {
     if (videoPath != null) widget.exerciseVideoMapping()[exercise] = videoPath;
     setState(() => recordingVideo = false);
   }
 
-  _showDialog() {
-    showDialog<String>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) => AlertDialog(
-            title: const Text("Wysyłanie danych"),
-            content: UploadDataDialog(
-                exerciseVideoMappingGetter: widget.exerciseVideoMapping,
-                userInformationGetter: widget.userInformation,
-                exitButton: Navigator.of(context).pop,
-                awaitedFunction: saveMeasurement)));
-  }
-
   _showModal(BuildContext context, String exerciseTitle) async {
-    // show the modal dialog and pass some data to it
+    // show the modal dialog and pass some data to its
     await Navigator.of(context).push(FullScreenModal(
         pathToVideoSetter: setExerciseVideoMapping,
         exerciseTitle: exerciseTitle));
@@ -149,7 +89,7 @@ class _NewRecording extends State<NewRecording> {
     return MeasurementStepper(
       showModalBottomSheet: (exerciseTitle) =>
           _showModal(context, exerciseTitle),
-      saveMeasurement: _showDialog,
+ 
       exerciseVideoMappingGetter: widget.exerciseVideoMapping,
       userInformationGetter: widget.userInformation,
       saveToFile: (userInformation, exerciseVideoMapping, {String? uuid}) => {
