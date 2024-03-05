@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'validated_text_id_input.dart';
 import 'validated_text_input.dart';
 
-enum StepTypes { inputBox, camera, info, save }
+enum StepTypes { inputBox, videoCamera, photoCamera, info, game, save }
 
 class MeasurementStepper extends StatefulWidget {
   const MeasurementStepper(
@@ -17,7 +17,6 @@ class MeasurementStepper extends StatefulWidget {
   final Map<String, String?> Function() exerciseVideoMappingGetter;
 
   final Function showModalBottomSheet;
-
 
   final void Function(Map<String, String?>, Map<String, String?>,
       {String? uuid}) saveToFile;
@@ -59,48 +58,34 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
       _textFieldGenerator(id, 'Wpisz ID z ankiety', 'Unikatowe ID dziecka',
           isID: true),
       _textFieldGenerator(height, 'Wpisz wzrost dziecka', 'Wzrost [cm]'),
-      _textFieldGenerator(
-          noseToFloor,
-          'Wpisz odległość od ziemi do czubka nosa',
-          'Odległość od ziemi do czubka nosa [cm]'),
-      _textFieldGenerator(
-          collarBoneToFloor,
-          'Wpisz odległość od ziemi do obojczyka',
-          'Odległość od ziemi do obojczyka [cm]'),
-      _textFieldGenerator(pelvisToFloor, 'Wpisz odległość od ziemi do bioder',
-          'Odległość od ziemi do bioder [cm]'),
-      Step(
-          isActive: rotateScreenVIsited[0],
-          state:
-              rotateScreenVIsited[0] ? StepState.complete : StepState.indexed,
-          title: const Text("Ustaw telefon w pozycji pionowej"),
-          content: const Text(
-              "Obróć telefon tak żeby znajdował sie w pozycji pionowej")),
-      _exerciseGenerator(exercise1,
-          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
+      _textFieldGenerator(age, 'Wpisz wiek dziecka', 'Wiek [lata]'),
+      _textFieldGenerator(sex, 'Wpisz biologiczną płeć dziecka', 'Wiek [lata]'),
+      _exerciseGenerator(
+          exercise1, "Zrób zdjęcie w pozycji 'T', przodem do kamery"),
       _exerciseGenerator(exercise2,
-          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
+          "Zrób zdjęcie w pozycji stania na Baczność, przodem do kamery"),
       _exerciseGenerator(exercise3,
-          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
+          "Zrób zdjęcie w pozycji stania na Baczność, lewym profilem do kamery"),
       _exerciseGenerator(exercise4,
-          "Nagraj dziecko wykonujące skłony przodem do kamery, w punkcie S"),
+          "Zrób zdjęcie w pozycji stania na Baczność, prawym profilem do kamery"),
       _exerciseGenerator(exercise5,
-          "Nagraj dziecko wykonujące skłony przodem do kamery, w punkcie S"),
+          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
       _exerciseGenerator(exercise6,
-          "Nagraj dziecko wykonujące skłony przodem do kamery, w punkcie S"),
-      Step(
-          isActive: rotateScreenVIsited[1],
-          state:
-              rotateScreenVIsited[1] ? StepState.complete : StepState.indexed,
-          title: const Text("Ustaw telefon w pozycji poziomej"),
-          content: const Text(
-              "Obróć telefon tak żeby znajdował sie w pozycji poziomej")),
+          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
       _exerciseGenerator(exercise7,
-          "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
+          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
       _exerciseGenerator(exercise8,
           "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
       _exerciseGenerator(exercise9,
           "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
+      _exerciseGenerator(exercise10,
+          "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
+      _exerciseGenerator(exercise11, "Nagraj dziecko skaczące wzwyż 5 razy"),
+      _exerciseGenerator(
+          exercise12, "Nagraj dziecko wykonujące w miejsu, skip A"),
+      _exerciseGenerator(exercise13, "Nagraj dziecko trzymające ciężarki"),
+      _exerciseGenerator(
+          exercise14, "Przekarz dziecku telefon, z grą zręcznościową"),
       Step(
           state: _enableSave() ? StepState.complete : StepState.disabled,
           title: const Text("Zapisz pomiar"),
@@ -115,18 +100,20 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
       StepTypes.inputBox,
       StepTypes.inputBox,
       StepTypes.inputBox,
-      StepTypes.inputBox,
-      StepTypes.info,
-      StepTypes.camera,
-      StepTypes.camera,
-      StepTypes.camera,
-      StepTypes.camera,
-      StepTypes.camera,
-      StepTypes.camera,
-      StepTypes.info,
-      StepTypes.camera,
-      StepTypes.camera,
-      StepTypes.camera,
+      StepTypes.photoCamera,
+      StepTypes.photoCamera,
+      StepTypes.photoCamera,
+      StepTypes.photoCamera,
+      StepTypes.videoCamera,
+      StepTypes.videoCamera,
+      StepTypes.videoCamera,
+      StepTypes.videoCamera,
+      StepTypes.videoCamera,
+      StepTypes.videoCamera,
+      StepTypes.videoCamera,
+      StepTypes.videoCamera,
+      StepTypes.videoCamera,
+      StepTypes.game,
       StepTypes.save
     ];
     return listOfStepTypes[index];
@@ -243,7 +230,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                   },
                   child: const Text('Dalej'),
                 ),
-              if (_stepType(_index) == StepTypes.camera)
+              if (_stepType(_index) == StepTypes.videoCamera)
                 FilledButton(
                   onPressed: _recordVideo,
                   child: const Text(
