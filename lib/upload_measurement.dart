@@ -10,7 +10,7 @@ import 'dart:io' as io;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:http/http.dart' as http;
 
-Future<(bool, String)> uploadMeasurementFromPath(String path) async {
+Future<String?> uploadMeasurementFromPath(String path) async {
   Map<String, dynamic> measurementInformation;
   String content = await io.File(path).readAsString();
 
@@ -29,11 +29,10 @@ Future<(bool, String)> uploadMeasurementFromPath(String path) async {
   final body = <String, dynamic>{
     "theKidlyId": measurementInformation[id],
     "appVersion": appVersion,
-    "measurementTime": "test",
+    "measurementTime": measurementInformation[measurementTime],
     "height": measurementInformation[height],
-    "noseToFloor": measurementInformation[noseToFloor],
-    "collarBoneToFloor": measurementInformation[collarBoneToFloor],
-    "pelvisToFloor": measurementInformation[pelvisToFloor]
+    "age": measurementInformation[age],
+    "sex": measurementInformation[sex]
   };
 
   Map<String, String?> exerciseVideoMapping = {};
@@ -67,17 +66,14 @@ Future<(bool, String)> uploadMeasurementFromPath(String path) async {
         .create(body: body, files: files)
         .timeout(const Duration(minutes: 5));
   } on TimeoutException {
-    return (
-      false,
-      "Wysyłanie pomiaru trwa za długo, połączenie internetowe jest za wolne"
-    );
+    return "Wysyłanie pomiaru trwa za długo, połączenie internetowe jest za wolne";
   } on SocketException {
-    return (false, "Brak połączenia z serwerem, sprawdź ustawienia internetu");
+    return "Brak połączenia z serwerem, sprawdź ustawienia internetu";
   } catch (x) {
-    return (false, "Napotkano nieznany błąd, szczegóły dla developerów: $x");
+    return "Napotkano nieznany błąd, szczegóły dla developerów: $x";
   }
 
-  return (true, "");
+  return null;
 }
 
 deleteMeasurement(String pathToMeasurement) async {
@@ -91,19 +87,13 @@ deleteMeasurement(String pathToMeasurement) async {
 
   String content = await file.readAsString();
 
-  if (content.isEmpty) {
-    file.delete();
-  }
+  if (content.isNotEmpty) {
+    var localJsonData = json.decode(content);
 
-  var localJsonData = json.decode(content);
-
-  Map<String, String?> exerciseVideoMapping =
-      Map<String, String?>.from(emptyExerciseVideoMapping);
-
-  var keysList = List.from(exerciseVideoMapping.keys);
-  for (var element in keysList) {
-    if (element != null) {
-      io.File(localJsonData[element].toString()).delete();
+    for (var element in emptyExerciseVideoMapping.keys) {
+      if (localJsonData[element] != null) {
+        io.File(localJsonData[element].toString()).delete();
+      }
     }
   }
   file.delete();

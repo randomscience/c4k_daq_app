@@ -53,11 +53,11 @@ class _LibraryCard extends State<LibraryCard> {
     setState(() {
       isAwaiting = true;
     });
-    (bool, String) result = await uploadMeasurementFromPath(widget.pathToFile);
+    String? result = await uploadMeasurementFromPath(widget.pathToFile);
     setState(() => isAwaiting = false);
 
-    if (!result.$1) {
-      widget.snackBar(result.$2);
+    if (result != null) {
+      widget.snackBar(result);
       return;
     }
     widget.deleteMeasurement(widget.pathToFile);

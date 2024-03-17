@@ -17,6 +17,17 @@ const uniqueID = "unique_id";
 const measurementTime = "measurement_time";
 const version = "app_version";
 
+enum MeasurementType { info, photo, video }
+
+class Measurement {
+  late MeasurementType type;
+  late String title;
+  late String description;
+  late String group;
+  late String uniqueKeyword;
+  Measurement({required this.type, required this.title, required this.description, required this.uniqueKeyword});
+}
+
 emptyUserInformation() {
   if (kDebugMode) {
     return Map<String, String?>.from({
