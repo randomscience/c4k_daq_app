@@ -8,7 +8,8 @@ enum StepTypes { inputBox, videoCamera, photoCamera, info, game, save }
 class MeasurementStepper extends StatefulWidget {
   const MeasurementStepper(
       {super.key,
-      required this.showModalBottomSheet,
+      required this.showVideoModal,
+      required this.showPhotoModal,
       required this.exerciseVideoMappingGetter,
       required this.userInformationGetter,
       required this.saveToFile});
@@ -16,7 +17,8 @@ class MeasurementStepper extends StatefulWidget {
   final Map<String, String?> Function() userInformationGetter;
   final Map<String, String?> Function() exerciseVideoMappingGetter;
 
-  final Function showModalBottomSheet;
+  final Function showVideoModal;
+  final Function showPhotoModal;
 
   final void Function(Map<String, String?>, Map<String, String?>,
       {String? uuid}) saveToFile;
@@ -26,13 +28,13 @@ class MeasurementStepper extends StatefulWidget {
 }
 
 class _MeasurementStepperState extends State<MeasurementStepper> {
-  var rotateScreenVIsited = [false, false];
+  // var rotateScreenVIsited = [false, false];
   var scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    rotateScreenVIsited = [false, false];
+    // rotateScreenVIsited = [false, false];
   }
 
   _enableSave() {
@@ -86,10 +88,10 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
       _exerciseGenerator(exercise13, "Nagraj dziecko trzymające ciężarki"),
       _exerciseGenerator(
           exercise14, "Przekarz dziecku telefon, z grą zręcznościową"),
-      Step(
-          state: _enableSave() ? StepState.complete : StepState.disabled,
-          title: const Text("Zapisz pomiar"),
-          content: const Text(
+      const Step(
+          state: StepState.complete,
+          title: Text("Zapisz pomiar"),
+          content: Text(
               "Dziękujemy za wykonany pomiar, dane zostaną wysłane do naszej prywatnej bazy danych")),
     ];
   }
@@ -167,7 +169,17 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
 
   _recordVideo() async {
     Text textField = _steps()[_index].title;
-    await widget.showModalBottomSheet(textField.data);
+    await widget.showVideoModal(textField.data);
+    // if (widget.exerciseVideoMappingGetter()[_steps()[_index].title] != null) {
+    setState(() {
+      _index = _index + 1;
+    });
+    // }
+  }
+
+  _takePicture() async {
+    Text textField = _steps()[_index].title;
+    await widget.showPhotoModal(textField.data);
     // if (widget.exerciseVideoMappingGetter()[_steps()[_index].title] != null) {
     setState(() {
       _index = _index + 1;
@@ -178,7 +190,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   void _animateToIndex(int index) {
     if (index <= 9) {
       scrollController.animateTo(
-        index * 30,
+        index * 32,
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn,
       );
@@ -219,23 +231,29 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                   onPressed: controls.onStepContinue,
                   child: const Text('Dalej'),
                 ),
-              if (_stepType(_index) == StepTypes.info)
-                FilledButton(
-                  onPressed: () => {
-                    rotateScreenVIsited = [
-                      rotateScreenVIsited[0] || _index == 5,
-                      rotateScreenVIsited[1] || _index == 12,
-                    ],
-                    controls.onStepContinue!(),
-                  },
-                  child: const Text('Dalej'),
-                ),
+
+              // if (_stepType(_index) == StepTypes.info)
+              //   FilledButton(
+              //     onPressed: () => {
+              //       rotateScreenVIsited = [
+              //         rotateScreenVIsited[0] || _index == 5,
+              //         rotateScreenVIsited[1] || _index == 12,
+              //       ],
+              //       controls.onStepContinue!(),
+              //     },
+              //     child: const Text('Dalej'),
+              //   ),
               if (_stepType(_index) == StepTypes.videoCamera)
                 FilledButton(
                   onPressed: _recordVideo,
                   child: const Text(
                     "Nagraj wideo",
                   ),
+                ),
+              if (_stepType(_index) == StepTypes.photoCamera)
+                FilledButton(
+                  onPressed: _takePicture,
+                  child: const Text('Wykonaj zdjęcie'),
                 ),
               if (_stepType(_index) == StepTypes.save)
                 Padding(
@@ -247,7 +265,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                         _animateToIndex(0),
                         setState(() {
                           _index = 0;
-                          rotateScreenVIsited = [false, false];
+                          // rotateScreenVIsited = [false, false];
                         })
                       },
                       child: const Text('Zapisz'),

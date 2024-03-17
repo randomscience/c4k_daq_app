@@ -1,12 +1,18 @@
 import 'package:c4k_daq/camera/camera_page.dart';
+import 'package:c4k_daq/camera/photo_page.dart';
 import 'package:flutter/material.dart';
+
+enum CamearaMode { video, photo }
 
 class FullScreenModal extends ModalRoute {
   final Function pathToVideoSetter;
   final String exerciseTitle;
+  final CamearaMode mode;
 
   FullScreenModal(
-      {required this.pathToVideoSetter, required this.exerciseTitle});
+      {required this.pathToVideoSetter,
+      required this.exerciseTitle,
+      required this.mode});
 
   _closeModal(context) {
     Navigator.pop(context);
@@ -39,10 +45,15 @@ class FullScreenModal extends ModalRoute {
     return Material(
       type: MaterialType.transparency,
       child: Center(
-          child: CameraPage(
-              pathToVideoSetter: pathToVideoSetter,
-              exerciseTitle: exerciseTitle,
-              exitButton: () => _closeModal(context))),
+          child: mode == CamearaMode.video
+              ? CameraPage(
+                  pathToVideoSetter: pathToVideoSetter,
+                  exerciseTitle: exerciseTitle,
+                  exitButton: () => _closeModal(context))
+              : PhotoCameraPage(
+                  pathToVideoSetter: pathToVideoSetter,
+                  exerciseTitle: exerciseTitle,
+                  exitButton: () => _closeModal(context))),
     );
   }
 

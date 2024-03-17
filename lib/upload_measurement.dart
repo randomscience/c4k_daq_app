@@ -24,7 +24,8 @@ Future<(bool, String)> uploadMeasurementFromPath(String path) async {
   await pb
       .collection('users')
       .authWithPassword(pocketBaseUserName, pocketBasePassword);
-
+  print("measurementInformation");
+  print(measurementInformation);
   final body = <String, dynamic>{
     "theKidlyId": measurementInformation[id],
     "appVersion": appVersion,
@@ -35,7 +36,7 @@ Future<(bool, String)> uploadMeasurementFromPath(String path) async {
     "pelvisToFloor": measurementInformation[pelvisToFloor]
   };
 
-  Map<String, String> exerciseVideoMapping = {};
+  Map<String, String?> exerciseVideoMapping = {};
 
   emptyExerciseVideoMapping.forEach((key, value) {
     exerciseVideoMapping[key] = measurementInformation[key];
@@ -47,11 +48,17 @@ Future<(bool, String)> uploadMeasurementFromPath(String path) async {
 
   while (videoIterator.moveNext()) {
     MapEntry<String, String?> entry = videoIterator.current;
-    files.add(http.MultipartFile.fromBytes(
-      entry.key.replaceAll('_', ''),
-      io.File(exerciseVideoMapping[entry.key]!).readAsBytesSync(),
-      filename: entry.key,
-    ));
+    if (entry.value != null) {
+      try {
+        files.add(http.MultipartFile.fromBytes(
+          entry.key.replaceAll('_', ''),
+          io.File(exerciseVideoMapping[entry.key]!).readAsBytesSync(),
+          filename: entry.key,
+        ));
+      } catch (x) {
+        print("error acucred");
+      }
+    }
   }
 
   try {
@@ -95,7 +102,9 @@ deleteMeasurement(String pathToMeasurement) async {
 
   var keysList = List.from(exerciseVideoMapping.keys);
   for (var element in keysList) {
-    io.File(localJsonData[element].toString()).delete();
+    if (element != null) {
+      io.File(localJsonData[element].toString()).delete();
+    }
   }
   file.delete();
 }

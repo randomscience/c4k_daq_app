@@ -7,7 +7,6 @@ import 'measurement_stepper.dart';
 import '../camera/full_screen_modal.dart';
 import '../upload_measurement.dart';
 
-
 class NewRecording extends StatefulWidget {
   final Map<String, String?> Function() userInformation;
   final Map<String, String?> Function() exerciseVideoMapping;
@@ -77,19 +76,27 @@ class _NewRecording extends State<NewRecording> {
     setState(() => recordingVideo = false);
   }
 
-  _showModal(BuildContext context, String exerciseTitle) async {
-    // show the modal dialog and pass some data to its
+  _showVideoModal(BuildContext context, String exerciseTitle) async {
     await Navigator.of(context).push(FullScreenModal(
         pathToVideoSetter: setExerciseVideoMapping,
-        exerciseTitle: exerciseTitle));
+        exerciseTitle: exerciseTitle,
+        mode: CamearaMode.video));
+  }
+
+  _showPhotoModal(BuildContext context, String exerciseTitle) async {
+    await Navigator.of(context).push(FullScreenModal(
+        pathToVideoSetter: setExerciseVideoMapping,
+        exerciseTitle: exerciseTitle,
+        mode: CamearaMode.photo));
   }
 
   @override
   Widget build(BuildContext context) {
     return MeasurementStepper(
-      showModalBottomSheet: (exerciseTitle) =>
-          _showModal(context, exerciseTitle),
- 
+      showVideoModal: (exerciseTitle) =>
+          _showVideoModal(context, exerciseTitle),
+      showPhotoModal: (exerciseTitle) =>
+          _showPhotoModal(context, exerciseTitle),
       exerciseVideoMappingGetter: widget.exerciseVideoMapping,
       userInformationGetter: widget.userInformation,
       saveToFile: (userInformation, exerciseVideoMapping, {String? uuid}) => {
