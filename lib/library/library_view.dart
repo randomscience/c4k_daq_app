@@ -51,7 +51,10 @@ class _LibraryState extends State<Library> {
   void _loadFiles() async {
     List<String> measurementsInFile = [];
 
-    setState(() => {_isLoading = false, measurementFiles = {}});
+    setState(() {
+      _isLoading = false;
+      measurementFiles = {};
+    });
 
     String directory = (await getApplicationDocumentsDirectory()).path;
 
@@ -60,10 +63,16 @@ class _LibraryState extends State<Library> {
           .listSync()
           .forEach((element) => measurementsInFile.add(element.path));
     } on PathNotFoundException {
-      setState(() => {_isLoading = false, measurementFiles = {}});
+      setState(() {
+        _isLoading = false;
+        measurementFiles = {};
+      });
       return;
     } catch (x) {
-      setState(() => {_isLoading = false, measurementFiles = {}});
+      setState(() {
+        _isLoading = false;
+        measurementFiles = {};
+      });
       return;
     }
 
@@ -86,7 +95,10 @@ class _LibraryState extends State<Library> {
 
     widget.updateBadgeNumber(measurementFiles.entries.length);
 
-    setState(() => {_isLoading = false, measurementFiles = sortedByValueMap});
+    setState(() {
+      _isLoading = false;
+      measurementFiles = sortedByValueMap;
+    });
   }
 
   @override

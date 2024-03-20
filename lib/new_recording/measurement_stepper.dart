@@ -10,18 +10,15 @@ class MeasurementStepper extends StatefulWidget {
       {super.key,
       required this.showVideoModal,
       required this.showPhotoModal,
-      required this.exerciseVideoMappingGetter,
       required this.userInformationGetter,
       required this.saveToFile});
 
   final Map<String, String?> Function() userInformationGetter;
-  final Map<String, String?> Function() exerciseVideoMappingGetter;
 
   final Function showVideoModal;
   final Function showPhotoModal;
 
-  final void Function(Map<String, String?>, Map<String, String?>,
-      {String? uuid}) saveToFile;
+  final void Function(Map<String, String?>, {String? uuid}) saveToFile;
 
   @override
   State<MeasurementStepper> createState() => _MeasurementStepperState();
@@ -37,97 +34,81 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
     // rotateScreenVIsited = [false, false];
   }
 
-  _enableSave() {
-    for (MapEntry<String, String?> field
-        in widget.userInformationGetter().entries) {
-      if (field.value == null) {
-        return false;
-      }
-    }
-
-    for (MapEntry<String, String?> field
-        in widget.exerciseVideoMappingGetter().entries) {
-      if (field.value == null) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   _steps() {
-    return <Step>[
-      _textFieldGenerator(id, 'Wpisz ID z ankiety', 'Unikatowe ID dziecka',
-          isID: true),
-      _textFieldGenerator(height, 'Wpisz wzrost dziecka', 'Wzrost [cm]'),
-      _textFieldGenerator(age, 'Wpisz wiek dziecka', 'Wiek [lata]'),
-      _textFieldGenerator(sex, 'Wpisz biologiczną płeć dziecka', 'Wiek [lata]'),
-      _exerciseGenerator(
-          exercise1, "Zrób zdjęcie w pozycji 'T', przodem do kamery"),
-      _exerciseGenerator(exercise2,
-          "Zrób zdjęcie w pozycji stania na Baczność, przodem do kamery"),
-      _exerciseGenerator(exercise3,
-          "Zrób zdjęcie w pozycji stania na Baczność, lewym profilem do kamery"),
-      _exerciseGenerator(exercise4,
-          "Zrób zdjęcie w pozycji stania na Baczność, prawym profilem do kamery"),
-      _exerciseGenerator(exercise5,
-          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
-      _exerciseGenerator(exercise6,
-          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
-      _exerciseGenerator(exercise7,
-          "Nagraj dziecko idące przodem do kamery, z punktu D do punktu B"),
-      _exerciseGenerator(exercise8,
-          "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
-      _exerciseGenerator(exercise9,
-          "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
-      _exerciseGenerator(exercise10,
-          "Nagraj dziecko idące profilem do kamery, z punktu L do punktu P"),
-      _exerciseGenerator(exercise11, "Nagraj dziecko skaczące wzwyż 5 razy"),
-      _exerciseGenerator(
-          exercise12, "Nagraj dziecko wykonujące w miejsu, skip A"),
-      _exerciseGenerator(exercise13, "Nagraj dziecko trzymające ciężarki"),
-      _exerciseGenerator(
-          exercise14, "Przekarz dziecku telefon, z grą zręcznościową"),
-      const Step(
-          state: StepState.complete,
-          title: Text("Zapisz pomiar"),
-          content: Text(
-              "Dziękujemy za wykonany pomiar, dane zostaną wysłane do naszej prywatnej bazy danych")),
-    ];
+    List<Step> steps = [];
+
+    for (final e in test) {
+      if (e.type == MeasurementType.id) {
+        steps.add(_textFieldGenerator(e.uniqueKeyword, e.title, e.description,
+            isID: true));
+      }
+      if (e.type == MeasurementType.number) {
+        steps.add(_textFieldGenerator(e.uniqueKeyword, e.title, e.description));
+      }
+      if (e.type == MeasurementType.dropdown) {
+        steps.add(_dropdownGenerator(e.uniqueKeyword, e.title, e.description));
+      }
+      if (e.type == MeasurementType.photo) {
+        steps.add(_exerciseGenerator(e.uniqueKeyword, e.title, e.description));
+      }
+      if (e.type == MeasurementType.video) {
+        steps.add(_exerciseGenerator(e.uniqueKeyword, e.title, e.description));
+      }
+      if (e.type == MeasurementType.save) {
+        steps.add(
+          const Step(
+              state: StepState.complete,
+              title: Text("Zapisz pomiar"),
+              content: Text(
+                  "Dziękujemy za wykonany pomiar, dane zostaną wysłane do naszej prywatnej bazy danych")),
+        );
+      }
+    }
+    return steps;
   }
 
-  _stepType(int index) {
-    const listOfStepTypes = [
-      StepTypes.inputBox,
-      StepTypes.inputBox,
-      StepTypes.inputBox,
-      StepTypes.inputBox,
-      StepTypes.photoCamera,
-      StepTypes.photoCamera,
-      StepTypes.photoCamera,
-      StepTypes.photoCamera,
-      StepTypes.videoCamera,
-      StepTypes.videoCamera,
-      StepTypes.videoCamera,
-      StepTypes.videoCamera,
-      StepTypes.videoCamera,
-      StepTypes.videoCamera,
-      StepTypes.videoCamera,
-      StepTypes.videoCamera,
-      StepTypes.videoCamera,
-      StepTypes.game,
-      StepTypes.save
-    ];
-    return listOfStepTypes[index];
+  _dropdownGenerator(String mapKey, String title, String hintText) {
+    StepState state = StepState.indexed;
+    String? dropdownValue;
+    if (widget.userInformationGetter().containsKey(mapKey)) {
+      state = StepState.complete;
+      dropdownValue = widget.userInformationGetter()[mapKey]!;
+    }
+
+    StatefulWidget inputBox = DropdownButton(
+        value: dropdownValue,
+        hint: Text(hintText),
+        items: const [
+          DropdownMenuItem(
+            value: "male",
+            child: Text("Mężczyzna"),
+          ),
+          DropdownMenuItem(
+            value: "female",
+            child: Text("Kobieta"),
+          )
+        ],
+        onChanged: (String? newValue) {
+          setState(() {
+            widget.userInformationGetter()[mapKey] = newValue!;
+          });
+        });
+
+    return Step(
+        isActive: state == StepState.complete ? true : false,
+        state: state,
+        title: Text(title),
+        content: inputBox);
   }
 
   _textFieldGenerator(String mapKey, String title, String hintText,
       {bool isID = false}) {
     StepState state = StepState.indexed;
 
-    if (widget.userInformationGetter()[mapKey] != null) {
+    if (widget.userInformationGetter().containsKey(mapKey)) {
       state = StepState.complete;
     }
+
     StatefulWidget inputBox;
     if (isID) {
       inputBox = ValidatedTextIDInput(
@@ -150,11 +131,10 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
         content: inputBox);
   }
 
-  _exerciseGenerator(String title, String exerciseExplanation) {
+  _exerciseGenerator(String mapKey, String title, String exerciseExplanation) {
     StepState state = StepState.indexed;
 
-    if (widget.exerciseVideoMappingGetter()[exerciseNameConverter(title)] !=
-        null) {
+    if (widget.userInformationGetter().containsKey(mapKey)) {
       state = StepState.complete;
     }
 
@@ -168,8 +148,8 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   }
 
   _recordVideo() async {
-    Text textField = _steps()[_index].title;
-    await widget.showVideoModal(textField.data);
+    // Text textField = _steps()[_index].title;
+    await widget.showVideoModal(_index);
     // if (widget.exerciseVideoMappingGetter()[_steps()[_index].title] != null) {
     setState(() {
       _index = _index + 1;
@@ -178,8 +158,8 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   }
 
   _takePicture() async {
-    Text textField = _steps()[_index].title;
-    await widget.showPhotoModal(textField.data);
+    // Text textField = _steps()[_index].title;
+    await widget.showPhotoModal(_index);
     // if (widget.exerciseVideoMappingGetter()[_steps()[_index].title] != null) {
     setState(() {
       _index = _index + 1;
@@ -195,6 +175,10 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
         curve: Curves.fastOutSlowIn,
       );
     }
+  }
+
+  bool enableSave() {
+    return true;
   }
 
   int _index = 0;
@@ -216,6 +200,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
         });
       },
       onStepTapped: (int index) {
+        print(index);
         _animateToIndex(index);
         setState(() {
           _index = index;
@@ -226,51 +211,42 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
           child: Row(
             children: <Widget>[
-              if (_stepType(_index) == StepTypes.inputBox)
+              if (test[_index].type == MeasurementType.id ||
+                  test[_index].type == MeasurementType.number ||
+                  test[_index].type == MeasurementType.dropdown)
                 FilledButton(
                   onPressed: controls.onStepContinue,
                   child: const Text('Dalej'),
                 ),
-
-              // if (_stepType(_index) == StepTypes.info)
-              //   FilledButton(
-              //     onPressed: () => {
-              //       rotateScreenVIsited = [
-              //         rotateScreenVIsited[0] || _index == 5,
-              //         rotateScreenVIsited[1] || _index == 12,
-              //       ],
-              //       controls.onStepContinue!(),
-              //     },
-              //     child: const Text('Dalej'),
-              //   ),
-              if (_stepType(_index) == StepTypes.videoCamera)
+              if (test[_index].type == MeasurementType.video)
                 FilledButton(
                   onPressed: _recordVideo,
                   child: const Text(
                     "Nagraj wideo",
                   ),
                 ),
-              if (_stepType(_index) == StepTypes.photoCamera)
+              if (test[_index].type == MeasurementType.photo)
                 FilledButton(
                   onPressed: _takePicture,
                   child: const Text('Wykonaj zdjęcie'),
                 ),
-              if (_stepType(_index) == StepTypes.save)
+              if (test[_index].type == MeasurementType.save)
                 Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                    child: FilledButton.tonal(
-                      onPressed: () async => {
-                        widget.saveToFile(widget.userInformationGetter(),
-                            widget.exerciseVideoMappingGetter()),
-                        _animateToIndex(0),
-                        setState(() {
-                          _index = 0;
-                          // rotateScreenVIsited = [false, false];
-                        })
-                      },
+                    child: FilledButton(
+                      onPressed: enableSave()
+                          ? () async => {
+                                widget
+                                    .saveToFile(widget.userInformationGetter()),
+                                _animateToIndex(0),
+                                setState(() {
+                                  _index = 0;
+                                })
+                              }
+                          : null,
                       child: const Text('Zapisz'),
                     )),
-              if (_index != 0 && _stepType(_index) != StepTypes.save)
+              if (_index != 0 && test[_index].type == MeasurementType.save)
                 Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: FilledButton.tonal(

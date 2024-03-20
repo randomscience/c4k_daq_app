@@ -33,7 +33,8 @@ class _LibraryCard extends State<LibraryCard> {
   @override
   void initState() {
     super.initState();
-    id = widget.localJsonData['id'];
+    print(widget.localJsonData);
+    id = widget.localJsonData['theKidlyId'];
 
     final DateTime date =
         DateTime.parse(widget.localJsonData['measurement_time']);
@@ -60,7 +61,7 @@ class _LibraryCard extends State<LibraryCard> {
       widget.snackBar(result);
       return;
     }
-    widget.deleteMeasurement(widget.pathToFile);
+    // widget.deleteMeasurement(widget.pathToFile);
   }
 
   FilledButton _sendButton() {

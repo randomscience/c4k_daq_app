@@ -26,14 +26,24 @@ Future<String?> uploadMeasurementFromPath(String path) async {
       .authWithPassword(pocketBaseUserName, pocketBasePassword);
   print("measurementInformation");
   print(measurementInformation);
+
   final body = <String, dynamic>{
-    "theKidlyId": measurementInformation[id],
+    // "theKidlyId": measurementInformation[id],
+    // "height": measurementInformation[height],
+    // "age": measurementInformation[age],
+    // "sex": measurementInformation[sex],
     "appVersion": appVersion,
     "measurementTime": measurementInformation[measurementTime],
-    "height": measurementInformation[height],
-    "age": measurementInformation[age],
-    "sex": measurementInformation[sex]
   };
+
+  for (final measureemnt in test) {
+    if (measurementInformation.containsKey(measureemnt.uniqueKeyword)) {
+      body[measureemnt.uniqueKeyword] =
+          measurementInformation[measureemnt.uniqueKeyword];
+    }
+  }
+  print("body");
+  print(body);
 
   Map<String, String?> exerciseVideoMapping = {};
 
@@ -102,13 +112,15 @@ deleteMeasurement(String pathToMeasurement) async {
 Future<void> saveToFile(
     io.File localFile,
     String uuid,
-    Map<String, String?> userInformation,
-    Map<String, String?> exerciseVideoMapping) async {
+    Map<String, String?> userInformation) async {
+  print("saving to file");
+  print("userInformation");
+  print(userInformation);
+
   await localFile.writeAsString(
       json.encode({
         ...{"unique_id": uuid},
         ...userInformation,
-        ...exerciseVideoMapping,
         ...{"measurement_time": "${DateTime.now()}"},
         ...{"app_version": appVersion}
       }),

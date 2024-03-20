@@ -46,17 +46,8 @@ class MyHomePage extends StatefulWidget {
   Map<String, String?> userInformation =
       Map<String, String?>.from(emptyUserInformation());
 
-  Map<String, String?> exerciseVideoMapping =
-      Map<String, String?>.from(emptyExerciseVideoMapping);
-
   bool isRecording() {
-    for (var element in userInformation.values) {
-      if (element != null && element != "") return true;
-    }
-    for (var element in exerciseVideoMapping.values) {
-      if (element != null) return true;
-    }
-    return false;
+    return userInformation.isNotEmpty;
   }
 
   MyHomePage({super.key});
@@ -70,8 +61,6 @@ class MyHomePageState extends State<MyHomePage> {
   int noDirectoriesInFile = 0;
 
   clearData() {
-    widget.exerciseVideoMapping =
-        Map<String, String?>.from(emptyExerciseVideoMapping);
     widget.userInformation = Map<String, String?>.from(emptyUserInformation());
     _noLoadedFiles();
   }
@@ -102,116 +91,6 @@ class MyHomePageState extends State<MyHomePage> {
         File(file.path).copy("$finalDirectoryPath$filename");
       }
     }
-  }
-
-  void addMeasurementForDebug() async {
-    String directory = (await getApplicationDocumentsDirectory()).path;
-    Directory("$directory/c4k_daq/").createSync();
-
-    String uid = const Uuid().v4();
-
-    void helper(String from, String to) async {
-      ByteData bytes =
-          await rootBundle.load("assets/$from.mp4"); //load sound from assets
-
-      Uint8List vidBytes =
-          bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
-
-      XFile.fromData(vidBytes)
-          .saveTo("$directory/c4k_daq/${uid}_debug_exercise_$to.mp4");
-    }
-
-    helper("123", "1");
-    helper("123", "2");
-    helper("123", "3");
-
-    helper("456", "4");
-    helper("456", "5");
-    helper("456", "6");
-
-    helper("789", "7");
-    helper("789", "8");
-    helper("789", "9");
-
-    File("$directory/c4k_daq/$uid.json").writeAsString(
-        json.encode({
-          ...{"unique_id": uid},
-          ...{
-            id: Random().nextInt(20000).toString(),
-            height: (Random().nextInt(160) + 100).toString(),
-            noseToFloor: (Random().nextInt(130) + 90).toString(),
-            collarBoneToFloor: (Random().nextInt(100) + 80).toString(),
-            pelvisToFloor: (Random().nextInt(70) + 20).toString(),
-          },
-          ...{
-            "exercise_1": "$directory/c4k_daq/${uid}_debug_exercise_1.mp4",
-            "exercise_2": "$directory/c4k_daq/${uid}_debug_exercise_2.mp4",
-            "exercise_3": "$directory/c4k_daq/${uid}_debug_exercise_3.mp4",
-            "exercise_4": "$directory/c4k_daq/${uid}_debug_exercise_4.mp4",
-            "exercise_5": "$directory/c4k_daq/${uid}_debug_exercise_5.mp4",
-            "exercise_6": "$directory/c4k_daq/${uid}_debug_exercise_6.mp4",
-            "exercise_7": "$directory/c4k_daq/${uid}_debug_exercise_7.mp4",
-            "exercise_8": "$directory/c4k_daq/${uid}_debug_exercise_8.mp4",
-            "exercise_9": "$directory/c4k_daq/${uid}_debug_exercise_9.mp4",
-          },
-          ...{"measurement_time": "${DateTime.now()}"},
-          ...{"app_version": appVersion}
-        }),
-        flush: true);
-  }
-
-  void addIncompleteMeasurementForDebug() async {
-    String directory = (await getApplicationDocumentsDirectory()).path;
-    Directory("$directory/c4k_daq/").createSync();
-
-    String uid = const Uuid().v4();
-
-    void helper(String from, String to) async {
-      ByteData bytes =
-          await rootBundle.load("assets/$from.mp4"); //load sound from assets
-
-      Uint8List vidBytes =
-          bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
-
-      XFile.fromData(vidBytes)
-          .saveTo("$directory/c4k_daq/${uid}_debug_exercise_$to.mp4");
-    }
-
-    helper("123", "1");
-    helper("123", "2");
-    helper("123", "3");
-
-    helper("456", "4");
-    helper("456", "6");
-
-    helper("789", "7");
-    helper("789", "8");
-    helper("789", "9");
-
-    File("$directory/c4k_daq/$uid.json").writeAsString(
-        json.encode({
-          ...{"unique_id": uid},
-          ...{
-            id: Random().nextInt(20000).toString(),
-            height: (Random().nextInt(160) + 100).toString(),
-            noseToFloor: (Random().nextInt(130) + 90).toString(),
-            collarBoneToFloor: (Random().nextInt(100) + 80).toString(),
-            pelvisToFloor: (Random().nextInt(70) + 20).toString(),
-          },
-          ...{
-            "exercise_1": "$directory/c4k_daq/${uid}_debug_exercise_1.mp4",
-            "exercise_2": "$directory/c4k_daq/${uid}_debug_exercise_2.mp4",
-            "exercise_3": "$directory/c4k_daq/${uid}_debug_exercise_3.mp4",
-            "exercise_4": "$directory/c4k_daq/${uid}_debug_exercise_4.mp4",
-            "exercise_6": "$directory/c4k_daq/${uid}_debug_exercise_6.mp4",
-            "exercise_7": "$directory/c4k_daq/${uid}_debug_exercise_7.mp4",
-            "exercise_8": "$directory/c4k_daq/${uid}_debug_exercise_8.mp4",
-            "exercise_9": "$directory/c4k_daq/${uid}_debug_exercise_9.mp4",
-          },
-          ...{"measurement_time": "${DateTime.now()}"},
-          ...{"app_version": appVersion}
-        }),
-        flush: true);
   }
 
   void _updateBadge(int newNoDirectoriesInFile) {
@@ -272,7 +151,6 @@ class MyHomePageState extends State<MyHomePage> {
     if (currentPageIndex == 1) {
       return NewRecording(
         userInformation: () => widget.userInformation,
-        exerciseVideoMapping: () => widget.exerciseVideoMapping,
         clearData: clearData,
       );
     }
@@ -354,16 +232,6 @@ class MyHomePageState extends State<MyHomePage> {
             onPressed: () => {Navigator.pop(context, 'OK')},
             child: const Text('Ok'),
           ),
-          if (kDebugMode)
-            FilledButton(
-              onPressed: () => {addMeasurementForDebug()},
-              child: const Text('Add'),
-            ),
-          if (kDebugMode)
-            FilledButton(
-              onPressed: () => {addIncompleteMeasurementForDebug()},
-              child: const Text('Add Incomplete'),
-            ),
           FilledButton(
             onPressed: () =>
                 {copyToSDCard(), Navigator.pop(context, 'Wyeksportuj')},

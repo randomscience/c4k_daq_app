@@ -9,13 +9,13 @@ import 'package:path_provider/path_provider.dart';
 class PhotoCameraPage extends StatefulWidget {
   final Function pathToVideoSetter;
   final Function exitButton;
-  final String exerciseTitle;
+  final int index;
   final bool verticalOrientation;
 
   const PhotoCameraPage({
     super.key,
     required this.pathToVideoSetter,
-    required this.exerciseTitle,
+    required this.index,
     required this.exitButton,
     this.verticalOrientation = true,
   });
@@ -84,8 +84,7 @@ class PhotoCameraPageState extends State<PhotoCameraPage> {
 
     await file.saveTo(filepath);
 
-    widget.pathToVideoSetter(
-        exerciseNameConverter(widget.exerciseTitle), filepath);
+    widget.pathToVideoSetter(test[widget.index].uniqueKeyword, filepath);
 
     setState(() {
       _pictureTaken = true;
@@ -143,7 +142,7 @@ class PhotoCameraPageState extends State<PhotoCameraPage> {
                   child: SizedBox(
                     height: 36,
                     child: Center(
-                        child: Text(widget.exerciseTitle,
+                        child: Text(test[widget.index].title,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,

@@ -6,12 +6,12 @@ enum CamearaMode { video, photo }
 
 class FullScreenModal extends ModalRoute {
   final Function pathToVideoSetter;
-  final String exerciseTitle;
+  final int index;
   final CamearaMode mode;
 
   FullScreenModal(
       {required this.pathToVideoSetter,
-      required this.exerciseTitle,
+      required this.index,
       required this.mode});
 
   _closeModal(context) {
@@ -48,11 +48,11 @@ class FullScreenModal extends ModalRoute {
           child: mode == CamearaMode.video
               ? CameraPage(
                   pathToVideoSetter: pathToVideoSetter,
-                  exerciseTitle: exerciseTitle,
+                  index: index,
                   exitButton: () => _closeModal(context))
               : PhotoCameraPage(
                   pathToVideoSetter: pathToVideoSetter,
-                  exerciseTitle: exerciseTitle,
+                  index: index,
                   exitButton: () => _closeModal(context))),
     );
   }
