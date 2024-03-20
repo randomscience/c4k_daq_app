@@ -84,7 +84,7 @@ class CameraPageState extends State<CameraPage> {
 
       await file.saveTo(filepath);
 
-      widget.pathToVideoSetter(test[widget.index].uniqueKeyword, filepath);
+      widget.pathToVideoSetter(measurementList[widget.index].uniqueKeyword, filepath);
 
       setState(() {_isRecording = false; _recordingEnded = true;});
     } else {
@@ -145,7 +145,7 @@ class CameraPageState extends State<CameraPage> {
                   child: SizedBox(
                     height: 36,
                     child: Center(
-                        child: Text(test[widget.index].title,
+                        child: Text(measurementList[widget.index].title,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,

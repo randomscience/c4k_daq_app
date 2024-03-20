@@ -84,7 +84,7 @@ class PhotoCameraPageState extends State<PhotoCameraPage> {
 
     await file.saveTo(filepath);
 
-    widget.pathToVideoSetter(test[widget.index].uniqueKeyword, filepath);
+    widget.pathToVideoSetter(measurementList[widget.index].uniqueKeyword, filepath);
 
     setState(() {
       _pictureTaken = true;
@@ -142,7 +142,7 @@ class PhotoCameraPageState extends State<PhotoCameraPage> {
                   child: SizedBox(
                     height: 36,
                     child: Center(
-                        child: Text(test[widget.index].title,
+                        child: Text(measurementList[widget.index].title,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,

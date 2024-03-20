@@ -2,21 +2,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-const gatewayKeyValue = "dc48813b9f2371df0479fa27b112b64d";
-
-const id = "id";
-const height = "height";
-const age = "age";
-const sex = "sex";
-
-const noseToFloor = "nose_to_floor";
-const collarBoneToFloor = "collar_bone_to_floor";
-const pelvisToFloor = "pelvis_to_floor";
-
-const gatewayKey = "gateway_key";
-const uniqueID = "unique_id";
 const measurementTime = "measurement_time";
-const version = "app_version";
 
 enum MeasurementType { id, number, dropdown, photo, video, save }
 
@@ -45,62 +31,62 @@ class Measurement {
       this.isRequired = false});
 }
 
-List<Measurement> test = [
+List<Measurement> measurementList = [
   Measurement(
       type: MeasurementType.id,
-      title: 'Wpisz ID z ankiety',
-      description: 'Unikatowe ID dziecka',
+      title: 'The Kidly ID',
+      description: 'Wpisz Unikatowe ID dziecka',
       group: MeasurementGroup.generalInfo,
       uniqueKeyword: "theKidlyId",
       isRequired: true),
   Measurement(
       type: MeasurementType.number,
-      title: 'Wpisz wzrost dziecka',
-      description: 'Wzrost [cm]',
+      title: 'Wzrost',
+      description: 'Wpisz wzrost [cm]',
       group: MeasurementGroup.generalInfo,
       uniqueKeyword: "height",
       isRequired: true),
   Measurement(
       type: MeasurementType.number,
-      title: 'Wpisz wiek dziecka',
-      description: 'Wiek [lata]',
+      title: 'Wiek',
+      description: 'Wpisz wiek [lata]',
       group: MeasurementGroup.generalInfo,
       uniqueKeyword: "age",
       isRequired: true),
   Measurement(
       type: MeasurementType.dropdown,
-      title: 'Wybierz biologiczną płeć dziecka',
-      description: 'Płeć',
+      title: 'Płeć',
+      description: 'Wybierz biologiczną płeć',
       group: MeasurementGroup.generalInfo,
       uniqueKeyword: "sex",
       isRequired: true),
   Measurement(
       type: MeasurementType.photo,
-      title: 'Zrób zdjęcie w pozycji "T"',
-      description: 'Przodem do kamery',
+      title: 'Zdjęcie w pozycji "T"',
+      description: 'Zrób zdjęcie w pozycji "T", przodem do kamery',
       group: MeasurementGroup.photos,
       uniqueKeyword: "t_pose_photo_front",
       isRequired: true),
   Measurement(
       type: MeasurementType.photo,
-      title: 'Zrób zdjęcie w pozycji stania na Baczność, przodem do kamery',
-      description: 'Przodem do kamery',
+      title: '(1) Zdjęcie w pozycji stania na baczność',
+      description: 'Zrób zdjęcie w pozycji "na baczność", przodem do kamery',
       group: MeasurementGroup.photos,
       uniqueKeyword: "attention_pose_photo_front",
       isRequired: true),
   Measurement(
       type: MeasurementType.photo,
-      title:
-          'Zrób zdjęcie w pozycji stania na Baczność, lewym profilem do kamery',
-      description: 'lewym profilem do kamery',
+      title: '(2) Zdjęcie w pozycji stania na baczność',
+      description:
+          'Zrób zdjęcie w pozycji "na baczność", lewym profilem do kamery',
       group: MeasurementGroup.photos,
       uniqueKeyword: "attention_pose_photo_left",
       isRequired: true),
   Measurement(
       type: MeasurementType.photo,
-      title:
-          'Zrób zdjęcie w pozycji stania na Baczność, prawym profilem do kamery',
-      description: 'prawym profilem do kamery',
+       title: '(3) Zdjęcie w pozycji stania na baczność',
+      description:
+          'Zrób zdjęcie w pozycji "na baczność", prawym profilem do kamery',
       group: MeasurementGroup.photos,
       uniqueKeyword: "attention_pose_photo_right",
       isRequired: true),
@@ -148,22 +134,48 @@ List<Measurement> test = [
       uniqueKeyword: "move_from_l_p_3"),
   Measurement(
       type: MeasurementType.video,
-      title: "Nagraj dziecko skaczące wzwyż 5 razy",
-      description: 'Nagraj dziecko skaczące wzwyż 5 razy',
+      title: "Skok",
+      description: 'Nagraj dziecko skaczące 5 razy',
       group: MeasurementGroup.superPowersVideos,
-      uniqueKeyword: "jump"),
+      uniqueKeyword: "high_jump_5"),
   Measurement(
       type: MeasurementType.video,
-      title: "Nagraj dziecko wykonujące w miejsu, skip A",
-      description: 'Nagraj dziecko wykonujące w miejsu, skip A',
+      title: "Skip A",
+      description: 'Nagraj dziecko wykonujące w miejscu skip A',
       group: MeasurementGroup.superPowersVideos,
-      uniqueKeyword: "skip"),
+      uniqueKeyword: "skip_a"),
   Measurement(
       type: MeasurementType.video,
-      title: "Nagraj dziecko trzymające ciężarki",
-      description: 'Nagraj dziecko trzymające ciężarki',
+      title: "Pajacyki",
+      description: 'Nagraj dziecko wykonujące pajacyki',
       group: MeasurementGroup.superPowersVideos,
-      uniqueKeyword: "strength"),
+      uniqueKeyword: "rompers"),
+  Measurement(
+      type: MeasurementType.video,
+      title: "Podpór przodem",
+      description: 'Nagraj dziecko wykonujące podpór przodem',
+      group: MeasurementGroup.superPowersVideos,
+      uniqueKeyword: "plank"),
+  Measurement(
+      type: MeasurementType.video,
+      title: "Pół przysiad",
+      description:
+          'Nagraj dziecko wykonujące pół przysiad z rękami wyprostowanymi w przód',
+      group: MeasurementGroup.superPowersVideos,
+      uniqueKeyword: "squat"),
+  Measurement(
+      type: MeasurementType.video,
+      title: "Ciężarki",
+      description: 'Nagraj dziecko trzymające ciężarki o wadze 1 kg, w pozycji "T"',
+      group: MeasurementGroup.superPowersVideos,
+      uniqueKeyword: "strength_doubles"),
+    Measurement(
+      type: MeasurementType.video,
+      title: "Leżenie na brzuchu z kończynami uniesionymi",
+      description: 'Nagraj dziecko leżące na brzuchu z kończynami uniesionymi',
+      group: MeasurementGroup.superPowersVideos,
+      uniqueKeyword: "laying_down_banana_style"),
+      
   Measurement(
       type: MeasurementType.save,
       title: "",
@@ -171,83 +183,6 @@ List<Measurement> test = [
       group: MeasurementGroup.save,
       uniqueKeyword: "")
 ];
-
-emptyUserInformation() {
-  // if (kDebugMode) {
-  //   return Map<String, String?>.from({
-  //     id: "1331231",
-  //     height: "96",
-  //     age: "52",
-  //     sex: "Male",
-  //   });
-  // }
-  return Map<String, String?>.from({
-    // id: null,
-    // height: null,
-    // age: null,
-    // sex: null,
-  });
-}
-
-const String exercise1 = "Zdjęcie w pozycji 'T', przodem do kamery";
-const String exercise2 =
-    "Zdjęcie w pozycji stania na Baczność, przodem do kamery";
-const String exercise3 =
-    "Zdjęcie w pozycji stania na Baczność, lewym profilem do kamery";
-const String exercise4 =
-    "Zrób zdjęcie w pozycji stania na Baczność, prawym profilem do kamery";
-
-const String exercise5 = "(1) Przejście z punktu D do punktu B";
-const String exercise6 = "(2) Przejście z punktu D do punktu B";
-const String exercise7 = "(3) Przejście z punktu D do punktu B";
-
-const String exercise8 = "(1) Przejście z punktu L do punktu P";
-const String exercise9 = "(2) Przejście z punktu L do punktu P";
-const String exercise10 = "(3) Przejście z punktu L do punktu P";
-
-const String exercise11 = "Nagraj dziecko skaczące wzwyż 5 razy";
-const String exercise12 = "Nagraj dziecko wykonujące w miejsu, skip A";
-const String exercise13 = "Nagraj dziecko trzymające ciężarki";
-const String exercise14 = "Przekarz dziecku telefon, z grą zręcznościową";
-
-String exerciseNameConverter(String exerciseName) {
-  if (exerciseName == exercise1) return "exercise_1";
-  if (exerciseName == exercise2) return "exercise_2";
-  if (exerciseName == exercise3) return "exercise_3";
-  if (exerciseName == exercise4) return "exercise_4";
-  if (exerciseName == exercise5) return "exercise_5";
-  if (exerciseName == exercise6) return "exercise_6";
-
-  if (exerciseName == exercise7) return "exercise_7";
-  if (exerciseName == exercise8) return "exercise_8";
-  if (exerciseName == exercise9) return "exercise_9";
-
-  if (exerciseName == exercise10) return "exercise_10";
-  if (exerciseName == exercise11) return "exercise_11";
-  if (exerciseName == exercise12) return "exercise_12";
-
-  if (exerciseName == exercise13) return "exercise_13";
-  if (exerciseName == exercise14) return "exercise_14";
-
-  return "unknown_exercise";
-}
-
-const Map<String, String?> emptyExerciseVideoMapping = {
-  // "exercise_1": null,
-  // "exercise_2": null,
-  // "exercise_3": null,
-  // "exercise_4": null,
-  // "exercise_5": null,
-  // "exercise_6": null,
-  // "exercise_7": null,
-  // "exercise_8": null,
-  // "exercise_9": null,
-  // "exercise_10": null,
-  // "exercise_11": null,
-  // "exercise_12": null,
-  // "exercise_13": null,
-  // "exercise_14": null,
-};
 
 Future<AndroidDeviceInfo> getAndroidDevice() async {
   var deviceInfo = DeviceInfoPlugin();

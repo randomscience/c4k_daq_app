@@ -43,8 +43,7 @@ void main() async {
 
 class MyHomePage extends StatefulWidget {
   // new recording information
-  Map<String, String?> userInformation =
-      Map<String, String?>.from(emptyUserInformation());
+  Map<String, String?> userInformation = {};
 
   bool isRecording() {
     return userInformation.isNotEmpty;
@@ -61,7 +60,7 @@ class MyHomePageState extends State<MyHomePage> {
   int noDirectoriesInFile = 0;
 
   clearData() {
-    widget.userInformation = Map<String, String?>.from(emptyUserInformation());
+    widget.userInformation = {};
     _noLoadedFiles();
   }
 
@@ -213,6 +212,57 @@ class MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  _addMeasurement() async {
+    var uuid = const Uuid().v4();
+    String directory = (await getApplicationDocumentsDirectory()).path;
+    Map<String, dynamic> userInformationData = {};
+    ByteData bigImageBytes = await rootBundle.load("assets/big_image.jpg");
+
+    Uint8List bigImage = bigImageBytes.buffer
+        .asUint8List(bigImageBytes.offsetInBytes, bigImageBytes.lengthInBytes);
+
+    ByteData bigVideoBytes =
+        await rootBundle.load("assets/Money_(short_song)_Louis_Cole.mp4");
+
+    Uint8List bigVideo = bigVideoBytes.buffer
+        .asUint8List(bigVideoBytes.offsetInBytes, bigVideoBytes.lengthInBytes);
+
+    for (Measurement measurement in measurementList) {
+      if (measurement.type == MeasurementType.id) {
+        userInformationData[measurement.uniqueKeyword] = "test";
+      } else if (measurement.type == MeasurementType.number) {
+        userInformationData[measurement.uniqueKeyword] = 23;
+      } else if (measurement.type == MeasurementType.dropdown) {
+        userInformationData[measurement.uniqueKeyword] = "female";
+      } else if (measurement.type == MeasurementType.photo) {
+        await XFile.fromData(bigImage).saveTo(
+            "$directory/c4k_daq/${uuid}_debug_exercise_${measurement.uniqueKeyword}.jpg");
+
+        userInformationData[measurement.uniqueKeyword] =
+            "$directory/c4k_daq/${uuid}_debug_exercise_${measurement.uniqueKeyword}.jpg";
+      } else if (measurement.type == MeasurementType.video) {
+        await XFile.fromData(bigVideo).saveTo(
+            "$directory/c4k_daq/${uuid}_debug_exercise_${measurement.uniqueKeyword}.mp4");
+
+        userInformationData[measurement.uniqueKeyword] =
+            "$directory/c4k_daq/${uuid}_debug_exercise_${measurement.uniqueKeyword}.mp4";
+      }
+    }
+
+    var localFile = File('$directory/c4k_daq/$uuid.json');
+    await localFile.create(recursive: true);
+
+    localFile.writeAsString(
+        json.encode({
+          ...{"unique_id": uuid},
+          ...userInformationData,
+          ...{"measurement_time": "${DateTime.now()}"},
+          ...{"app_version": appVersion}
+        }),
+        flush: true);
+    print(Directory("$directory/c4k_daq/").listSync());
+  }
+
   _showDialog() {
     showDialog<String>(
       context: context,
@@ -236,6 +286,11 @@ class MyHomePageState extends State<MyHomePage> {
             onPressed: () =>
                 {copyToSDCard(), Navigator.pop(context, 'Wyeksportuj')},
             child: const Text('Wyeksportuj'),
+          ),
+          // if (kDebugMode)
+          FilledButton(
+            onPressed: () => {_addMeasurement()},
+            child: const Text('Add data'),
           ),
         ],
       ),

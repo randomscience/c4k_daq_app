@@ -37,7 +37,7 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   _steps() {
     List<Step> steps = [];
 
-    for (final e in test) {
+    for (final e in measurementList) {
       if (e.type == MeasurementType.id) {
         steps.add(_textFieldGenerator(e.uniqueKeyword, e.title, e.description,
             isID: true));
@@ -178,6 +178,15 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
   }
 
   bool enableSave() {
+    for (Measurement measureemnt in measurementList) {
+      if (measureemnt.isRequired &&
+          !widget
+              .userInformationGetter()
+              .containsKey(measureemnt.uniqueKeyword)) {
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -211,26 +220,26 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
           padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
           child: Row(
             children: <Widget>[
-              if (test[_index].type == MeasurementType.id ||
-                  test[_index].type == MeasurementType.number ||
-                  test[_index].type == MeasurementType.dropdown)
+              if (measurementList[_index].type == MeasurementType.id ||
+                  measurementList[_index].type == MeasurementType.number ||
+                  measurementList[_index].type == MeasurementType.dropdown)
                 FilledButton(
                   onPressed: controls.onStepContinue,
                   child: const Text('Dalej'),
                 ),
-              if (test[_index].type == MeasurementType.video)
+              if (measurementList[_index].type == MeasurementType.video)
                 FilledButton(
                   onPressed: _recordVideo,
                   child: const Text(
                     "Nagraj wideo",
                   ),
                 ),
-              if (test[_index].type == MeasurementType.photo)
+              if (measurementList[_index].type == MeasurementType.photo)
                 FilledButton(
                   onPressed: _takePicture,
                   child: const Text('Wykonaj zdjęcie'),
                 ),
-              if (test[_index].type == MeasurementType.save)
+              if (measurementList[_index].type == MeasurementType.save)
                 Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: FilledButton(
@@ -246,7 +255,8 @@ class _MeasurementStepperState extends State<MeasurementStepper> {
                           : null,
                       child: const Text('Zapisz'),
                     )),
-              if (_index != 0 && test[_index].type == MeasurementType.save)
+              if (_index != 0 &&
+                  measurementList[_index].type == MeasurementType.save)
                 Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: FilledButton.tonal(

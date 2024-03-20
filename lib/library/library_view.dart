@@ -95,10 +95,7 @@ class _LibraryState extends State<Library> {
 
     widget.updateBadgeNumber(measurementFiles.entries.length);
 
-    setState(() {
-      _isLoading = false;
-      measurementFiles = sortedByValueMap;
-    });
+    setState(() {_isLoading = false; measurementFiles = sortedByValueMap;});
   }
 
   @override

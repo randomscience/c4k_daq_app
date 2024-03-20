@@ -46,7 +46,7 @@ class _LibraryCard extends State<LibraryCard> {
   void _deleteMeasurement() async {
     String directory = (await getApplicationDocumentsDirectory()).path;
 
-    widget.runPopUp(widget.localJsonData['id'],
+    widget.runPopUp(widget.localJsonData['theKidlyId'],
         '$directory/c4k_daq/${widget.localJsonData['unique_id']}.json');
   }
 
@@ -61,7 +61,7 @@ class _LibraryCard extends State<LibraryCard> {
       widget.snackBar(result);
       return;
     }
-    // widget.deleteMeasurement(widget.pathToFile);
+    widget.deleteMeasurement(widget.pathToFile);
   }
 
   FilledButton _sendButton() {
