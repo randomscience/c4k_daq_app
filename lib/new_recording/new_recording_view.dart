@@ -76,14 +76,14 @@ class _NewRecording extends State<NewRecording> {
     await Navigator.of(context).push(FullScreenModal(
         pathToVideoSetter: setExerciseVideoMapping,
         index: index,
-        mode: CamearaMode.video));
+        mode: CameraMode.video));
   }
 
   _showPhotoModal(BuildContext context, int index) async {
     await Navigator.of(context).push(FullScreenModal(
         pathToVideoSetter: setExerciseVideoMapping,
         index: index,
-        mode: CamearaMode.photo));
+        mode: CameraMode.photo));
   }
 
   @override

@@ -74,6 +74,22 @@ class CameraPageState extends State<CameraPage> {
     widget.exitButton();
   }
 
+  _cameraDirection() {
+    String text = "";
+    if (measurementList[widget.index].cameraOrientation ==
+        CameraOrientation.horizontal) {
+      text = "Pozioma";
+    } else if (measurementList[widget.index].cameraOrientation ==
+        CameraOrientation.vertical) {
+      text = "Pionowa";
+    }
+
+    return Text("Kamera: $text",
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white));
+  }
+
   _recordVideo() async {
     if (_isRecording) {
       file = await _cameraController.stopVideoRecording();
@@ -84,9 +100,13 @@ class CameraPageState extends State<CameraPage> {
 
       await file.saveTo(filepath);
 
-      widget.pathToVideoSetter(measurementList[widget.index].uniqueKeyword, filepath);
+      widget.pathToVideoSetter(
+          measurementList[widget.index].uniqueKeyword, filepath);
 
-      setState(() {_isRecording = false; _recordingEnded = true;});
+      setState(() {
+        _isRecording = false;
+        _recordingEnded = true;
+      });
     } else {
       await _cameraController.prepareForVideoRecording();
       await _cameraController.startVideoRecording();
@@ -138,6 +158,12 @@ class CameraPageState extends State<CameraPage> {
                   onPressed: () => {_exitRecording()},
                 ),
               )),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 0, 120),
+                child: _cameraDirection()),
+          ),
           Align(
               alignment: Alignment.topCenter,
               child: Padding(

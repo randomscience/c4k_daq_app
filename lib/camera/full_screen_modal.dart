@@ -2,12 +2,12 @@ import 'package:c4k_daq/camera/camera_page.dart';
 import 'package:c4k_daq/camera/photo_page.dart';
 import 'package:flutter/material.dart';
 
-enum CamearaMode { video, photo }
+enum CameraMode { video, photo }
 
 class FullScreenModal extends ModalRoute {
   final Function pathToVideoSetter;
   final int index;
-  final CamearaMode mode;
+  final CameraMode mode;
 
   FullScreenModal(
       {required this.pathToVideoSetter,
@@ -45,7 +45,7 @@ class FullScreenModal extends ModalRoute {
     return Material(
       type: MaterialType.transparency,
       child: Center(
-          child: mode == CamearaMode.video
+          child: mode == CameraMode.video
               ? CameraPage(
                   pathToVideoSetter: pathToVideoSetter,
                   index: index,

@@ -3,13 +3,14 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:c4k_daq/constants.dart';
 import 'package:c4k_daq/gateway_url.dart';
 import 'package:c4k_daq/version.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 
 import 'library/library_view.dart';
@@ -156,16 +157,10 @@ class MyHomePageState extends State<MyHomePage> {
     return Library(updateBadgeNumber: _updateBadge);
   }
 
-  String deviceID = '';
-
-  _getID() async {
-    deviceID = await getId();
-  }
-
   @override
   void initState() {
     super.initState();
-    _getID();
+
     _noLoadedFiles();
   }
 
@@ -260,7 +255,6 @@ class MyHomePageState extends State<MyHomePage> {
           ...{"app_version": appVersion}
         }),
         flush: true);
-    print(Directory("$directory/c4k_daq/").listSync());
   }
 
   _showDialog() {
@@ -268,14 +262,13 @@ class MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('C4K DAQ'),
-        content: SizedBox(
+        content: const SizedBox(
             height: 200,
             child: Column(children: [
-              const Text(
+              Text(
                 'Wersja Aplikacji: $appVersion',
               ),
-              Text('Wersja urządzenia: $deviceID'),
-              const Text('Ścieżka do bramki:\n$gatewayUrl'),
+              Text('Ścieżka do bramki:\n$gatewayUrl'),
             ])),
         actions: <Widget>[
           FilledButton(
@@ -287,11 +280,7 @@ class MyHomePageState extends State<MyHomePage> {
                 {copyToSDCard(), Navigator.pop(context, 'Wyeksportuj')},
             child: const Text('Wyeksportuj'),
           ),
-          // if (kDebugMode)
-          FilledButton(
-            onPressed: () => {_addMeasurement()},
-            child: const Text('Add data'),
-          ),
+          
         ],
       ),
     );
