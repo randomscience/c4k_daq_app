@@ -29,9 +29,9 @@ class ValidatedTextInput extends StatefulWidget {
     if (textInt >= 200) {
       return 'Wprowadzono za dużą wartość';
     }
-    if (textInt < 20) {
-      return 'Wprowadzono za małą wartość';
-    }
+    // if (textInt < 20) {
+    //   return 'Wprowadzono za małą wartość';
+    // }
     return null;
   }
 
