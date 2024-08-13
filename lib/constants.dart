@@ -1,105 +1,357 @@
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'dart:io';
 
-const gatewayKeyValue = "dc48813b9f2371df0479fa27b112b64d";
-
-const id = "id";
-const height = "height";
-const age = "age";
-const sex = "sex";
-
-const noseToFloor = "nose_to_floor";
-const collarBoneToFloor = "collar_bone_to_floor";
-const pelvisToFloor = "pelvis_to_floor";
-
-const gatewayKey = "gateway_key";
-const uniqueID = "unique_id";
 const measurementTime = "measurement_time";
-const version = "app_version";
 
-emptyUserInformation() {
-  if (kDebugMode) {
-    return Map<String, String?>.from({
-      id: "1331231",
-      height: "96",
-      age: "52",
-      sex: "98",
-    });
-  }
-  return Map<String, String?>.from({
-    id: null,
-    height: null,
-    age: null,
-    sex: null,
-  });
+enum MeasurementType { id, number, dropdown, photo, video, save }
+
+enum CameraOrientation { vertical, horizontal, none }
+
+enum MeasurementGroup {
+  generalInfo,
+  photos,
+  poseVideos,
+  superPowersVideos,
+  save
 }
 
-const String exercise1 = "Zdjęcie w pozycji 'T', przodem do kamery";
-const String exercise2 =
-    "Zdjęcie w pozycji stania na Baczność, przodem do kamery";
-const String exercise3 =
-    "Zdjęcie w pozycji stania na Baczność, lewym profilem do kamery";
-const String exercise4 =
-    "Zrób zdjęcie w pozycji stania na Baczność, prawym profilem do kamery";
-
-const String exercise5 = "(1) Przejście z punktu D do punktu B";
-const String exercise6 = "(2) Przejście z punktu D do punktu B";
-const String exercise7 = "(3) Przejście z punktu D do punktu B";
-
-const String exercise8 = "(1) Przejście z punktu L do punktu P";
-const String exercise9 = "(2) Przejście z punktu L do punktu P";
-const String exercise10 = "(3) Przejście z punktu L do punktu P";
-
-const String exercise11 = "Nagraj dziecko skaczące wzwyż 5 razy";
-const String exercise12 = "Nagraj dziecko wykonujące w miejsu, skip A";
-const String exercise13 = "Nagraj dziecko trzymające ciężarki";
-const String exercise14 = "Przekarz dziecku telefon, z grą zręcznościową";
-
-String exerciseNameConverter(String exerciseName) {
-  if (exerciseName == exercise1) return "exercise_1";
-  if (exerciseName == exercise2) return "exercise_2";
-  if (exerciseName == exercise3) return "exercise_3";
-  if (exerciseName == exercise4) return "exercise_4";
-  if (exerciseName == exercise5) return "exercise_5";
-  if (exerciseName == exercise6) return "exercise_6";
-
-  if (exerciseName == exercise7) return "exercise_7";
-  if (exerciseName == exercise8) return "exercise_8";
-  if (exerciseName == exercise9) return "exercise_9";
-
-  if (exerciseName == exercise10) return "exercise_10";
-  if (exerciseName == exercise11) return "exercise_11";
-  if (exerciseName == exercise12) return "exercise_12";
-
-  if (exerciseName == exercise13) return "exercise_13";
-  if (exerciseName == exercise14) return "exercise_14";
-
-  return "unknown_exercise";
+class Measurement {
+  late MeasurementType type;
+  late String title;
+  late String description;
+  late MeasurementGroup group;
+  late String uniqueKeyword;
+  late bool isRequired;
+  late CameraOrientation cameraOrientation;
+  Measurement(
+      {required this.type,
+      required this.title,
+      required this.description,
+      required this.group,
+      required this.uniqueKeyword,
+      this.cameraOrientation = CameraOrientation.none,
+      this.isRequired = false});
 }
 
-const Map<String, String?> emptyExerciseVideoMapping = {
-  "exercise_1": null,
-  "exercise_2": null,
-  "exercise_3": null,
-  "exercise_4": null,
-  "exercise_5": null,
-  "exercise_6": null,
-  "exercise_7": null,
-  "exercise_8": null,
-  "exercise_9": null,
-  "exercise_10": null,
-  "exercise_11": null,
-  "exercise_12": null,
-  "exercise_13": null,
-  "exercise_14": null,
-};
-
-Future<AndroidDeviceInfo> getAndroidDevice() async {
-  var deviceInfo = DeviceInfoPlugin();
-  return deviceInfo.androidInfo;
-  // unique ID on Android
+_generateMeasurementList() async {
+  var input = await File("assets/exercises.json").readAsString();
+  var map = jsonDecode(input);
+  print(map);
+  var list = [
+    Measurement(
+        type: MeasurementType.save,
+        title: "",
+        description: '',
+        group: MeasurementGroup.save,
+        uniqueKeyword: "")
+  ];
+  return list;
 }
 
-Future<String> getId() async {
-  return (await getAndroidDevice()).fingerprint;
-}
+List<Measurement> measurementList = [
+  Measurement(
+      type: MeasurementType.id,
+      title: 'The Kidly ID',
+      description: 'Wpisz Unikatowe ID dziecka',
+      group: MeasurementGroup.generalInfo,
+      uniqueKeyword: "theKidlyId",
+      isRequired: true),
+  Measurement(
+      type: MeasurementType.number,
+      title: 'Wzrost',
+      description: 'Wpisz wzrost [cm]',
+      group: MeasurementGroup.generalInfo,
+      uniqueKeyword: "height",
+      isRequired: true),
+  Measurement(
+      type: MeasurementType.number,
+      title: 'Wiek',
+      description: 'Wpisz wiek [lata]',
+      group: MeasurementGroup.generalInfo,
+      uniqueKeyword: "age",
+      isRequired: true),
+  Measurement(
+      type: MeasurementType.dropdown,
+      title: 'Płeć',
+      description: 'Wybierz biologiczną płeć',
+      group: MeasurementGroup.generalInfo,
+      uniqueKeyword: "sex",
+      isRequired: true),
+  Measurement(
+      type: MeasurementType.photo,
+      title: 'Zdjęcie w pozycji "T"',
+      description: 'Zrób zdjęcie w pozycji "T", przodem do kamery',
+      group: MeasurementGroup.photos,
+      uniqueKeyword: "t_pose_photo_front",
+      cameraOrientation: CameraOrientation.vertical,
+      isRequired: false),
+  Measurement(
+      type: MeasurementType.photo,
+      title: '(1) Zdjęcie w pozycji stania na baczność',
+      description: 'Zrób zdjęcie w pozycji "na baczność", przodem do kamery',
+      group: MeasurementGroup.photos,
+      uniqueKeyword: "attention_pose_photo_front",
+      cameraOrientation: CameraOrientation.vertical,
+      isRequired: false),
+  Measurement(
+      type: MeasurementType.photo,
+      title: '(2) Zdjęcie w pozycji stania na baczność',
+      description:
+          'Zrób zdjęcie w pozycji "na baczność", lewym profilem do kamery',
+      group: MeasurementGroup.photos,
+      uniqueKeyword: "attention_pose_photo_left",
+      cameraOrientation: CameraOrientation.vertical,
+      isRequired: false),
+  Measurement(
+      type: MeasurementType.photo,
+      title: '(3) Zdjęcie w pozycji stania na baczność',
+      description:
+          'Zrób zdjęcie w pozycji "na baczność", prawym profilem do kamery',
+      group: MeasurementGroup.photos,
+      uniqueKeyword: "attention_pose_photo_right",
+      cameraOrientation: CameraOrientation.vertical,
+      isRequired: false),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "(1) Przejście z punktu D do punktu B",
+  //     description:
+  //         'Nagraj dziecko idące przodem do kamery, z punktu D do punktu B',
+  //     group: MeasurementGroup.poseVideos,
+  //     cameraOrientation: CameraOrientation.vertical,
+  //     uniqueKeyword: "move_from_d_b_1"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "(2) Przejście z punktu D do punktu B",
+  //     description:
+  //         'Nagraj dziecko idące przodem do kamery, z punktu D do punktu B',
+  //     group: MeasurementGroup.poseVideos,
+  //     cameraOrientation: CameraOrientation.vertical,
+  //     uniqueKeyword: "move_from_d_b_2"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "(3) Przejście z punktu D do punktu B",
+  //     description:
+  //         'Nagraj dziecko idące przodem do kamery, z punktu D do punktu B',
+  //     group: MeasurementGroup.poseVideos,
+  //     cameraOrientation: CameraOrientation.vertical,
+  //     uniqueKeyword: "move_from_d_b_3"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "Skok",
+  //     description: 'Nagraj dziecko skaczące 5 razy',
+  //     group: MeasurementGroup.superPowersVideos,
+  //     cameraOrientation: CameraOrientation.vertical,
+  //     uniqueKeyword: "high_jump_5"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "Skip A",
+  //     description: 'Nagraj dziecko wykonujące w miejscu skip A',
+  //     group: MeasurementGroup.superPowersVideos,
+  //     cameraOrientation: CameraOrientation.vertical,
+  //     uniqueKeyword: "skip_a"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "Półprzysiad profilem do kamery",
+  //     description:
+  //         'Nagraj dziecko wykonujące półprzysiad z rękami wyprostowanymi w przód, profilem do kamery',
+  //     group: MeasurementGroup.superPowersVideos,
+  //     cameraOrientation: CameraOrientation.vertical,
+  //     uniqueKeyword: "squat_side"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "Półprzysiad, przodem do kamery",
+  //     description:
+  //         'Nagraj dziecko wykonujące półprzysiad z rękami wyprostowanymi w przód, przodem do kamery',
+  //     group: MeasurementGroup.superPowersVideos,
+  //     cameraOrientation: CameraOrientation.vertical,
+  //     uniqueKeyword: "squat_front"),
+  Measurement(
+      type: MeasurementType.video,
+      title: "Rozkrok, przodem do kamery",
+      description: 'Nagraj dziecko wykonujące rozkrok przodem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "split_front"),
+
+  Measurement(
+      type: MeasurementType.video,
+      title: "Klęczenie jednonóż bez podparcia, co najmniej 10s",
+      description:
+          'Nagraj dziecko klęczące jednonóż bez podparcia, profilem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "one_leg_squat_side"),
+  Measurement(
+      type: MeasurementType.video,
+      title: "Klęczenie jednonóż bez podparcia, co najmniej 10s",
+      description:
+          'Nagraj dziecko klęczące jednonóż bez podparcia, przodem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "one_leg_front"),
+
+  Measurement(
+      type: MeasurementType.video,
+      title: "Podnoszenie przedmiotu w siadzie",
+      description:
+          'Nagraj dziecko klęczące obunóż bez podparcia, przodem do kamery sięgające po przedmiot umieszczony z tyłu. Ćwiczenie powinno być powtórzone 2 razy, raz prze lewe raz przez prawe ramie',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "two_leg_squat"),
+
+  Measurement(
+      type: MeasurementType.video,
+      title: "Stanie jednonóż bez podparcia, co najmniej 10s",
+      description:
+          'Nagraj dziecko stojące jednonóż bez podparcia, przodem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "one_leg_stand"),
+
+  Measurement(
+      type: MeasurementType.video,
+      title: "Podskoki jednonóż wzwyż, co najmniej 5 razy",
+      description:
+          'Nagraj dziecko wykonujące podskoki na jednej nodze w miejscu bez podparcia, przodem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "one_leg_high_jump"),
+
+  Measurement(
+      type: MeasurementType.video,
+      title: "Podskoki wzwyż obunóż, co najmniej 5 razy",
+      description:
+          'Nagraj dziecko wykonujące podskoki obunóż w miejscu, przodem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "two_leg_high_jump"),
+
+  Measurement(
+      type: MeasurementType.video,
+      title: "Podskoki obunóż do przodu, na bogi i do tyłu, co najmniej 5 razy",
+      description:
+          'Nagraj dziecko wykonujące podskoki obunóż do przodu, na boki i do tyłu, przodem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "two_leg_sidewise_jump"),
+
+  Measurement(
+      type: MeasurementType.video,
+      title: "Podskok obunóż na podniesienie",
+      description:
+          'Nagraj dziecko wykonujące podskok obunóż na podniesienie, np. na stopień wysokości 20cm, przodem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "two_leg_obstacle_jump"),
+
+  Measurement(
+      type: MeasurementType.video,
+      title: "Przeskok przez przeszkodę",
+      description:
+          'Nagraj dziecko wykonujące podskok obunóż przez przeszkodę, przedmiot wysokości 20cm, przodem do kamery',
+      group: MeasurementGroup.superPowersVideos,
+      cameraOrientation: CameraOrientation.vertical,
+      uniqueKeyword: "two_leg_over_obstacle_jump"),
+
+  //   Measurement(
+  // type: MeasurementType.video,
+  // title: "Skakanie na skakance, co najmniej 10s",
+  // description:
+  //     'Nagraj dziecko skaczące na skakance, przodem do kamery',
+  // group: MeasurementGroup.superPowersVideos,
+  // cameraOrientation: CameraOrientation.vertical,
+  // uniqueKeyword: "jump_rope"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "Podpór przodem",
+  //     description: 'Nagraj dziecko wykonujące podpór przodem',
+  //     group: MeasurementGroup.superPowersVideos,
+  //     cameraOrientation: CameraOrientation.horizontal,
+  //     uniqueKeyword: "plank"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "Ciężarki",
+  //     description:
+  //         'Nagraj dziecko trzymające ciężarki o wadze 1 kg, w pozycji "T"',
+  //     group: MeasurementGroup.superPowersVideos,
+  //     cameraOrientation: CameraOrientation.vertical,
+  //     uniqueKeyword: "strength_doubles"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "(1) Przejście z punktu L do punktu P",
+  //     description:
+  //         'Nagraj dziecko idące profilem do kamery, z punktu L do punktu P',
+  //     group: MeasurementGroup.poseVideos,
+  //     cameraOrientation: CameraOrientation.horizontal,
+  //     uniqueKeyword: "move_from_l_p_1"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "(2) Przejście z punktu L do punktu P",
+  //     description:
+  //         'Nagraj dziecko idące profilem do kamery, z punktu L do punktu P',
+  //     group: MeasurementGroup.poseVideos,
+  //     cameraOrientation: CameraOrientation.horizontal,
+  //     uniqueKeyword: "move_from_l_p_2"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "(3) Przejście z punktu L do punktu P",
+  //     description:
+  //         'Nagraj dziecko idące profilem do kamery, z punktu L do punktu P',
+  //     group: MeasurementGroup.poseVideos,
+  //     cameraOrientation: CameraOrientation.horizontal,
+  //     uniqueKeyword: "move_from_l_p_3"),
+  // Measurement(
+  //     type: MeasurementType.video,
+  //     title: "Leżenie na brzuchu z kończynami uniesionymi",
+  //     description: 'Nagraj dziecko leżące na brzuchu z kończynami uniesionymi',
+  //     group: MeasurementGroup.superPowersVideos,
+  //     cameraOrientation: CameraOrientation.horizontal,
+  //     uniqueKeyword: "laying_down_banana_style"),
+  // Measurement(
+  //   type: MeasurementType.video,
+  //   title: "Pompki kobiece, profilem do kamery",
+  //   description: "Nagraj dziecko wykonujące pompki, profilem do kamery",
+  //   group: MeasurementGroup.superPowersVideos,
+  //   uniqueKeyword: "push_ups_easy_side",
+  //   cameraOrientation: CameraOrientation.horizontal,
+  // ),
+  // Measurement(
+  //   type: MeasurementType.video,
+  //   title: "Pompki kobiece, przodem do kamery",
+  //   description: "Nagraj dziecko wykonujące pompki, przodem do kamery",
+  //   group: MeasurementGroup.superPowersVideos,
+  //   uniqueKeyword: "push_ups_easy_front",
+  //   cameraOrientation: CameraOrientation.horizontal,
+  // ),
+  // Measurement(
+  //   type: MeasurementType.video,
+  //   title: "Bieg wahadłowy 10x5",
+  //   description:
+  //       "Nagraj dziecko wykonujące bieg wahadłowy, 10 razy po 5 metrów",
+  //   group: MeasurementGroup.superPowersVideos,
+  //   uniqueKeyword: "shuttle_run",
+  //   cameraOrientation: CameraOrientation.horizontal,
+  // ),
+  // Measurement(
+  //   type: MeasurementType.video,
+  //   title: "Beep test 20 m",
+  //   description: "Nagraj dziecko wykonujące beep test",
+  //   group: MeasurementGroup.superPowersVideos,
+  //   uniqueKeyword: "beep_test_20",
+  //   cameraOrientation: CameraOrientation.horizontal,
+  // ),
+  // Measurement(
+  //   type: MeasurementType.video,
+  //   title: "Skok w dal z miejsca",
+  //   description: "Nagraj dziecko wykonujące skok w dal, bokiem do kamery",
+  //   group: MeasurementGroup.superPowersVideos,
+  //   uniqueKeyword: "long_jump",
+  //   cameraOrientation: CameraOrientation.horizontal,
+  // ),
+  Measurement(
+      type: MeasurementType.save,
+      title: "",
+      description: '',
+      group: MeasurementGroup.save,
+      uniqueKeyword: "")
+];

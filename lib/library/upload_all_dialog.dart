@@ -1,4 +1,3 @@
-
 import 'package:c4k_daq/upload_measurement.dart';
 import 'package:flutter/material.dart';
 
@@ -47,13 +46,13 @@ class _UploadAllDialogState extends State<UploadAllDialog>
     List<String> measurementsInFile = List.from(widget.measurementFiles.keys);
 
     for (String measurementConfigFilePath in measurementsInFile) {
-      (bool, String) overallResult =
+      String? overallResult =
           await uploadMeasurementFromPath(measurementConfigFilePath);
-      if (!overallResult.$1) {
+      if (overallResult != null) {
         setState(() {
-              _currentNoMeasurements = widget.measurementFiles.keys.length;
-              _message = overallResult.$2;
-            });
+          _currentNoMeasurements = widget.measurementFiles.keys.length;
+          _message = overallResult;
+        });
         return;
       }
 
@@ -65,25 +64,15 @@ class _UploadAllDialogState extends State<UploadAllDialog>
       if (!mounted) return;
       if (_currentNoMeasurements <= 0) {
         setState(() {
-              _currentNoMeasurements = widget.measurementFiles.keys.length;
-              _message = "Nie ma więcej pomiarów do przesłania";
-            });
+          _currentNoMeasurements = widget.measurementFiles.keys.length;
+          _message = "Nie ma więcej pomiarów do przesłania";
+        });
         return;
       } else {
         setState(
             () => _currentNoMeasurements = widget.measurementFiles.keys.length);
       }
     }
-    // if (!mounted) return;
-    // if (_currentNoMeasurements <= 0) {
-    //   setState(() => {
-    //         _currentNoMeasurements = widget.measurementFiles.keys.length,
-    //         _message = "All measurements are uploaded"
-    //       });
-    // } else {
-    //   setState(
-    //       () => _currentNoMeasurements = widget.measurementFiles.keys.length);
-    // }
   }
 
   @override

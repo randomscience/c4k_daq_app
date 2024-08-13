@@ -9,13 +9,13 @@ import 'package:path_provider/path_provider.dart';
 class CameraPage extends StatefulWidget {
   final Function pathToVideoSetter;
   final Function exitButton;
-  final String exerciseTitle;
+  final int index;
   final bool verticalOrientation;
 
   const CameraPage({
     super.key,
     required this.pathToVideoSetter,
-    required this.exerciseTitle,
+    required this.index,
     required this.exitButton,
     this.verticalOrientation = true,
   });
@@ -74,6 +74,22 @@ class CameraPageState extends State<CameraPage> {
     widget.exitButton();
   }
 
+  _cameraDirection() {
+    String text = "";
+    if (measurementList[widget.index].cameraOrientation ==
+        CameraOrientation.horizontal) {
+      text = "Pozioma";
+    } else if (measurementList[widget.index].cameraOrientation ==
+        CameraOrientation.vertical) {
+      text = "Pionowa";
+    }
+
+    return Text("Kamera: $text",
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white));
+  }
+
   _recordVideo() async {
     if (_isRecording) {
       file = await _cameraController.stopVideoRecording();
@@ -85,9 +101,12 @@ class CameraPageState extends State<CameraPage> {
       await file.saveTo(filepath);
 
       widget.pathToVideoSetter(
-          exerciseNameConverter(widget.exerciseTitle), filepath);
+          measurementList[widget.index].uniqueKeyword, filepath);
 
-      setState(() => {_isRecording = false, _recordingEnded = true});
+      setState(() {
+        _isRecording = false;
+        _recordingEnded = true;
+      });
     } else {
       await _cameraController.prepareForVideoRecording();
       await _cameraController.startVideoRecording();
@@ -140,13 +159,19 @@ class CameraPageState extends State<CameraPage> {
                 ),
               )),
           Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 0, 120),
+                child: _cameraDirection()),
+          ),
+          Align(
               alignment: Alignment.topCenter,
               child: Padding(
                   padding: const EdgeInsets.fromLTRB(42, 42, 42, 0),
                   child: SizedBox(
                     height: 36,
                     child: Center(
-                        child: Text(widget.exerciseTitle,
+                        child: Text(measurementList[widget.index].title,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,

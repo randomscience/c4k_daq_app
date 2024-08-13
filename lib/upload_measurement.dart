@@ -10,7 +10,7 @@ import 'dart:io' as io;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:http/http.dart' as http;
 
-Future<(bool, String)> uploadMeasurementFromPath(String path) async {
+Future<String?> uploadMeasurementFromPath(String path) async {
   Map<String, dynamic> measurementInformation;
   String content = await io.File(path).readAsString();
 
@@ -26,51 +26,64 @@ Future<(bool, String)> uploadMeasurementFromPath(String path) async {
       .authWithPassword(pocketBaseUserName, pocketBasePassword);
 
   final body = <String, dynamic>{
-    "theKidlyId": measurementInformation[id],
     "appVersion": appVersion,
-    "measurementTime": "test",
-    "height": measurementInformation[height],
-    "noseToFloor": measurementInformation[noseToFloor],
-    "collarBoneToFloor": measurementInformation[collarBoneToFloor],
-    "pelvisToFloor": measurementInformation[pelvisToFloor]
+    "measurementTime": measurementInformation[measurementTime],
   };
 
-  Map<String, String> exerciseVideoMapping = {};
-
-  emptyExerciseVideoMapping.forEach((key, value) {
-    exerciseVideoMapping[key] = measurementInformation[key];
-  });
-
-  Iterator videoIterator = exerciseVideoMapping.entries.iterator;
-
-  List<MultipartFile> files = [];
-
-  while (videoIterator.moveNext()) {
-    MapEntry<String, String?> entry = videoIterator.current;
-    files.add(http.MultipartFile.fromBytes(
-      entry.key.replaceAll('_', ''),
-      io.File(exerciseVideoMapping[entry.key]!).readAsBytesSync(),
-      filename: entry.key,
-    ));
+  for (final measurement in measurementList) {
+    if (measurement.group == MeasurementGroup.generalInfo &&
+        measurementInformation.containsKey(measurement.uniqueKeyword)) {
+      body[measurement.uniqueKeyword] =
+          measurementInformation[measurement.uniqueKeyword];
+    }
   }
-
+  var result;
   try {
-    await pb
+    result = await pb
         .collection('c4k_daq_app_dev')
-        .create(body: body, files: files)
+        .create(body: body)
         .timeout(const Duration(minutes: 5));
+
   } on TimeoutException {
-    return (
-      false,
-      "Wysyłanie pomiaru trwa za długo, połączenie internetowe jest za wolne"
-    );
+    return "Wysyłanie pomiaru trwa za długo, połączenie internetowe jest za wolne";
   } on SocketException {
-    return (false, "Brak połączenia z serwerem, sprawdź ustawienia internetu");
+    return "Brak połączenia z serwerem, sprawdź ustawienia internetu";
   } catch (x) {
-    return (false, "Napotkano nieznany błąd, szczegóły dla developerów: $x");
+    return "Napotkano nieznany błąd, szczegóły dla developerów: $x";
   }
 
-  return (true, "");
+  // List<MultipartFile> files = [];
+  for (final measurement in measurementList) {
+    if ((measurement.group == MeasurementGroup.photos ||
+            measurement.group == MeasurementGroup.poseVideos ||
+            measurement.group == MeasurementGroup.superPowersVideos) &&
+        measurementInformation.containsKey(measurement.uniqueKeyword)) {
+      print("uploading${measurementInformation[measurement.uniqueKeyword]}");
+
+      try {
+        List<MultipartFile> file = [
+          http.MultipartFile.fromBytes(
+              measurement.group.toString().split('.')[1],
+              io.File(measurementInformation[measurement.uniqueKeyword]!)
+                  .readAsBytesSync(),
+              filename: measurement.uniqueKeyword)
+        ];
+
+        await pb
+            .collection('c4k_daq_app_dev')
+            .update(result.id, files: file)
+            .timeout(const Duration(minutes: 5));
+      } on TimeoutException {
+        return "Wysyłanie pomiaru trwa za długo, połączenie internetowe jest za wolne";
+      } on SocketException {
+        return "Brak połączenia z serwerem, sprawdź ustawienia internetu";
+      } catch (x) {
+        return "Napotkano nieznany błąd, szczegóły dla developerów: $x";
+      }
+    }
+  }
+
+  return null;
 }
 
 deleteMeasurement(String pathToMeasurement) async {
@@ -84,32 +97,27 @@ deleteMeasurement(String pathToMeasurement) async {
 
   String content = await file.readAsString();
 
-  if (content.isEmpty) {
-    file.delete();
-  }
+  if (content.isNotEmpty) {
+    Map<String, dynamic> localJsonData = json.decode(content);
 
-  var localJsonData = json.decode(content);
-
-  Map<String, String?> exerciseVideoMapping =
-      Map<String, String?>.from(emptyExerciseVideoMapping);
-
-  var keysList = List.from(exerciseVideoMapping.keys);
-  for (var element in keysList) {
-    io.File(localJsonData[element].toString()).delete();
+    for (Measurement measurement in measurementList) {
+      if ((measurement.group == MeasurementGroup.photos ||
+              measurement.group == MeasurementGroup.poseVideos ||
+              measurement.group == MeasurementGroup.superPowersVideos) &&
+          localJsonData.containsKey(measurement.uniqueKeyword)) {
+        io.File(localJsonData[measurement.uniqueKeyword]!).delete();
+      }
+    }
   }
   file.delete();
 }
 
-Future<void> saveToFile(
-    io.File localFile,
-    String uuid,
-    Map<String, String?> userInformation,
-    Map<String, String?> exerciseVideoMapping) async {
+Future<void> saveToFile(io.File localFile, String uuid,
+    Map<String, String?> userInformation) async {
   await localFile.writeAsString(
       json.encode({
         ...{"unique_id": uuid},
         ...userInformation,
-        ...exerciseVideoMapping,
         ...{"measurement_time": "${DateTime.now()}"},
         ...{"app_version": appVersion}
       }),

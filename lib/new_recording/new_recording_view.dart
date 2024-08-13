@@ -7,16 +7,13 @@ import 'measurement_stepper.dart';
 import '../camera/full_screen_modal.dart';
 import '../upload_measurement.dart';
 
-
 class NewRecording extends StatefulWidget {
   final Map<String, String?> Function() userInformation;
-  final Map<String, String?> Function() exerciseVideoMapping;
   final void Function() clearData;
 
   const NewRecording(
       {super.key,
       required this.userInformation,
-      required this.exerciseVideoMapping,
       required this.clearData});
 
   Future<String> get _localPath async {
@@ -54,16 +51,14 @@ class _NewRecording extends State<NewRecording> {
     );
   }
 
-  _saveToFile(Map<String, String?> userInformation,
-      Map<String, String?> exerciseVideoMapping,
-      {String? uuid}) async {
+  _saveToFile(Map<String, String?> userInformation, {String? uuid}) async {
     uuid ??= const Uuid().v4();
 
     var localFile = io.File(
         '${(await getApplicationDocumentsDirectory()).path}/c4k_daq/$uuid.json');
     await localFile.create(recursive: true);
     try {
-      await saveToFile(localFile, uuid, userInformation, exerciseVideoMapping);
+      await saveToFile(localFile, uuid, userInformation);
     } catch (e) {
       throw Exception(
           "Exception occurred when data was saved to local file, error message: $e");
@@ -73,27 +68,34 @@ class _NewRecording extends State<NewRecording> {
   }
 
   setExerciseVideoMapping(String exercise, String? videoPath) {
-    if (videoPath != null) widget.exerciseVideoMapping()[exercise] = videoPath;
+    if (videoPath != null) widget.userInformation()[exercise] = videoPath;
     setState(() => recordingVideo = false);
   }
 
-  _showModal(BuildContext context, String exerciseTitle) async {
-    // show the modal dialog and pass some data to its
+  _showVideoModal(BuildContext context, int index) async {
     await Navigator.of(context).push(FullScreenModal(
         pathToVideoSetter: setExerciseVideoMapping,
-        exerciseTitle: exerciseTitle));
+        index: index,
+        mode: CameraMode.video));
+  }
+
+  _showPhotoModal(BuildContext context, int index) async {
+    await Navigator.of(context).push(FullScreenModal(
+        pathToVideoSetter: setExerciseVideoMapping,
+        index: index,
+        mode: CameraMode.photo));
   }
 
   @override
   Widget build(BuildContext context) {
     return MeasurementStepper(
-      showModalBottomSheet: (exerciseTitle) =>
-          _showModal(context, exerciseTitle),
- 
-      exerciseVideoMappingGetter: widget.exerciseVideoMapping,
+      showVideoModal: (exerciseTitle) =>
+          _showVideoModal(context, exerciseTitle),
+      showPhotoModal: (exerciseTitle) =>
+          _showPhotoModal(context, exerciseTitle),
       userInformationGetter: widget.userInformation,
-      saveToFile: (userInformation, exerciseVideoMapping, {String? uuid}) => {
-        _saveToFile(userInformation, exerciseVideoMapping, uuid: uuid),
+      saveToFile: (userInformation, {String? uuid}) => {
+        _saveToFile(userInformation, uuid: uuid),
         _showSnackBar(context, "Pomiar zapisano w oczekujących")
       },
     );

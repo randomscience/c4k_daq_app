@@ -33,7 +33,8 @@ class _LibraryCard extends State<LibraryCard> {
   @override
   void initState() {
     super.initState();
-    id = widget.localJsonData['id'];
+    print(widget.localJsonData);
+    id = widget.localJsonData['theKidlyId'];
 
     final DateTime date =
         DateTime.parse(widget.localJsonData['measurement_time']);
@@ -45,7 +46,7 @@ class _LibraryCard extends State<LibraryCard> {
   void _deleteMeasurement() async {
     String directory = (await getApplicationDocumentsDirectory()).path;
 
-    widget.runPopUp(widget.localJsonData['id'],
+    widget.runPopUp(widget.localJsonData['theKidlyId'],
         '$directory/c4k_daq/${widget.localJsonData['unique_id']}.json');
   }
 
@@ -53,11 +54,11 @@ class _LibraryCard extends State<LibraryCard> {
     setState(() {
       isAwaiting = true;
     });
-    (bool, String) result = await uploadMeasurementFromPath(widget.pathToFile);
+    String? result = await uploadMeasurementFromPath(widget.pathToFile);
     setState(() => isAwaiting = false);
 
-    if (!result.$1) {
-      widget.snackBar(result.$2);
+    if (result != null) {
+      widget.snackBar(result);
       return;
     }
     widget.deleteMeasurement(widget.pathToFile);
