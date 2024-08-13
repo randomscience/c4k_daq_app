@@ -50,9 +50,9 @@ class _UploadAllDialogState extends State<UploadAllDialog>
       (bool, String) overallResult =
           await uploadMeasurementFromPath(measurementConfigFilePath);
       if (!overallResult.$1) {
-        setState(() => {
-              _currentNoMeasurements = widget.measurementFiles.keys.length,
-              _message = overallResult.$2
+        setState(() {
+              _currentNoMeasurements = widget.measurementFiles.keys.length;
+              _message = overallResult.$2;
             });
         return;
       }
@@ -64,9 +64,9 @@ class _UploadAllDialogState extends State<UploadAllDialog>
 
       if (!mounted) return;
       if (_currentNoMeasurements <= 0) {
-        setState(() => {
-              _currentNoMeasurements = widget.measurementFiles.keys.length,
-              _message = "Nie ma więcej pomiarów do przesłania"
+        setState(() {
+              _currentNoMeasurements = widget.measurementFiles.keys.length;
+              _message = "Nie ma więcej pomiarów do przesłania";
             });
         return;
       } else {

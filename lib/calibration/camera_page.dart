@@ -88,7 +88,7 @@ class CameraPageState extends State<CameraPage> {
       widget.pathToVideoSetter(
           exerciseNameConverter(widget.exerciseTitle), filepath);
 
-      setState(() => {_isRecording = false, _recordingEnded = true});
+      setState(() {_isRecording = false; _recordingEnded = true;});
     } else {
       await _cameraController.prepareForVideoRecording();
       await _cameraController.startVideoRecording();
