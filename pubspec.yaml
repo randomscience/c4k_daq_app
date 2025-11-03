@@ -1,5 +1,5 @@
 name: c4k_daq
-description: A new Flutter project.
+description: Connect for kids, data acquisition app.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.1.7
+version: 0.1.8
 
 environment:
   sdk: ">=3.0.6 <4.0.0"
@@ -43,7 +43,6 @@ dependencies:
   amplify_storage_s3: ^1.3.3
   http: ^0.13.6
   uuid: ^3.0.7
-  # package_info_plus: ^1.0.2
   flutter_markdown: ^0.6.17+1
   url_launcher: ^6.1.12
   device_info_plus: ^8.2.2
